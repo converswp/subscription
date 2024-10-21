@@ -99,9 +99,16 @@ class Order {
 
 		$subtotal        = '-';
 		$item_id         = $item->get_id();
-		$subscription_id = Helper::get_subscription_from_order_item_id( $item->get_id() )->subscription_id;
-		$price           = get_post_meta( $subscription_id, '_subscrpt_price', true );
-		$subtotal        = Helper::format_price_with_order_item( $price, $item_id );
+		$subscription_id = Helper::get_subscription_from_order_item_id( $item->get_id() );
+
+		if ( ! $subscription_id ) {
+			echo "<td class='item_recurring' width='15%'>-</td>";
+			return;
+		}
+		$subscription_id = $subscription_id->subscription_id;
+
+		$price    = get_post_meta( $subscription_id, '_subscrpt_price', true );
+		$subtotal = Helper::format_price_with_order_item( $price, $item_id );
 		?>
 		<td class="item_recurring" width="15%">
 			<div class="view">
