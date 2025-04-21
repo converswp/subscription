@@ -93,13 +93,13 @@ class Product {
 	 */
 	public function text_if_active() {
 		global $product;
-		$product = sdevs_get_subscription_product( $product );
-		if ( ! $product->is_type( 'simple' ) ) {
+		$sdevs_product = sdevs_get_subscription_product( $product );
+		if ( ! $sdevs_product->is_type( 'simple' ) ) {
 			return;
 		}
 
-		if ( $product->is_enabled() ) {
-			$limit = $product->get_limit();
+		if ( $sdevs_product->is_enabled() ) {
+			$limit = $sdevs_product->get_limit();
 			if ( 'unlimited' === $limit ) {
 				return;
 			}
