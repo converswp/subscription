@@ -20,6 +20,10 @@ bash clean.sh
 
 ## changelog
 
+### v1.3.1
+
+- **Fix**: Add to card button in product page was not showing certain themes are is used.
+
 ### v1.3
 
 - **New**: Stripe renewal added.
