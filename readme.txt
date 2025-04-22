@@ -8,7 +8,7 @@ Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Subscriptions for WooCommerce enables repeat purchases by automatically delivering your customers’ favorite products or services on a weekly, monthly, or custom schedule—no reordering needed.
+WooCommerce for Subscriptions plugin for recurring payments—auto-renew products weekly, monthly, or on custom schedules.
 
 == Description ==
 
@@ -142,7 +142,9 @@ Manual installation involves downloading the plugin and uploading it to your web
 Automatic updates are available via the WordPress dashboard.  
 We recommend backing up your website before performing any updates.
 
-
+== Upgrade to Pro ==
+This plugin has a Pro version with more features, priority support, and advanced integrations.
+Learn more: [WPSubscription](https://wpsubscription.co/)
 
 == Screenshots ==
 
