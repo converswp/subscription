@@ -1,138 +1,147 @@
-=== Subscription for WooCommerce ===
+=== Subscriptions for WooCommerce - Recurring Payment Plugins, Stripe, PayPal, Paddle & More ===
 Contributors: shamsbd71, parvezvai
-Tags: woocommerce, woocommerce-subscriptions, subscriptions, subscriptions-billing, recurring-payments
+Tags: woocommerce-subscriptions, subscriptions, subscriptions-billing, recurring-payments, woocommerce-extensions
 Requires at least: 6.0
-Requires Plugins: woocommerce
 Tested up to: 6.8
 Stable tag: 1.3.1
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Allow your customers to order once and get their products and services every month/week.
+Subscriptions for WooCommerce enables repeat purchases by automatically delivering your customers’ favorite products or services on a weekly, monthly, or custom schedule—no reordering needed.
 
 == Description ==
 
-**Start Earning Recurring Revenue with Subscription for WooCommerce**
+**Start Earning Recurring Revenue with Subscriptions for WooCommerce**
 
-Want to sell your products as a subscription? With the Subscription for WooCommerce plugin, it's quick and easy. You can turn any product in your WooCommerce store into a subscription with just a few clicks. Whether you sell digital downloads or online services, this tool works for everything.
-The WooCommerce subscription plugin helps you set up flexible plans like daily, weekly, monthly, or yearly payments. You can even offer a free trial or charge a one-time sign-up fee. Everything is simple and beginner-friendly. No coding needed.
+Want to earn steady income from your WooCommerce store? The [Subscriptions for WooCommerce](https://wordpress.org/plugins/subscription) plugin makes it fast and simple. With just a few clicks, you can turn any WooCommerce product into a subscription. This includes digital products, physical goods, and services like memberships or online courses. It’s one of the best WooCommerce recurring payment plugins for store owners looking to build a stable income stream.
+
+The WooCommerce subscriptions plugin helps you create flexible plans that fit your business. You can choose how often customers get charged such as daily, weekly, monthly or yearly. You can also give users a free trial before billing starts or add a one-time sign-up fee to cover setup costs. It's very easy for beginners. You do not need any coding skills or technical setup. Everything is managed from your WordPress dashboard. Admins can view all subscriptions, track payments, and manage customer activity in one place.
+
+The plugin also lets customers manage their own subscriptions. They can update payment details, cancel plans, or pause their service at any time. This gives users more control and keeps them happy.
+
+The WooCommerce subscriptions plugin works with popular payment gateways like PayPal, WooEpay, and Stripe which is available in the Pro version. It also supports most WordPress themes that follow WooCommerce standards. Among the best WooCommerce recurring payment plugins, this tool gives your store the flexibility to offer subscriptions in minutes.
 
 
-### WITH SUBSCRIPTION FOR WOOCOMMERCE, YOU CAN:
-Add recurring billing to WooCommerce products
-Offer free trials before the first payment
-Set custom billing times like daily, weekly, monthly, or yearly
-Add sign-up fees if needed
-Let customers cancel their plan at the end of the billing period
-Manage all subscriptions easily from your admin panel
-Let customers manage their subscriptions from their own account
-The WooCommerce subscription plugin gives both you and your customers full control. From your dashboard, you can view all subscriptions and manage them with ease. Customers can pause, cancel, or update their plans anytime.
+### Start Earning with Subscriptions for WooCommerce - Recurring Payment Plugin 
+**[Download the Plugin Now!](https://downloads.wordpress.org/plugin/subscription.zip)**. You can also find it on the official [WordPress.org Subscriptions for WooCommerce page](https://wordpress.org/plugins/subscription).
 
+
+### WITH SUBSCRIPTIONS FOR WOOCOMMERCE, YOU CAN:
+
+- Add recurring billing to WooCommerce products
+- Offer free trials before the first payment
+- Set custom billing times like daily, weekly, monthly, or yearly
+- Add sign-up fees if needed
+- Let customers cancel their plan at the end of the billing period
+- Manage all subscriptions easily from your admin panel
+- Let customers manage their subscriptions from their own account 
+
+The WooCommerce subscriptions plugin gives both you and your customers full control over subscription management. From your dashboard, you can view all subscriptions and manage them with ease. Customers have the flexibility to pause, cancel, or update their plans at any time. This level of control, combined with recurring payments for WooCommerce, ensures that your subscription-based business runs smoothly and customers have a seamless experience managing their subscriptions. That’s why it ranks as one of the best WooCommerce recurring payment plugins on the market today.
 
 
 #### KEY FEATURES (FREE VERSION)
 
-1.  **Simple Product Subscriptions**
-    Easily assign a subscription plan to any simple WooCommerce product. No separate product type required.  
-      
-    
-2.  **Flexible Billing Cycles**  
-    Set recurring payment intervals based on days, weeks, months, or years.  
-      
-    
-3.  **Free Trial Support**  
-    Offer customers a trial period before the first payment.  
-      
-    
-4.  **Subscription Management for Admins**  
-    Access all subscriptions in one place and manage them from the backend.  
-      
-    
-5.  **Customer Subscription Dashboard** 
-    Let users view and manage their subscriptions directly from their account page.  
+1.  **Simple Product Subscriptions** You can easily turn any simple product in your store into a subscription. There is no need to create a new product type or go through complex steps. Just select a subscription plan, set the billing cycle, and you're ready to offer your product as a recurring service. This makes it perfect for beginners and store owners who want a fast and hassle-free way to start selling subscriptions.
+2.  **Flexible Billing Cycles** You can choose to charge customers on a daily, weekly, monthly, or yearly basis, giving you complete control over the payment schedule. Whether you offer short-term services or long-term plans, the WooCommerce subscriptions plugin makes it easy to create a payment cycle that aligns with both your business and your customers' preferences. This flexibility ensures a smooth and personalized experience for all subscription-based services. With recurring payments for WooCommerce, your customers' payments are automatically processed on the set schedule, ensuring seamless transactions and better cash flow management.
+3.  **Free Trial Support** You can offer customers a free trial before the first payment. This helps build trust and gives users a chance to try your product or service without any upfront cost. It's a great way to increase conversions and attract more subscribers to your WooCommerce store. 
+4.  **Subscription Management for Admins** Store admins can easily access and manage all subscriptions from one central location in the WordPress dashboard with the plugin. You can view active plans, track billing dates, monitor payment history, and make changes to subscriptions as needed. This makes managing your subscription business smooth and efficient, saving you time and effort.
+5.  **Customer Subscription Dashboard** With a dedicated dashboard for your customers, the WooCommerce subscriptions plugin allows them to view and manage their subscriptions directly from their account page. They can check their next billing date, update payment methods, pause or cancel subscriptions, and track their subscription status anytime. This user-friendly feature gives your customers more control and improves their overall experience on your WooCommerce store.
 
 
 #### PREMIUM FEATURES
 
-1.  **Support for Simple and Variable Products**  
-    Enable subscriptions for both simple and variable WooCommerce products.  
-      
-    
-2.  **Stripe Auto-renewal Integration**  
-    Support for automatic recurring payments via Stripe.  
-      
-    
-3.  **Advanced Product Customization**  
-    Customize how subscriptions work for individual products.  
-      
-    
-4.  **Sign-Up Fees**  
-    Charge a one-time sign-up fee at the start of a subscription.  
-      
-    
-5.  **Pending Cancellation Feature**  
-    Allow customers to schedule a cancellation at the end of the current period if the product has a user cancel option enabled.  
+1.  **Support for Simple and Variable Products** It will allow you to enable subscriptions for both simple and variable WooCommerce products. Whether you're selling a single product with a fixed price or offering different variations (such as size or color) with different prices, you can easily set up subscription options for both types. This flexibility ensures that you can offer subscription plans for a wide range of products in your store, giving your customers more choices and boosting recurring revenue.    
+2.  **Stripe Auto-renewal Integration** With automatic WooCommerce Stripe recurring payments, the Subscriptions for WooCommerce plugin takes the hassle out of billing by processing charges at the start of each billing cycle automatically. This means you don’t have to manually charge your customers—Stripe handles it all securely and efficiently. Whether it’s updating payment methods, retrying failed transactions, or managing billing schedules, everything is taken care of. By supporting recurring payments for WooCommerce, this integration ensures a steady cash flow and a smooth experience for both store owners and subscribers, making your subscription-based business easier to run and more professional than ever.  
+3.  **Advanced Product Customization** It will let you personalize subscription options for each individual product. You can set custom billing cycles, offer free trials, charge sign-up fees, or apply unique settings specific to each product. This level of customization allows you to create tailored subscription plans that best fit your products and meet the needs of your customers.
+4.  **Sign-Up Fees** You can charge a one-time sign-up fee at the start of a subscription. This allows you to cover initial setup costs or offer a premium service right from the beginning. The WooCommerce subscription feature enables you to add this fee seamlessly when customers sign up for a recurring plan, helping you boost revenue while providing an added layer of customization. You can adjust the sign-up fee based on the product or service, offering more flexibility to suit your business needs.
+5.  **Pending Cancellation Feature** Allow customers to schedule a cancellation at the end of their current period if the product has a user cancel option enabled. This feature makes it easy for users to manage their subscriptions by giving them the option to cancel at the end of the billing cycle instead of immediately. This provides greater flexibility and control to customers, reducing the risk of abrupt cancellations. You can ensure a smooth subscription experience for your customers while managing recurring payments more effectively.
 
-[**Upgrade to Subscription for WooCommerce**](https://wpsubscription.co/)
+[**Upgrade to Subscriptions for WooCommerce**](https://wpsubscription.co/)
 
 
+### SUBSCRIPTIONS FOR WOOCOMMERCE PLUGIN COMPATIBILITIES
+
+- **Works Perfectly with Membership for WooCommerce** The WooCommerce Subscriptions Plugin is fully compatible with the Membership for WooCommerce plugin. This means you can sell membership plans with recurring payments, giving users access to exclusive content or services. It helps you create a smooth membership experience with automatic billing and easy plan management.
+- **Compatible With PayPal Standard** You can use PayPal Standard to accept recurring payments with the Subscriptions for WooCommerce plugin. It works smoothly to process payments on time and ensures that your subscription billing is handled reliably and securely.
+- **Integrates with LearnPress** If you sell online courses using LearnPress, it fits in perfectly. You can create subscription plans for your courses, set recurring payments, and manage students easily. This is ideal for anyone offering lessons, training, or digital learning.
+- **Stripe Payment Gateway Support** It seamlessly integrates with the Stripe payment gateway, enabling recurring payments for WooCommerce subscription products. With WooCommerce Stripe recurring billing, you can automatically charge customers on set intervals—whether monthly, yearly, or on a custom schedule—without any manual intervention. Stripe guarantees secure, fast, and reliable payment processing for customers around the world, providing a smooth, professional, and fully automated billing experience for your subscription-based business.
+- **WPML Compatibility** Running a multilingual site? This Plugin works great with WPML. This lets you offer subscription products in different languages, so you can reach more customers around the world with the same easy subscription setup.
+- **Razorpay Payment Gateway Support** It also supports Razorpay for handling recurring payments. This is a great option for businesses that want to accept payments in India or use Razorpay’s local features. Setup is simple and secure.
+- **Built for WooCommerce Subscription Payment Gateway Compatibility** It’s designed to work smoothly with various WooCommerce-supported subscription payment gateways. Whether you are using PayPal, Stripe, or Razorpay, you can trust that your subscription payments will be processed correctly and on time.
 
 ### Make Your Store Subscription-Ready
 
-Subscription for WooCommerce is also perfect for digital products. Selling online courses, downloads, or memberships? Just set the item as a product, choose your subscription settings, and you're ready to go.
-The WooCommerce subscription plugin works well with most themes that follow WordPress and WooCommerce standards. If any issue comes up after a theme or version update, the plugin team quickly makes it compatible again.
+This Plugin is also perfect for digital products. Selling online courses, downloads, or memberships? Just set the item as a product, choose your subscription settings, and you're ready to go.
 
-Whether you're selling digital downloads, or services, Subscription for WooCommerce helps you grow with recurring revenue. It's the easiest way to make your WooCommerce store subscription-ready.
+The WooCommerce subscriptions plugin works well with most themes that follow WordPress and WooCommerce standards. If any issue comes up after a theme or version update, the plugin team quickly makes it compatible again.
 
+Whether you're selling digital downloads, or services, it will help you grow with recurring revenue. It's the easiest way to make your WooCommerce store subscription-ready. If you’re searching for the best WooCommerce recurring payment plugins, this solution is a powerful and user-friendly choice.
 
 ### Need Help?
 
-Chat with us live, browse the documentation, or create a support ticket if you have questions.
+If you need any help with the plugin or have questions, feel free to use our live chat window. Our team is here to assist you and help you get the most out of your subscription setup.
 
-Make your WooCommerce store work smarter with easy subscriptions.
+You can also explore our full range of WooCommerce Extensions designed to grow your eCommerce store.
+
+If the documentation does not solve your issue, you can generate a Support Ticket for quick assistance.
+
+Build or improve your eCommerce store confidently with the Subscriptions for WooCommerce plugin and expert WooCommerce services.
 
 
-== Frequently Asked Questions ==
-=Does it work with free WooCommerce?=
-Yes, it works perfectly with the free WooCommerce plugin.
+== Frequently Asked Questions == 
 
-=Can I offer free trials?=
-Yes, you can set free trial periods before billing starts.
+=Does this plugin work with the free version of WooCommerce?=
+Yes, it works perfectly with the free WooCommerce plugin. You can easily set up and manage subscriptions without any extra add-ons or premium versions.
 
-=What payment gateways are supported?=
-Supports WooEpay, Stripe (Pro), and PayPal. Also Paddle for WooCommerce support is coming soon. 
+=Can I offer free trials with this plugin?=
+Yes, it allows you to offer free trials before the first payment is charged, giving customers a chance to try your product or service.
 
-=Can customers cancel or change plans?  =
-Yes, users can cancel or update their plans from their account.
+=What payment gateways are supported by this plugin?=
+This plugin supports several popular payment gateways including WooEpay, Stripe (Pro), and PayPal. These integrations make it easy to process recurring payments and manage subscriptions.
 
-=Is it good for digital products or courses?  =
-Absolutely! Great for downloads, memberships, or online courses.
+=Can customers cancel or change their subscription plans?=
+Yes, users can easily cancel or update their subscription plans directly from their account page.
 
-=Can I track customer subscriptions?  =
-Yes, view all logs and activity in your admin panel.
+=Is this plugin suitable for digital products or courses?  =
+Absolutely! It's perfect for digital downloads, memberships, and online courses.
 
-=Do I need coding skills?  =
-No coding needed! It’s beginner-friendly and easy to use.
+=Can I track customer subscriptions using the Subscription for WooCommerce plugin? =
+Yes, you can easily view all subscription logs and customer activity directly from your WordPress admin panel.
 
-=What if a payment fails?  =
-The plugin retries payments and sends alerts if anything goes wrong.
+=Do I need coding skills to set up and manage subscriptions? =
+No coding is needed at all! The setup is beginner-friendly and very easy to use, even if you have no technical background.
 
-With Subscription for WooCommerce, you can turn your store into a subscription business in just minutes. Try the WooCommerce subscription plugin today and start earning more every month.
+=What happens if a payment fails during a subscription cycle?  =
+If a payment fails, the system will automatically retry the payment and send alerts to notify you and the customer, helping to avoid missed renewals.
+
+With Subscriptions for WooCommerce, you can turn your store into a subscription business in just minutes. Try this plugin today and discover why many store owners consider it among the best WooCommerce recurring payment plugins available.
 
 == Installation ==
 
-= Installation from within WordPress =
+= Automatic installation =
+Automatic installation is the easiest way to install Subscriptions for WooCommerce, as WordPress handles everything without leaving your browser.
 
-1. Visit 'Plugins > 'Add New'.
-2. Search for 'WooCommerce Subscription'.
-3. Install and activate the 'WooCommerce Subscription' plugin.
+1. Log in to your WordPress dashboard.
+2. Navigate to 'Plugins > Add New'.
+3. In the search field, type 'Subscriptions for WooCommerce - Recurring Payment Plugins, Stripe, PayPal, Paddle & More'.
+4. Locate the plugin in the results and click 'Install Now'.
+5. After installation, click 'Activate'.
 
 = Manual installation =
+Manual installation involves downloading the plugin and uploading it to your web server using an FTP client or the File Manager in your hosting panel.
 
-1. Upload the entire `WooCommerce Subscription` folder to the `/wp-content/plugins/` directory.
-2. Visit 'Plugins'.
-3. Activate the `WooCommerce Subscription` plugin.
+1. Download the 'Subscriptions for WooCommerce' plugin ZIP file.
+2. Unzip the file.
+3. Upload the entire `subscription` folder to the `/wp-content/plugins/` directory.
+4. Go to the 'Plugins' menu in WordPress.
+5. Activate the 'Subscriptions for WooCommerce' plugin.
+
+= Updating =
+
+Automatic updates are available via the WordPress dashboard.  
+We recommend backing up your website before performing any updates.
+
 
 
 == Screenshots ==
@@ -215,3 +224,4 @@ With Subscription for WooCommerce, you can turn your store into a subscription b
 
 = 1.0.0 =
 - **New:** Initial release
+
