@@ -225,6 +225,9 @@ Learn more: [WPSubscription](https://wpsubscription.co/)
 
 == Changelog ==
 
+= 1.3.2 =
+- **Fix**: Astra theme support added.
+
 = 1.3.1 =
 - **Fix**: Add to cart button in product page was not showing certain themes are is used.
 

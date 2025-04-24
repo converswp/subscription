@@ -8,7 +8,7 @@ Plugin URI: https://wpsubscription.co/
 Author: shamsbd71
 Author URI: https://wpsubscription.co/
 
-Version: 1.3.1
+Version: 1.3.2
 Requires Plugins: woocommerce
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -36,7 +36,7 @@ final class Sdevs_Subscription {
 	 *
 	 * @var string
 	 */
-	const version = '1.3.1';
+	const version = '1.3.2';
 
 	/**
 	 * Holds various class instances
