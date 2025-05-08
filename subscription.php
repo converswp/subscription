@@ -172,6 +172,13 @@ final class Sdevs_Subscription {
 		add_action( 'init', array( $this, 'init_classes' ) );
 		add_action( 'init', array( $this, 'localization_setup' ) );
 		add_action( 'init', array( $this, 'run_update' ) );
+		
+		// Declare HPOS compatibility
+		add_action('before_woocommerce_init', function() {
+			if (class_exists(\Automattic\WooCommerce\Utilities\FeaturesUtil::class)) {
+				\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility('custom_order_tables', __FILE__, true);
+			}
+		});
 	}
 
 	/**
