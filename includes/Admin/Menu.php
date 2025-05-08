@@ -22,12 +22,12 @@ class Menu {
     public function create_admin_menu() {
         $slug = 'edit.php?post_type=subscrpt_order';
         add_menu_page( 
-            __( 'Subscriptions', 'sdevs_subscrpt' ), 
-            __( 'Subscriptions', 'sdevs_subscrpt' ), 
+            __( 'WP Subscription', 'wp_subscription' ), 
+            __( 'WP Subscription', 'wp_subscription' ), 
             'manage_options', 
             $slug, 
             false, 
-            SUBSCRPT_ASSETS . '/images/icons/subscription-20-gray.png', 
+            WP_SUBSCRIPTION_ASSETS . '/images/icons/subscription-20-gray.png', 
             40 
         );
     }

@@ -24,19 +24,19 @@ class Settings {
 	 */
 	public function admin_menu() {
 		$post_type_link = 'edit.php?post_type=subscrpt_order';
-		add_submenu_page( $post_type_link, 'Subscription Settings', 'Settings', 'manage_options', 'subscrpt_settings', array( $this, 'settings_content' ) );
+		add_submenu_page( $post_type_link, 'WP Subscription Settings', 'Settings', 'manage_options', 'wp_subscription_settings', array( $this, 'settings_content' ) );
 	}
 
 	/**
 	 * Register settings options.
 	 **/
 	public function register_settings() {
-		register_setting( 'subscrpt_settings', 'subscrpt_renewal_process' );
-		register_setting( 'subscrpt_settings', 'subscrpt_manual_renew_cart_notice' );
-		register_setting( 'subscrpt_settings', 'subscrpt_active_role' );
-		register_setting( 'subscrpt_settings', 'subscrpt_unactive_role' );
-		register_setting( 'subscrpt_settings', 'subscrpt_stripe_auto_renew' );
-		register_setting( 'subscrpt_settings', 'subscrpt_auto_renewal_toggle' );
+		register_setting( 'wp_subscription_settings', 'wp_subscription_renewal_process' );
+		register_setting( 'wp_subscription_settings', 'wp_subscription_manual_renew_cart_notice' );
+		register_setting( 'wp_subscription_settings', 'wp_subscription_active_role' );
+		register_setting( 'wp_subscription_settings', 'wp_subscription_unactive_role' );
+		register_setting( 'wp_subscription_settings', 'wp_subscription_stripe_auto_renew' );
+		register_setting( 'wp_subscription_settings', 'wp_subscription_auto_renewal_toggle' );
 
 		do_action( 'subscrpt_register_settings', 'subscrpt_settings' );
 	}

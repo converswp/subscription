@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Subscription for WooCommerce
+Plugin Name: WP Subscription for WooCommerce
 Plugin URI: https://wordpress.org/plugins/subscription
 Description: Enable WooCommerce Subscriptions and Start Recurring Revenue in Minutes.
 Plugin URI: https://wpsubscription.co/
@@ -12,7 +12,7 @@ Version: 1.3.2
 Requires Plugins: woocommerce
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
-Text Domain: sdevs_subscrpt
+Text Domain: wp_subscription
 Domain Path: /languages
 */
 
@@ -110,6 +110,14 @@ final class Sdevs_Subscription {
 	 * @return void
 	 */
 	public function define_constants() {
+		define( 'WP_SUBSCRIPTION_VERSION', self::version );
+		define( 'WP_SUBSCRIPTION_FILE', __FILE__ );
+		define( 'WP_SUBSCRIPTION_PATH', dirname( WP_SUBSCRIPTION_FILE ) );
+		define( 'WP_SUBSCRIPTION_INCLUDES', WP_SUBSCRIPTION_PATH . '/includes' );
+		define( 'WP_SUBSCRIPTION_TEMPLATES', WP_SUBSCRIPTION_PATH . '/templates/' );
+		define( 'WP_SUBSCRIPTION_URL', plugins_url( '', WP_SUBSCRIPTION_FILE ) );
+		define( 'WP_SUBSCRIPTION_ASSETS', WP_SUBSCRIPTION_URL . '/assets' );
+		// DB-related: The following constants are used in DB/meta. Left as is for compatibility.
 		define( 'SUBSCRPT_VERSION', self::version );
 		define( 'SUBSCRPT_FILE', __FILE__ );
 		define( 'SUBSCRPT_PATH', dirname( SUBSCRPT_FILE ) );
@@ -227,7 +235,7 @@ final class Sdevs_Subscription {
 	 * @uses load_plugin_textdomain()
 	 */
 	public function localization_setup() {
-		load_plugin_textdomain( 'sdevs_subscrpt', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+		load_plugin_textdomain( 'wp_subscription', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 	}
 
 	/**
