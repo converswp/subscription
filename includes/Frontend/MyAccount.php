@@ -131,7 +131,7 @@ class MyAccount {
 				'wp_button_class' => wc_wp_theme_get_element_class_name( 'button' ) ? ' ' . wc_wp_theme_get_element_class_name( 'button' ) : '',
 			),
 			'subscription',
-			SUBSCRPT_TEMPLATES
+			WP_SUBSCRIPTION_TEMPLATES
 		);
 	}
 
@@ -209,7 +209,7 @@ class MyAccount {
 				'current_page'    => $current_page,
 			),
 			'subscription',
-			SUBSCRPT_TEMPLATES
+			WP_SUBSCRIPTION_TEMPLATES
 		);
 	}
 

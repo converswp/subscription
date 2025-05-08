@@ -246,7 +246,7 @@ class Subscriptions {
 				?>
 				<a href="https://wpsubscription.co" target="_blank">
 					<img style="width: 100%;"
-						src="<?php echo esc_html( SUBSCRPT_ASSETS . '/images/subscrpt-ads.png' ); ?>" />
+						src="<?php echo esc_html( WP_SUBSCRIPTION_ASSETS . '/images/subscrpt-ads.png' ); ?>" />
 				</a>
 				<?php
 			endif;

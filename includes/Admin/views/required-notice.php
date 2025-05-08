@@ -1,6 +1,6 @@
 <div class="notice notice-error sdevs-install-plugin">
 	<div class="sdevs-notice-icon">
-		<img src="<?php echo SUBSCRPT_ASSETS . '/images/woocommerce.png'; ?>" alt="woocommerce-logo" />
+		<img src="<?php echo WP_SUBSCRIPTION_ASSETS . '/images/woocommerce.png'; ?>" alt="woocommerce-logo" />
 	</div>
 	<div class="sdevs-notice-content">
 		<h2><?php _e( 'Thanks for using Subscription for WooCommerce', 'sdevs_subscrpt' ); ?></h2>
