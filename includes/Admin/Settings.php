@@ -24,7 +24,16 @@ class Settings {
 	 */
 	public function admin_menu() {
 		$post_type_link = 'edit.php?post_type=subscrpt_order';
-		add_submenu_page( $post_type_link, 'WP Subscription Settings', 'Settings', 'manage_options', 'wp_subscription_settings', array( $this, 'settings_content' ) );
+
+		add_submenu_page( 
+			$post_type_link, 
+			__( 'WP Subscription Settings', 'sdevs_subscrpt_pro' ),
+			__( 'Settings', 'sdevs_subscrpt_pro' ), 
+			'manage_options', 
+			'edit.php?post_type=wp_subscription_settings',
+			array( $this, 'settings_content' ),
+			40
+		);
 	}
 
 	/**
