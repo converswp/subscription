@@ -238,7 +238,7 @@ class Subscriptions {
 				do_action( 'subscrpt_order_activities', $post->ID );
 			else :
 				?>
-				<a href="https://springdevs.com/subscription" target="_blank">
+				<a href="https://wpsubscription.co" target="_blank">
 					<img style="width: 100%;"
 						src="<?php echo esc_html( SUBSCRPT_ASSETS . '/images/subscrpt-ads.png' ); ?>" />
 				</a>

@@ -49,15 +49,15 @@ pnpm install
 bash clean.sh
 ```
 
-## 📚 Documentation
+## �� Documentation
 
-- [User Guide](https://springdevs.com/docs)
-- [Developer Documentation](https://springdevs.com/developer-docs)
-- [API Reference](https://springdevs.com/api-reference)
+- [Help Center & Documentation](https://converslabs.thrivedeskdocs.com/en)
+- [Developer Documentation](https://converslabs.thrivedeskdocs.com/en)
+- [API Reference](https://converslabs.thrivedeskdocs.com/en)
 
 ## 🤝 Contributing
 
-We welcome contributions! Please read our [contributing guidelines](https://springdevs.com/contributing) before submitting pull requests.
+We welcome contributions! Please read our [contributing guidelines](https://github.com/converswp/subscription/blob/main/CONTRIBUTING.md) before submitting pull requests.
 
 ## 📄 License
 
@@ -65,6 +65,8 @@ This plugin is licensed under the GPL v2 or later.
 
 ## 🔗 Links
 
-- [Website](https://springdevs.com)
-- [Support](https://springdevs.com/support)
-- [Pro Version](https://springdevs.com/pro)
+- [Website](https://wpsubscription.co)
+- [WordPress.org Plugin Page](https://wordpress.org/plugins/subscription/)
+- [Support](https://wpsubscription.co/support)
+- [Pro Version](https://wpsubscription.co)
+- [GitHub Repository](https://github.com/converswp/subscription)
