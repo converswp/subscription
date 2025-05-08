@@ -4,6 +4,10 @@ namespace SpringDevs\Subscription;
 
 use SpringDevs\Subscription\Installer;
 
+// HPOS: This file uses direct SQL on postmeta for migration/upgrade tasks only.
+// Do NOT use direct SQL for live WooCommerce order data access—use WooCommerce CRUD for HPOS compatibility.
+// All live order data access must use WooCommerce CRUD methods.
+
 class Upgrade {
 
 	public function run() {

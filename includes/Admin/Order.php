@@ -4,6 +4,11 @@ namespace SpringDevs\Subscription\Admin;
 
 use SpringDevs\Subscription\Illuminate\Helper;
 
+// HPOS: This file is compatible with WooCommerce High-Performance Order Storage (HPOS).
+// All WooCommerce order data is accessed via WooCommerce CRUD methods (wc_get_order, etc.).
+// All direct post meta access is for subscription data only, not WooCommerce order data.
+// If you add new order data access, use WooCommerce CRUD for HPOS compatibility.
+
 /**
  * Order class
  *
@@ -27,7 +32,7 @@ class Order {
 	 * @return void
 	 */
 	public function add_subscription_label( $order ) {
-		$histories = Helper::get_subscriptions_from_order( $order->get_id() );
+		$histories = Helper::get_subscriptions_from_order( $order->get_id() ); // HPOS: Safe, uses custom table for subscription relations.
 		if ( count( $histories ) > 0 ) :
 			?>
 			<div class="subscrpt-order-label"><?php echo esc_html_e( 'Subscription order', 'sdevs_subscrpt' ); ?></div>
@@ -45,7 +50,7 @@ class Order {
 		$order_id  = is_wc_order_hpos_enabled() && isset( $_GET['id'] ) ? ( sanitize_text_field( wp_unslash( $_GET['id'] ) ) ) : get_the_ID();
 		$histories = Helper::get_subscriptions_from_order( $order_id );
 		if ( is_array( $histories ) ) {
-			$order = wc_get_order( $order_id );
+			$order = wc_get_order( $order_id ); // HPOS: Safe, uses WooCommerce CRUD.
 			add_meta_box(
 				'subscrpt_order_related',
 				__( 'Related Subscriptions', 'sdevs_subscrpt' ),

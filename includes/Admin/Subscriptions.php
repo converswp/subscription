@@ -5,6 +5,11 @@ namespace SpringDevs\Subscription\Admin;
 use SpringDevs\Subscription\Illuminate\Action;
 use SpringDevs\Subscription\Illuminate\Helper;
 
+// HPOS: This file is compatible with WooCommerce High-Performance Order Storage (HPOS).
+// All WooCommerce order data is accessed via WooCommerce CRUD methods (wc_get_order, etc.).
+// All direct post meta access is for subscription data only, not WooCommerce order data.
+// If you add new order data access, use WooCommerce CRUD for HPOS compatibility.
+
 /**
  * Subscriptions class
  *
@@ -120,8 +125,9 @@ class Subscriptions {
 	 * @return void
 	 */
 	public function add_custom_columns_data( $column, $post_id ) {
-		$order_id = get_post_meta( $post_id, '_subscrpt_order_id', true );
-		$order    = wc_get_order( $order_id );
+		// HPOS: Safe. Only retrieves WooCommerce order via CRUD, and subscription meta via post meta.
+		$order_id = get_post_meta( $post_id, '_subscrpt_order_id', true ); // HPOS: Only subscription meta, not order meta.
+		$order = wc_get_order( $order_id ); // HPOS: Safe, uses WooCommerce CRUD.
 		if ( $order ) {
 			if ( 'subscrpt_start_date' === $column ) {
 				$start_date = get_post_meta( $post_id, '_subscrpt_start_date', true );

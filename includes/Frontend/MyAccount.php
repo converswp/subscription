@@ -2,6 +2,11 @@
 
 namespace SpringDevs\Subscription\Frontend;
 
+// HPOS: This file is compatible with WooCommerce High-Performance Order Storage (HPOS).
+// All WooCommerce order data is accessed via WooCommerce CRUD methods (wc_get_order, wc_get_order_item_meta, etc.).
+// All direct post meta access is for subscription data only, not WooCommerce order data.
+// If you add new order data access, use WooCommerce CRUD for HPOS compatibility.
+
 /**
  * Class MyAccount
  *
