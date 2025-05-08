@@ -173,12 +173,28 @@ final class Sdevs_Subscription {
 		add_action( 'init', array( $this, 'localization_setup' ) );
 		add_action( 'init', array( $this, 'run_update' ) );
 		
-		// Declare HPOS compatibility
+		// HPOS Compatibility: Declare support for custom order tables
 		add_action('before_woocommerce_init', function() {
 			if (class_exists(\Automattic\WooCommerce\Utilities\FeaturesUtil::class)) {
 				\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility('custom_order_tables', __FILE__, true);
 			}
 		});
+
+		// HPOS Compatibility: Register subscription post type with HPOS support
+		add_action('init', function() {
+			register_post_type('subscrpt_order', array(
+				'hpos' => true,
+				'public' => false,
+				'show_ui' => true,
+				'show_in_menu' => false,
+				'supports' => array('title'),
+				'capability_type' => 'post',
+				'capabilities' => array(
+					'create_posts' => false,
+				),
+				'map_meta_cap' => true,
+			));
+		}, 0);
 	}
 
 	/**
