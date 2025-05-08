@@ -117,14 +117,6 @@ final class Sdevs_Subscription {
 		define( 'WP_SUBSCRIPTION_TEMPLATES', WP_SUBSCRIPTION_PATH . '/templates/' );
 		define( 'WP_SUBSCRIPTION_URL', plugins_url( '', WP_SUBSCRIPTION_FILE ) );
 		define( 'WP_SUBSCRIPTION_ASSETS', WP_SUBSCRIPTION_URL . '/assets' );
-		// DB-related: The following constants are used in DB/meta. Left as is for compatibility.
-		define( 'SUBSCRPT_VERSION', self::version );
-		define( 'SUBSCRPT_FILE', __FILE__ );
-		define( 'SUBSCRPT_PATH', dirname( SUBSCRPT_FILE ) );
-		define( 'SUBSCRPT_INCLUDES', SUBSCRPT_PATH . '/includes' );
-		define( 'SUBSCRPT_TEMPLATES', SUBSCRPT_PATH . '/templates/' );
-		define( 'SUBSCRPT_URL', plugins_url( '', SUBSCRPT_FILE ) );
-		define( 'SUBSCRPT_ASSETS', SUBSCRPT_URL . '/assets' );
 	}
 
 	/**
