@@ -15,6 +15,7 @@ class Settings {
 	public function __construct() {
 		add_action( 'admin_menu', array( $this, 'admin_menu' ), 30 );
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_wc_admin_styles' ) );
 	}
 
 	/**
@@ -55,5 +56,19 @@ class Settings {
 	 */
 	public function settings_content() {
 		include 'views/settings.php';
+	}
+
+	/**
+	 * Enqueue WooCommerce admin styles for settings page.
+	 */
+	public function enqueue_wc_admin_styles( $hook ) {
+		// Only load on our settings page
+		if ( isset( $_GET['post_type'] ) && strpos( $_GET['post_type'], 'subscrpt_order' ) !== false ) {
+			// WooCommerce admin styles
+			wp_enqueue_style( 'woocommerce_admin_styles', WC()->plugin_url() . '/assets/css/admin.css', array(), WC_VERSION );
+			// Optional: WooCommerce enhanced select2
+			wp_enqueue_style( 'woocommerce_admin_select2', WC()->plugin_url() . '/assets/css/select2.css', array(), WC_VERSION );
+			wp_enqueue_script( 'select2' );
+		}
 	}
 }

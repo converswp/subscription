@@ -24,7 +24,7 @@ class Links {
 	 * @param array $links Plugin Links.
 	 */
 	public function plugin_action_links( $links ) {
-		if ( ! wp_subscription_pro_activated() ) {
+		if ( ! subscrpt_pro_activated() ) {
 			$links[] = '<a href="https://wpsubscription.co" target="_blank" style="color:#3db634;">' . __( 'Upgrade to premium', 'wp_subscription' ) . '</a>';
 		}
 		$links[] = '<a href="https://wordpress.org/support/plugin/subscription" target="_blank">' . __( 'Support', 'wp_subscription' ) . '</a>';
