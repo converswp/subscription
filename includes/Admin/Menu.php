@@ -30,5 +30,17 @@ class Menu {
             WP_SUBSCRIPTION_ASSETS . '/images/icons/subscription-20-gray.png', 
             40 
         );
+        // Add a submenu that redirects to the subscriptions list
+        add_submenu_page(
+            'woocommerce',
+            __( 'WP Subscriptions', 'wp_subscription' ),
+            __( 'WP Subscriptions', 'wp_subscription' ),
+            'manage_woocommerce',
+            'wp_subscriptions_list',
+            function() {
+                wp_safe_redirect( admin_url( 'edit.php?post_type=subscrpt_order' ) );
+                exit;
+            }
+        );
     }
 }
