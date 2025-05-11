@@ -268,6 +268,44 @@ class Menu {
                 </div>
             </div>
 
+            <!-- PRO Features List -->
+            <div class="wp-subscription-admin-box wp-subscription-pro-features" style="margin-bottom:32px;">
+                <div style="font-size:1.3em;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:10px;">
+                    <svg width="28" height="28" fill="none" viewBox="0 0 28 28"><circle cx="14" cy="14" r="14" fill="#2196f3"/><path d="M9 14.5l3 3 7-7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span>WP Subscription PRO Features</span>
+                </div>
+                <ul class="wp-subscription-pro-feature-list" style="list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;">
+                    <li style="background:#f4f7fa;border-radius:8px;padding:18px 20px;display:flex;align-items:center;gap:14px;box-shadow:0 2px 8px #e0e7ef;">
+                        <span style="font-size:1.5em;color:#2196f3;">🔀</span>
+                        <span><b>Variable Product</b><br><span style="color:#555;font-size:0.98em;">Offer flexible subscription options for variable products.</span></span>
+                    </li>
+                    <li style="background:#f4f7fa;border-radius:8px;padding:18px 20px;display:flex;align-items:center;gap:14px;box-shadow:0 2px 8px #e0e7ef;">
+                        <span style="font-size:1.5em;color:#2196f3;">🚚</span>
+                        <span><b>Delivery Schedule</b><br><span style="color:#555;font-size:0.98em;">Set custom delivery intervals for each subscription.</span></span>
+                    </li>
+                    <li style="background:#f4f7fa;border-radius:8px;padding:18px 20px;display:flex;align-items:center;gap:14px;box-shadow:0 2px 8px #e0e7ef;">
+                        <span style="font-size:1.5em;color:#2196f3;">📜</span>
+                        <span><b>Subscription History</b><br><span style="color:#555;font-size:0.98em;">Track all changes and events for every subscription.</span></span>
+                    </li>
+                    <li style="background:#f4f7fa;border-radius:8px;padding:18px 20px;display:flex;align-items:center;gap:14px;box-shadow:0 2px 8px #e0e7ef;">
+                        <span style="font-size:1.5em;color:#2196f3;">⏳</span>
+                        <span><b>More Subscription Durations</b><br><span style="color:#555;font-size:0.98em;">Offer more flexible and custom subscription periods.</span></span>
+                    </li>
+                    <li style="background:#f4f7fa;border-radius:8px;padding:18px 20px;display:flex;align-items:center;gap:14px;box-shadow:0 2px 8px #e0e7ef;">
+                        <span style="font-size:1.5em;color:#2196f3;">💶</span>
+                        <span><b>Sign Up Fee</b><br><span style="color:#555;font-size:0.98em;">Charge a one-time sign up fee for new subscribers.</span></span>
+                    </li>
+                    <li style="background:#f4f7fa;border-radius:8px;padding:18px 20px;display:flex;align-items:center;gap:14px;box-shadow:0 2px 8px #e0e7ef;">
+                        <span style="font-size:1.5em;color:#2196f3;">⏩</span>
+                        <span><b>Early Renewal</b><br><span style="color:#555;font-size:0.98em;">Allow customers to renew their subscription before expiry.</span></span>
+                    </li>
+                    <li style="background:#f4f7fa;border-radius:8px;padding:18px 20px;display:flex;align-items:center;gap:14px;box-shadow:0 2px 8px #e0e7ef;">
+                        <span style="font-size:1.5em;color:#2196f3;">💳</span>
+                        <span><b>Renewal Price</b><br><span style="color:#555;font-size:0.98em;">Set a different price for subscription renewals.</span></span>
+                    </li>
+                </ul>
+            </div>
+
             <!-- Support Resources: 2 rows, 2 columns, each in its own box -->
             <div class="wp-subscription-support-resources" style="display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-bottom:24px;">
                 <div class="wp-subscription-admin-box">
@@ -289,75 +327,6 @@ class Menu {
                     <h3>Show Your Love</h3>
                     <p style="font-size:14px;margin:0 0 8px 0;">Enjoying WP Subscription? <a href=\"https://wordpress.org/support/plugin/subscription/reviews/\" target=\"_blank\" style=\"color:#f59e42;\">Leave us a review</a> or share your experience!</p>
                     <a href="https://wordpress.org/support/plugin/subscription/reviews/" target="_blank" class="button button-small" style="font-size:13px;padding:5px 14px;">Leave a Review</a>
-                </div>
-            </div>
-
-            <!-- Free vs Pro Section -->
-            <div class="wp-subscription-admin-box" style="margin-bottom:24px;">
-                <h3 style="text-align:center;">Free vs Pro: Unlock the Full Power</h3>
-                <table class="widefat wp-subscription-list-table" style="margin:0 auto 12px auto;max-width:700px;font-size:14px;">
-                    <thead>
-                        <tr style="background:#f8fafc;">
-                            <th style="width:40%;padding:8px 10px;text-align:left;">Feature</th>
-                            <th style="width:30%;padding:8px 10px;text-align:center;">Free</th>
-                            <th style="width:30%;padding:8px 10px;text-align:center;">Pro</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td style="padding:8px 10px;">Modern Admin UI</td>
-                            <td style="text-align:center;">✔️</td>
-                            <td style="text-align:center;">✔️</td>
-                        </tr>
-                        <tr>
-                            <td style="padding:8px 10px;">Advanced Filters & Search</td>
-                            <td style="text-align:center;">✔️</td>
-                            <td style="text-align:center;">✔️</td>
-                        </tr>
-                        <tr>
-                            <td style="padding:8px 10px;">Subscription History</td>
-                            <td style="text-align:center;">✔️</td>
-                            <td style="text-align:center;">✔️</td>
-                        </tr>
-                        <tr>
-                            <td style="padding:8px 10px;">Migration Tools</td>
-                            <td style="text-align:center;">✔️</td>
-                            <td style="text-align:center;">✔️</td>
-                        </tr>
-                        <tr>
-                            <td style="padding:8px 10px;">Variable Product</td>
-                            <td style="text-align:center;color:#bbb;">—</td>
-                            <td style="text-align:center;">✔️</td>
-                        </tr>
-                        <tr>
-                            <td style="padding:8px 10px;">Delivery Schedule</td>
-                            <td style="text-align:center;color:#bbb;">—</td>
-                            <td style="text-align:center;">✔️</td>
-                        </tr>
-                        <tr>
-                            <td style="padding:8px 10px;">Analytics Dashboard</td>
-                            <td style="text-align:center;color:#bbb;">—</td>
-                            <td style="text-align:center;">✔️</td>
-                        </tr>
-                        <tr>
-                            <td style="padding:8px 10px;">Automations & Triggers</td>
-                            <td style="text-align:center;color:#bbb;">—</td>
-                            <td style="text-align:center;">✔️</td>
-                        </tr>
-                        <tr>
-                            <td style="padding:8px 10px;">Premium Integrations</td>
-                            <td style="text-align:center;color:#bbb;">—</td>
-                            <td style="text-align:center;">✔️</td>
-                        </tr>
-                        <tr>
-                            <td style="padding:8px 10px;">Priority Support</td>
-                            <td style="text-align:center;color:#bbb;">—</td>
-                            <td style="text-align:center;">✔️</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div style="text-align:center;margin-top:10px;">
-                    <a href="https://wpsubscription.co/?utm_source=plugin&utm_medium=admin&utm_campaign=upgrade_pro" target="_blank" class="button button-primary button-small" style="font-size:15px;padding:8px 22px;">Upgrade to Pro</a>
                 </div>
             </div>
         </div>
