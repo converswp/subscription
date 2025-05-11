@@ -229,18 +229,22 @@ class Menu {
         $this->render_admin_header();
         ?>
         <div class="wp-subscription-admin-content" style="max-width:1240px;margin:0 auto;">
-            <!-- Upgrade to Pro Callout -->
-            <div class="wp-subscription-admin-box wp-subscription-pro-callout" style="display:flex;align-items:center;gap:24px;background:#2271b1;margin-bottom:24px;position:relative;overflow:hidden;">
-                <div style="flex:1;min-width:220px;">
-                    <h2>Unlock More Features!</h2>
-                    <p style="margin:0 0 10px 0;font-size:15px;color:#fff;">Upgrade to <b>WP Subscription Pro</b> for advanced analytics, automation, integrations, and premium support. <span style="color:#e0e7ef;">Make migration seamless!</span></p>
-                    <a href="https://wpsubscription.co/?utm_source=plugin&utm_medium=admin&utm_campaign=upgrade_pro" target="_blank" class="button button-primary button-small" style="font-size:14px;padding:7px 18px;background:#fff;color:#2271b1;">Upgrade to Pro</a>
+            <!-- HERO VARIANT 1: Emoji -->
+            <div class="wp-subscription-hero-upgrade" style="margin-bottom:18px;">
+                <div class="wp-subscription-hero-content">
+                    <span class="wp-subscription-hero-icon">✨</span>
+                    <span class="wp-subscription-hero-title">
+                        Unlock advanced features, priority support,<br>
+                        and more subscription control and reporting.
+                    </span>
                 </div>
-                <div style="min-width:120px;">
-                    <img src="<?php echo esc_url( WP_SUBSCRIPTION_ASSETS . '/images/upgrade-anim.gif' ); ?>" alt="Upgrade Animation" style="width:100px;display:block;animation:floatY 2.5s ease-in-out infinite alternate;">
-                </div>
+                <a href="https://wpsubscription.co/?utm_source=plugin&utm_medium=admin&utm_campaign=upgrade_pro"
+                   target="_blank"
+                   class="wp-subscription-hero-btn">
+                    UPGRADE TO PRO
+                </a>
             </div>
-
+            
             <!-- Product Overview & Video -->
             <div class="wp-subscription-admin-box" style="margin-bottom:24px;display:flex;gap:32px;align-items:flex-start;flex-wrap:wrap;">
                 <div style="flex:2;min-width:260px;">
@@ -366,6 +370,63 @@ class Menu {
         .wp-subscription-pro-callout .button-primary:hover { background:#e0e7ef!important; }
         @media (max-width: 900px) {
             .wp-subscription-support-resources { grid-template-columns:1fr!important; }
+        }
+        .wp-subscription-hero-upgrade {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #2196f3;
+            border-radius: 12px;
+            padding: 32px 36px;
+            margin-bottom: 28px;
+            overflow: hidden;
+            min-height: 90px;
+        }
+        .wp-subscription-hero-upgrade::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: repeating-linear-gradient(135deg, rgba(255,255,255,0.07) 0 2px, transparent 2px 40px);
+            opacity: 0.25;
+            pointer-events: none;
+        }
+        .wp-subscription-hero-content {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            z-index: 1;
+        }
+        .wp-subscription-hero-icon {
+            font-size: 2em;
+            line-height: 1;
+        }
+        .wp-subscription-hero-title {
+            font-size: 2em;
+            font-weight: bold;
+            color: #fff;
+            line-height: 1.2;
+        }
+        .wp-subscription-hero-btn {
+            z-index: 1;
+            background: #fff;
+            color: #2196f3;
+            font-weight: 600;
+            font-size: 1.1em;
+            padding: 16px 32px;
+            border-radius: 8px;
+            text-decoration: none;
+            box-shadow: 0 2px 8px rgba(33,150,243,0.08);
+            transition: background 0.18s, color 0.18s, transform 0.18s;
+            border: none;
+            outline: none;
+            display: inline-block;
+            text-align: center;
+        }
+        .wp-subscription-hero-btn:hover {
+            background: #e3f0fd;
+            color: #1565c0;
+            transform: translateY(-2px) scale(1.03);
         }
         </style>
         <?php
