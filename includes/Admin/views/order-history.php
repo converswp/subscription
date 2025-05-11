@@ -13,9 +13,7 @@ STYLE GUIDE FOR WP SUBSCRIPTION ADMIN PAGES:
 - All new UI/UX changes must follow these conventions.
 */
 ?>
-<div class="wp-subscription-admin-box" style="margin-bottom:18px;">
-    <h3 style="font-family:Georgia,serif;font-size:1.1em;margin:0 0 12px 0;">Subscription History</h3>
-    <table class="widefat striped">
+<table class="wp-list-table widefat fixed striped wp-subscription-modern-table" style="border-radius:6px;overflow:hidden;box-shadow:0 2px 8px #e0e7ef;">
 	<thead>
 		<tr>
 			<th><?php
@@ -62,4 +60,3 @@ STYLE GUIDE FOR WP SUBSCRIPTION ADMIN PAGES:
 		<?php endforeach; ?>
 	</tbody>
 </table>
-</div>
