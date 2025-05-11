@@ -43,3 +43,270 @@
     width: 20%;
   }
 }
+
+/* Utility Classes */
+.wp-subscription-flex {
+    display: flex;
+    align-items: center;
+}
+.wp-subscription-space-between {
+    justify-content: space-between;
+}
+.wp-subscription-full-width {
+    width: 100%;
+}
+
+/* Admin Header */
+.wp-subscription-admin-header {
+    background: #fff;
+    border-bottom: 1px solid #e2e4e7;
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.wp-subscription-admin-header-left {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+
+.wp-subscription-logo {
+    height: 38px;
+    width: auto;
+    display: block;
+}
+
+.wp-subscription-admin-header-menu {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 32px;
+}
+
+.wp-subscription-admin-header-menu a {
+    color: #1d2327;
+    text-decoration: none;
+    padding: 8px 18px;
+    border-radius: 4px;
+    font-weight: 500;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    font-size: 15px;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    background: transparent;
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
+
+.wp-subscription-admin-header-menu a.current,
+.wp-subscription-admin-header-menu a.active {
+    background: #f0f0f1;
+    color: #2271b1;
+}
+
+.wp-subscription-admin-header-menu a:hover {
+    background: #eaf6ff;
+    color: #2271b1;
+    box-shadow: 0 2px 8px rgba(34,113,177,0.06);
+}
+
+.wp-subscription-admin-header-right {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+}
+
+.wp-subscription-upgrade-btn {
+    background: #2271b1;
+    color: #fff;
+    padding: 10px 22px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    margin-left: 16px;
+    transition: background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 1px 3px rgba(34,113,177,0.08);
+    border: none;
+    outline: none;
+    display: inline-block;
+}
+
+.wp-subscription-upgrade-btn:hover {
+    background: #135e96;
+    color: #fff;
+    box-shadow: 0 3px 12px rgba(34,113,177,0.13);
+}
+
+/* Admin Content */
+.wp-subscription-admin-content {
+    padding: 32px;
+    background: #f6f7f9;
+    min-height: 80vh;
+}
+
+.wp-subscription-admin-box {
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    padding: 25px;
+    margin-bottom: 20px;
+    transition: box-shadow 0.3s ease;
+}
+
+.wp-subscription-admin-box:hover {
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+}
+
+/* Typography */
+.wp-subscription-admin-title {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 24px;
+    color: #1d2327;
+    margin: 0 0 20px 0;
+    padding: 0;
+}
+
+.wp-subscription-admin-content p,
+.wp-subscription-admin-content li,
+.wp-subscription-admin-content td,
+.wp-subscription-admin-content th {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #1d2327;
+}
+
+/* Navigation (legacy, for reference) */
+.wp-subscription-admin-nav {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.wp-subscription-admin-nav a {
+    color: #1d2327;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.wp-subscription-admin-nav a:hover {
+    background: #f0f0f1;
+}
+
+.wp-subscription-admin-nav a.current {
+    background: #2271b1;
+    color: #fff;
+}
+
+/* Stats Cards */
+.wp-subscription-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.wp-subscription-stat-card {
+    background: #fff;
+    border-radius: 6px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.wp-subscription-stat-card:hover {
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+.wp-subscription-stat-title {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 16px;
+    color: #1d2327;
+    margin: 0 0 10px 0;
+}
+
+.wp-subscription-stat-value {
+    font-size: 24px;
+    font-weight: 600;
+    color: #2271b1;
+}
+
+/* Support Grid */
+.wp-subscription-support-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.wp-subscription-support-card {
+    background: #fff;
+    border-radius: 6px;
+    padding: 25px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.wp-subscription-support-card:hover {
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media screen and (max-width: 900px) {
+    .wp-subscription-admin-header {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+        padding: 0 10px;
+    }
+    .wp-subscription-admin-header-left {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .wp-subscription-admin-header-menu {
+        margin-left: 0;
+        gap: 4px;
+    }
+    .wp-subscription-admin-content {
+        padding: 10px;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .wp-subscription-admin-header {
+        min-height: 48px;
+        padding: 0 4px;
+    }
+    .wp-subscription-logo {
+        height: 28px;
+    }
+    .wp-subscription-admin-header-menu a {
+        font-size: 13px;
+        padding: 6px 10px;
+    }
+    .wp-subscription-upgrade-btn {
+        font-size: 13px;
+        padding: 7px 12px;
+    }
+}
+
+/* Remove left padding on WP Subscription admin pages only */
+body.toplevel_page_wp-subscription #wpcontent,
+body.wp-subscription_page_wp-subscription-stats #wpcontent,
+body.wp-subscription_page_wp-subscription-settings #wpcontent,
+body.wp-subscription_page_wp-subscription-tools #wpcontent,
+body.wp-subscription_page_wp-subscription-support #wpcontent {
+    padding-left: 0 !important;
+}
