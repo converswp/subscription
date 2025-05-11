@@ -1,32 +1,40 @@
 <?php if (!isset($date_filter)) { $date_filter = ''; } ?>
-<div><h1 class="wp-heading-inline">Subscriptions</h2></div>
-<div class="wp-subscription-list-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;gap:16px;flex-wrap:wrap;">
-    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-        <form method="get" style="display:flex;align-items:center;gap:6px;">
-            <input type="hidden" name="page" value="wp-subscription" />
-            <select name="subscrpt_status" style="min-width:100px;font-size:14px;padding:5px 10px;">
-                <option value=""><?php esc_html_e('All Statuses', 'wp_subscription'); ?></option>
-                <option value="active" <?php selected($status, 'active'); ?>><?php esc_html_e('Active', 'wp_subscription'); ?></option>
-                <option value="cancelled" <?php selected($status, 'cancelled'); ?>><?php esc_html_e('Cancel', 'wp_subscription'); ?></option>
-                <option value="draft" <?php selected($status, 'draft'); ?>><?php esc_html_e('Draft', 'wp_subscription'); ?></option>
-            </select>
-            <select name="date_filter" style="min-width:100px;font-size:14px;padding:5px 10px;">
-                <option value=""><?php esc_html_e('All Dates', 'wp_subscription'); ?></option>
-                <option value="today" <?php selected($date_filter, 'today'); ?>><?php esc_html_e('Today', 'wp_subscription'); ?></option>
-                <option value="yesterday" <?php selected($date_filter, 'yesterday'); ?>><?php esc_html_e('Yesterday', 'wp_subscription'); ?></option>
-                <option value="this_month" <?php selected($date_filter, 'this_month'); ?>><?php esc_html_e('This Month', 'wp_subscription'); ?></option>
-                <option value="last_month" <?php selected($date_filter, 'last_month'); ?>><?php esc_html_e('Last Month', 'wp_subscription'); ?></option>
-            </select>
-            <button type="submit" class="button" style="margin-left:6px;font-size:14px;padding:5px 14px;">Filter</button>
-        </form>
-    </div>
-    <form method="get" style="display:flex;align-items:center;gap:6px;">
+<?php
+// Determine if filters are active
+$filters_active = !empty($status) || !empty($date_filter) || !empty($search);
+$months = [];
+for ($i = 0; $i < 12; $i++) {
+    $month = strtotime("-$i month");
+    $months[date('Y-m', $month)] = date('F Y', $month);
+}
+?>
+<div><h1 class="wp-heading-inline">Subscriptions</h1></div>
+<div class="wp-subscription-list-header">
+    <form method="get">
         <input type="hidden" name="page" value="wp-subscription" />
-        <input type="search" name="s" value="<?php echo esc_attr($search); ?>" placeholder="<?php esc_attr_e('Search Subscriptions...', 'wp_subscription'); ?>" style="min-width:160px;font-size:14px;padding:5px 10px;" />
-        <button type="submit" class="button" style="font-size:14px;padding:5px 14px;">Search</button>
+        <select name="subscrpt_status">
+            <option value=""><?php esc_html_e('All Status', 'wp_subscription'); ?></option>
+            <option value="active" <?php selected($status, 'active'); ?>><?php esc_html_e('Active', 'wp_subscription'); ?></option>
+            <option value="cancelled" <?php selected($status, 'cancelled'); ?>><?php esc_html_e('Cancelled', 'wp_subscription'); ?></option>
+            <option value="draft" <?php selected($status, 'draft'); ?>><?php esc_html_e('Draft', 'wp_subscription'); ?></option>
+        </select>
+        <select name="date_filter">
+            <option value=""><?php esc_html_e('All Dates', 'wp_subscription'); ?></option>
+            <?php foreach ($months as $val => $label): ?>
+                <option value="<?php echo esc_attr($val); ?>" <?php selected($date_filter, $val); ?>><?php echo esc_html($label); ?></option>
+            <?php endforeach; ?>
+        </select>
+        <input type="search" name="s" value="<?php echo esc_attr($search); ?>" placeholder="<?php esc_attr_e('Search Subscriptions...', 'wp_subscription'); ?>" />
+        <button type="submit" class="button button-primary">Filter</button>
+        <?php if ($filters_active): ?>
+            <a href="<?php echo esc_url(remove_query_arg(['subscrpt_status','date_filter','s','paged'])); ?>" class="button">Reset</a>
+        <?php endif; ?>
+        <?php if ($filters_active): ?>
+            <span>Filters applied</span>
+        <?php endif; ?>
     </form>
 </div>
-
+<h2 class="screen-reader-text">Subscriptions list</h2>
 <table class="widefat striped wp-subscription-list-table" style="border-radius:8px;overflow:hidden;">
     <thead>
         <tr>

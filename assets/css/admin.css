@@ -327,47 +327,6 @@ body.wp-subscription_page_wp-subscription-support #wpcontent {
     border-bottom: none;
 }
 
-/* Button Styles */
-.wp-subscription-list-header .button,
-.wp-subscription-list-header button,
-.wp-subscription-list-header input[type="submit"],
-.wp-subscription-list-table .button,
-.wp-subscription-list-table button {
-    background: #f6f7f9;
-    color: #2271b1;
-    border: 1px solid #e2e4e7;
-    border-radius: 6px;
-    font-size: 15px;
-    font-weight: 500;
-    padding: 7px 18px;
-    box-shadow: none;
-    transition: background 0.2s, color 0.2s, border 0.2s;
-    outline: none;
-    cursor: pointer;
-    margin: 0;
-    display: inline-block;
-}
-.wp-subscription-list-header .button-primary,
-.wp-subscription-list-header .button.button-primary,
-.wp-subscription-list-table .button.button-primary {
-    background: #2271b1;
-    color: #fff;
-    border: 1px solid #2271b1;
-}
-.wp-subscription-list-header .button:hover,
-.wp-subscription-list-header button:hover,
-.wp-subscription-list-table .button:hover {
-    background: #eaf6ff;
-    color: #135e96;
-    border: 1.5px solid #2271b1;
-}
-.wp-subscription-list-header .button-primary:hover,
-.wp-subscription-list-header .button.button-primary:hover,
-.wp-subscription-list-table .button.button-primary:hover {
-    background: #135e96;
-    color: #fff;
-    border: 1.5px solid #135e96;
-}
 
 .wp-subscription-list-table .button-small {
     font-size: 13px;
@@ -409,27 +368,6 @@ body.wp-subscription_page_wp-subscription-support #wpcontent {
 .wp-subscription-row-actions a:hover {
     background: #2271b1;
     color: #fff;
-}
-
-/* Select & Input Styles */
-.wp-subscription-list-header select,
-.wp-subscription-list-header input[type="search"],
-.wp-subscription-list-header input[type="number"],
-.wp-subscription-list-header input[type="date"] {
-    border: 1px solid #e2e4e7;
-    border-radius: 6px;
-    background: #f8fafc;
-    padding: 7px 12px;
-    font-size: 15px;
-    transition: border 0.2s;
-    outline: none;
-}
-.wp-subscription-list-header select:focus,
-.wp-subscription-list-header input[type="search"]:focus,
-.wp-subscription-list-header input[type="number"]:focus,
-.wp-subscription-list-header input[type="date"]:focus {
-    border: 1.5px solid #2271b1;
-    background: #fff;
 }
 
 /* Status Label Styles */
