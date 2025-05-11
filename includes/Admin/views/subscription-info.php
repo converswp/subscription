@@ -1,4 +1,5 @@
 <?php
+use SpringDevs\Subscription\Illuminate\Helper;
 /*
 STYLE GUIDE FOR WP SUBSCRIPTION ADMIN PAGES:
 - Use .wp-subscription-admin-content for main content area.
@@ -20,6 +21,8 @@ $order = wc_get_order($order_id);
 $order_item_id = get_post_meta($post->ID, '_subscrpt_order_item_id', true);
 $order_item = $order ? $order->get_item($order_item_id) : null;
 $product_name = $order_item ? $order_item->get_name() : '-';
+$cost = $order_item ? Helper::format_price_with_order_item(get_post_meta($post->ID, '_subscrpt_price', true), $order_item_id) : '-';
+$qty = $order_item ? 'x' . $order_item->get_quantity() : '-';
 $customer = $order ? $order->get_formatted_billing_full_name() : '-';
 $customer_id = $order ? $order->get_customer_id() : 0;
 $customer_url = $customer_id ? admin_url('user-edit.php?user_id=' . $customer_id) : '';
@@ -27,6 +30,9 @@ $start_date = get_post_meta($post->ID, '_subscrpt_start_date', true);
 $end_date = get_post_meta($post->ID, '_subscrpt_end_date', true);
 $renewal_date = get_post_meta($post->ID, '_subscrpt_next_date', true);
 $status_obj = get_post_status_object(get_post_status($post->ID));
+$payment_method = $order ? $order->get_payment_method_title() : '-';
+$billing_address = $order ? $order->get_formatted_billing_address() : '-';
+$shipping_address = $order ? $order->get_formatted_shipping_address() : '-';
 
 // Load subscription history and activities
 ob_start();
@@ -36,8 +42,8 @@ ob_start();
 include dirname(__FILE__) . '/required-notice.php';
 $activities_html = ob_get_clean();
 ?>
-<div class="wp-subscription-admin-content" style="max-width:900px;margin:0 auto;">
-    <div class="wp-subscription-admin-box" style="max-width:600px;margin:24px auto 18px auto;">
+<div class="wp-subscription-admin-content">
+    <div class="wp-subscription-admin-box" style="    background: #f3f4f5;max-width:600px;margin: 25px 0 18px 18px;">
         <h2 style="font-family:Georgia,serif;font-size:1.3em;margin:0 0 12px 0;">Subscription Details</h2>
         <table class="widefat striped wp-subscription-list-table" style="border-radius:8px;overflow:hidden;margin-bottom:16px;font-size:14px;">
             <tbody>
@@ -46,42 +52,61 @@ $activities_html = ob_get_clean();
                     <td style="padding:8px 10px;"><?php echo esc_html($product_name); ?></td>
                 </tr>
                 <tr>
-                    <th style="padding:8px 10px;">Customer</th>
-                    <td style="padding:8px 10px;">
-                        <?php if ($customer_url): ?>
-                            <a href="<?php echo esc_url($customer_url); ?>" target="_blank" style="color:#2271b1;text-decoration:underline;">
-                                <?php echo esc_html($customer); ?>
-                            </a>
-                        <?php else: ?>
-                            <?php echo esc_html($customer); ?>
-                        <?php endif; ?>
-                    </td>
+                    <th style="padding:8px 10px;">Cost</th>
+                    <td style="padding:8px 10px;"><?php echo $cost; ?></td>
                 </tr>
                 <tr>
-                    <th style="padding:8px 10px;">Start Date</th>
+                    <th style="padding:8px 10px;">Qty</th>
+                    <td style="padding:8px 10px;"><?php echo esc_html($qty); ?></td>
+                </tr>
+                <tr>
+                    <th style="padding:8px 10px;">Started date</th>
                     <td style="padding:8px 10px;"><?php echo $start_date ? esc_html(gmdate('F d, Y', $start_date)) : '-'; ?></td>
                 </tr>
                 <tr>
-                    <th style="padding:8px 10px;">End Date</th>
-                    <td style="padding:8px 10px;"><?php echo $end_date ? esc_html(gmdate('F d, Y', $end_date)) : '-'; ?></td>
-                </tr>
-                <tr>
-                    <th style="padding:8px 10px;">Renewal Date</th>
+                    <th style="padding:8px 10px;">Payment due date</th>
                     <td style="padding:8px 10px;"><?php echo $renewal_date ? esc_html(gmdate('F d, Y', $renewal_date)) : '-'; ?></td>
                 </tr>
                 <tr>
                     <th style="padding:8px 10px;">Status</th>
-                    <td style="padding:8px 10px;"><span class="subscrpt-<?php echo esc_attr($status_obj->name); ?>"><?php echo esc_html($status_obj->label); ?></span></td>
+                    <td style="padding:8px 10px;"><span class="subscrpt-status-badge subscrpt-status-<?php echo esc_attr($status_obj->name); ?>"><?php echo esc_html($status_obj->label); ?></span></td>
+                </tr>
+                <tr>
+                    <th style="padding:8px 10px;">Payment Method</th>
+                    <td style="padding:8px 10px;"><?php echo esc_html($payment_method); ?></td>
+                </tr>
+                <tr>
+                    <th style="padding:8px 10px;">Billing</th>
+                    <td style="padding:8px 10px;"><?php echo $billing_address ? wp_kses_post($billing_address) : '-'; ?></td>
+                </tr>
+                <tr>
+                    <th style="padding:8px 10px;">Shipping</th>
+                    <td style="padding:8px 10px;"><?php echo $shipping_address ? wp_kses_post($shipping_address) : '-'; ?></td>
                 </tr>
             </tbody>
         </table>
-        <div style="display:flex;gap:10px;justify-content:flex-end;">
-            <a href="<?php echo esc_url(get_edit_post_link($post->ID)); ?>" class="button button-small button-primary" style="font-size:13px;padding:5px 14px;">Edit</a>
-            <a href="<?php echo esc_url(get_delete_post_link($post->ID)); ?>" onclick="return confirm('<?php esc_attr_e('Are you sure you want to delete this subscription?', 'wp_subscription'); ?>');" class="button button-small" style="font-size:13px;padding:5px 14px;color:#d93025;">
-                <?php esc_html_e('Delete', 'wp_subscription'); ?>
-            </a>
-        </div>
+
     </div>
-    <?php echo $history_html; ?>
-    <?php echo $activities_html; ?>
 </div>
+<style>
+.subscrpt-status-badge {
+    display: inline-block;
+    min-width: 48px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #222;
+    text-align: center;
+    letter-spacing: 0.01em;
+    background: #e9ecef;
+    box-shadow: none;
+    text-transform: capitalize;
+}
+.subscrpt-status-active { background: #27c775 !important; color: #ffffff !important; }
+.subscrpt-status-cancelled { background: #fee2e2 !important; color: #b91c1c !important; }
+.subscrpt-status-draft { background: #e0e7ef !important; color: #374151 !important; }
+.subscrpt-status-pending { background: #fef9c3 !important; color: #b45309 !important; }
+.subscrpt-status-expired { background: #e5e7eb !important; color: #6b7280 !important; }
+.subscrpt-status-pe_cancelled { background: #ffedd5 !important; color: #b45309 !important; }
+</style>

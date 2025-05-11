@@ -27,7 +27,7 @@ STYLE GUIDE FOR WP SUBSCRIPTION ADMIN PAGES:
         </thead>
         <tbody>
         <?php
-        foreach ( $histories as $history ) :
+        foreach ( $order_histories as $history ) :
             $order_item_id = get_post_meta( $history->subscription_id, '_subscrpt_order_item_id', true );
             $order_item    = $order->get_item( $history->order_item_id );
             $price         = get_post_meta( $history->subscription_id, '_subscrpt_price', true );
