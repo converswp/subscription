@@ -56,16 +56,6 @@ class Menu {
             array( $this, 'render_subscriptions_page' )
         );
 
-        // Legacy Subscriptions List
-        add_submenu_page(
-            $parent_slug,
-            __( 'Legacy Subscriptions', 'wp_subscription' ),
-            __( 'Legacy Subscriptions', 'wp_subscription' ),
-            'manage_woocommerce',
-            'edit.php?post_type=subscrpt_order',
-            null
-        );
-
         // Stats Overview
         add_submenu_page(
             $parent_slug,
@@ -94,6 +84,16 @@ class Menu {
             'manage_woocommerce',
             'wp-subscription-support',
             array( $this, 'render_support_page' )
+        );
+
+        // Add WP Subscription link under WooCommerce menu
+        add_submenu_page(
+            'woocommerce',
+            __( 'WP Subscription', 'wp_subscription' ),
+            __( 'WP Subscription', 'wp_subscription' ),
+            'manage_woocommerce',
+            'wp-subscription',
+            array( $this, 'render_subscriptions_page' )
         );
     }
 
@@ -604,3 +604,18 @@ class Menu {
         // No longer needed, as the menu now links directly to the post type list.
     }
 }
+
+add_filter('parent_file', function($parent_file) {
+    global $typenow, $pagenow;
+    if ($typenow === 'subscrpt_order' && in_array($pagenow, array('post.php', 'post-new.php'), true)) {
+        return 'wp-subscription';
+    }
+    return $parent_file;
+});
+add_filter('submenu_file', function($submenu_file, $parent_file) {
+    global $typenow, $pagenow;
+    if ($typenow === 'subscrpt_order' && in_array($pagenow, array('post.php', 'post-new.php'), true)) {
+        return 'wp-subscription';
+    }
+    return $submenu_file;
+}, 10, 2);
