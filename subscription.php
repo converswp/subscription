@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: WP Subscription for WooCommerce
+Plugin Name: Subscriptions for WooCommerce
 Plugin URI: https://wordpress.org/plugins/subscription
 Description: Enable WooCommerce Subscriptions and Start Recurring Revenue in Minutes.
 Plugin URI: https://wpsubscription.co/

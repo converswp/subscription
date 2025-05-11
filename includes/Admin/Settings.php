@@ -28,8 +28,8 @@ class Settings {
 
 		add_submenu_page( 
 			$post_type_link, 
-			__( 'WP Subscription Settings', 'sdevs_subscrpt_pro' ),
-			__( 'Settings', 'sdevs_subscrpt_pro' ), 
+			__( 'WP Subscription Settings', 'wp_subscription' ),
+			__( 'Settings', 'wp_subscription' ), 
 			'manage_options', 
 			'edit.php?post_type=wp_subscription_settings',
 			array( $this, 'settings_content' ),

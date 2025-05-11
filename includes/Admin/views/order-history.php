@@ -17,11 +17,11 @@ STYLE GUIDE FOR WP SUBSCRIPTION ADMIN PAGES:
 	<thead>
 		<tr>
 			<th><?php
-			esc_html_e( 'Order', 'sdevs_subscrpt' ); ?></th>
+			esc_html_e( 'Order', 'wp_subscription' ); ?></th>
 			<th></th>
-			<th><?php esc_html_e( 'Date', 'sdevs_subscrpt' ); ?></th>
-			<th><?php esc_html_e( 'Status', 'sdevs_subscrpt' ); ?></th>
-			<th><?php esc_html_e( 'Amount', 'sdevs_subscrpt' ); ?></th>
+			<th><?php esc_html_e( 'Date', 'wp_subscription' ); ?></th>
+			<th><?php esc_html_e( 'Status', 'wp_subscription' ); ?></th>
+			<th><?php esc_html_e( 'Amount', 'wp_subscription' ); ?></th>
 		</tr>
 	</thead>
 	<tbody>
