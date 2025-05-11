@@ -149,7 +149,6 @@
 /* Admin Content */
 .wp-subscription-admin-content {
     padding: 32px;
-    background: #f6f7f9;
     min-height: 80vh;
 }
 
@@ -309,4 +308,154 @@ body.wp-subscription_page_wp-subscription-settings #wpcontent,
 body.wp-subscription_page_wp-subscription-tools #wpcontent,
 body.wp-subscription_page_wp-subscription-support #wpcontent {
     padding-left: 0 !important;
+}
+
+/* Table & List Styles */
+.wp-subscription-list-table {
+    border: none !important;
+    border-radius: 8px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+    overflow: hidden;
+}
+.wp-subscription-list-table th,
+.wp-subscription-list-table td {
+    border: none;
+    border-bottom: 1px solid #f0f0f1;
+    background: #fff;
+}
+.wp-subscription-list-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Button Styles */
+.wp-subscription-list-header .button,
+.wp-subscription-list-header button,
+.wp-subscription-list-header input[type="submit"],
+.wp-subscription-list-table .button,
+.wp-subscription-list-table button {
+    background: #f6f7f9;
+    color: #2271b1;
+    border: 1px solid #e2e4e7;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 500;
+    padding: 7px 18px;
+    box-shadow: none;
+    transition: background 0.2s, color 0.2s, border 0.2s;
+    outline: none;
+    cursor: pointer;
+    margin: 0;
+    display: inline-block;
+}
+.wp-subscription-list-header .button-primary,
+.wp-subscription-list-header .button.button-primary,
+.wp-subscription-list-table .button.button-primary {
+    background: #2271b1;
+    color: #fff;
+    border: 1px solid #2271b1;
+}
+.wp-subscription-list-header .button:hover,
+.wp-subscription-list-header button:hover,
+.wp-subscription-list-table .button:hover {
+    background: #eaf6ff;
+    color: #135e96;
+    border: 1.5px solid #2271b1;
+}
+.wp-subscription-list-header .button-primary:hover,
+.wp-subscription-list-header .button.button-primary:hover,
+.wp-subscription-list-table .button.button-primary:hover {
+    background: #135e96;
+    color: #fff;
+    border: 1.5px solid #135e96;
+}
+
+.wp-subscription-list-table .button-small {
+    font-size: 13px;
+    padding: 5px 14px;
+    border-radius: 5px;
+}
+
+/* Remove default table border */
+.wp-subscription-list-table {
+    border-collapse: separate !important;
+    border-spacing: 0;
+}
+
+/* Row Actions on Title Hover */
+.wp-subscription-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+}
+.wp-subscription-row-actions {
+    display: none;
+    gap: 8px;
+    margin-left: 8px;
+}
+.wp-subscription-title-wrap:hover .wp-subscription-row-actions {
+    display: flex;
+}
+.wp-subscription-row-actions a {
+    color: #2271b1;
+    font-size: 13px;
+    text-decoration: none;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: #f0f6ff;
+    transition: background 0.2s, color 0.2s;
+}
+.wp-subscription-row-actions a:hover {
+    background: #2271b1;
+    color: #fff;
+}
+
+/* Select & Input Styles */
+.wp-subscription-list-header select,
+.wp-subscription-list-header input[type="search"],
+.wp-subscription-list-header input[type="number"],
+.wp-subscription-list-header input[type="date"] {
+    border: 1px solid #e2e4e7;
+    border-radius: 6px;
+    background: #f8fafc;
+    padding: 7px 12px;
+    font-size: 15px;
+    transition: border 0.2s;
+    outline: none;
+}
+.wp-subscription-list-header select:focus,
+.wp-subscription-list-header input[type="search"]:focus,
+.wp-subscription-list-header input[type="number"]:focus,
+.wp-subscription-list-header input[type="date"]:focus {
+    border: 1.5px solid #2271b1;
+    background: #fff;
+}
+
+/* Status Label Styles */
+.wp-subscription-list-table .subscrpt-active {
+    background: #e6f4ea;
+    color: #1a7f37;
+    border-radius: 999px;
+    padding: 4px 16px;
+    font-weight: 600;
+    font-size: 13px;
+    display: inline-block;
+}
+.wp-subscription-list-table .subscrpt-cancelled {
+    background: #fbeaea;
+    color: #d93025;
+    border-radius: 999px;
+    padding: 4px 16px;
+    font-weight: 600;
+    font-size: 13px;
+    display: inline-block;
+}
+.wp-subscription-list-table .subscrpt-draft {
+    background: #f3f3f3;
+    color: #888;
+    border-radius: 999px;
+    padding: 4px 16px;
+    font-weight: 600;
+    font-size: 13px;
+    display: inline-block;
 }
