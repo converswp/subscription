@@ -1,5 +1,5 @@
 <?php if (!isset($date_filter)) { $date_filter = ''; } ?>
-<div style="margin-bottom:18px;"><h2 style="font-family:Georgia,serif;font-size:1.7em;margin:0 0 10px 0;">Subscriptions</h2></div>
+<div><h1 class="wp-heading-inline">Subscriptions</h2></div>
 <div class="wp-subscription-list-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;gap:16px;flex-wrap:wrap;">
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
         <form method="get" style="display:flex;align-items:center;gap:6px;">
@@ -34,7 +34,6 @@
             <th style="width:32%">Title</th>
             <th style="width:18%">Customer</th>
             <th><?php esc_html_e('Start Date', 'wp_subscription'); ?></th>
-            <th><?php esc_html_e('End Date', 'wp_subscription'); ?></th>
             <th><?php esc_html_e('Renewal Date', 'wp_subscription'); ?></th>
             <th><?php esc_html_e('Status', 'wp_subscription'); ?></th>
             <th><?php esc_html_e('Actions', 'wp_subscription'); ?></th>
@@ -52,7 +51,6 @@
             $customer_id = $order ? $order->get_customer_id() : 0;
             $customer_url = $customer_id ? admin_url('user-edit.php?user_id=' . $customer_id) : '';
             $start_date = get_post_meta($subscription->ID, '_subscrpt_start_date', true);
-            $end_date = get_post_meta($subscription->ID, '_subscrpt_end_date', true);
             $renewal_date = get_post_meta($subscription->ID, '_subscrpt_next_date', true);
             $status_obj = get_post_status_object(get_post_status($subscription->ID));
         ?>
@@ -80,11 +78,10 @@
                 <?php endif; ?>
             </td>
             <td><?php echo $start_date ? esc_html(gmdate('F d, Y', $start_date)) : '-'; ?></td>
-            <td><?php echo $end_date ? esc_html(gmdate('F d, Y', $end_date)) : '-'; ?></td>
             <td><?php echo $renewal_date ? esc_html(gmdate('F d, Y', $renewal_date)) : '-'; ?></td>
             <td><span class="subscrpt-<?php echo esc_attr($status_obj->name); ?>"><?php echo esc_html($status_obj->label); ?></span></td>
             <td>
-                <a href="<?php echo esc_url(get_edit_post_link($subscription->ID)); ?>" class="button button-small button-primary" style="font-size:13px;padding:5px 14px;"><?php esc_html_e('View/Edit', 'wp_subscription'); ?></a>
+                <a href="<?php echo esc_url(get_edit_post_link($subscription->ID)); ?>" class="button button-small button-primary" style="font-size:13px;"><?php esc_html_e('View/Edit', 'wp_subscription'); ?></a>
             </td>
         </tr>
         <?php endforeach; ?>

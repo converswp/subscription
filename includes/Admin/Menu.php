@@ -130,7 +130,7 @@ class Menu {
                     </nav>
                 </div>
                 <div class="wp-subscription-admin-header-right">
-                    <a href="https://wpsubscription.co/?utm_source=plugin&utm_medium=admin&utm_campaign=upgrade_pro" class="wp-subscription-upgrade-btn"><?php _e( 'Upgrade to Pro', 'wp_subscription' ); ?></a>
+                    <a target="_blank" href="https://wpsubscription.co/?utm_source=plugin&utm_medium=admin&utm_campaign=upgrade_pro" class="wp-subscription-upgrade-btn"><?php _e( 'Upgrade to Pro', 'wp_subscription' ); ?></a>
                 </div>
             </div>
         </div>
@@ -185,7 +185,7 @@ class Menu {
         $all_statuses = get_post_stati(['show_in_admin_all_list' => true], 'objects');
 
         ?>
-        <div class="wp-subscription-admin-content" style="max-width:100%;margin:0 auto;">
+        <div class="wp-subscription-admin-content" style="max-width:1240px;margin:0 auto;">
             <div class="wp-subscription-admin-box">
                 <?php include dirname(__FILE__) . '/views/subscription-list.php'; ?>
             </div>
@@ -310,22 +310,22 @@ class Menu {
             <div class="wp-subscription-support-resources" style="display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-bottom:24px;">
                 <div class="wp-subscription-admin-box">
                     <h3>Documentation</h3>
-                    <p style="font-size:14px;margin:0 0 8px 0;">Read our <a href=\"https://wpsubscription.com/docs\" target=\"_blank\" style=\"color:#2271b1;\">comprehensive docs</a> for setup, migration, and advanced usage.</p>
+                    <p style="font-size:14px;margin:0 0 8px 0;">Read our <a href="https://wpsubscription.com/docs\" target=\"_blank\" style=\"color:#2271b1;\">comprehensive docs</a> for setup, migration, and advanced usage.</p>
                     <a href="https://wpsubscription.com/docs" target="_blank" class="button button-small" style="font-size:13px;padding:5px 14px;">View Docs</a>
                 </div>
                 <div class="wp-subscription-admin-box">
                     <h3>Facing An Issue?</h3>
-                    <p style="font-size:14px;margin:0 0 8px 0;">If you have a problem, <a href=\"https://wpsubscription.com/support\" target=\"_blank\" style=\"color:#d93025;\">open a support ticket</a> or check our FAQ.</p>
+                    <p style="font-size:14px;margin:0 0 8px 0;">If you have a problem, <a href="https://wpsubscription.com/support\" target=\"_blank\" style=\"color:#d93025;\">open a support ticket</a> or check our FAQ.</p>
                     <a href="https://wpsubscription.com/support" target="_blank" class="button button-small" style="font-size:13px;padding:5px 14px;">Get Support</a>
                 </div>
                 <div class="wp-subscription-admin-box">
                     <h3>Request a Feature</h3>
-                    <p style="font-size:14px;margin:0 0 8px 0;">Have an idea? <a href=\"https://wpsubscription.com/feature-request\" target=\"_blank\" style=\"color:#2271b1;\">Request a feature</a> or vote on others.</p>
+                    <p style="font-size:14px;margin:0 0 8px 0;">Have an idea? <a href="https://wpsubscription.com/feature-request\" target=\"_blank\" style=\"color:#2271b1;\">Request a feature</a> or vote on others.</p>
                     <a href="https://wpsubscription.com/feature-request" target="_blank" class="button button-small" style="font-size:13px;padding:5px 14px;">Request Feature</a>
                 </div>
                 <div class="wp-subscription-admin-box">
                     <h3>Show Your Love</h3>
-                    <p style="font-size:14px;margin:0 0 8px 0;">Enjoying WP Subscription? <a href=\"https://wordpress.org/support/plugin/subscription/reviews/\" target=\"_blank\" style=\"color:#f59e42;\">Leave us a review</a> or share your experience!</p>
+                    <p style="font-size:14px;margin:0 0 8px 0;">Enjoying WP Subscription? <a href="https://wordpress.org/support/plugin/subscription/reviews/\" target=\"_blank\" style=\"color:#f59e42;\">Leave us a review</a> or share your experience!</p>
                     <a href="https://wordpress.org/support/plugin/subscription/reviews/" target="_blank" class="button button-small" style="font-size:13px;padding:5px 14px;">Leave a Review</a>
                 </div>
             </div>

@@ -66,7 +66,7 @@
     justify-content: space-between;
     min-height: 64px;
     position: sticky;
-    top: 0;
+    top: 32px;
     z-index: 100;
     width: 100%;
     box-sizing: border-box;
@@ -389,12 +389,13 @@ body.wp-subscription_page_wp-subscription-support #wpcontent {
     position: relative;
 }
 .wp-subscription-row-actions {
-    display: none;
+    visibility: hidden;
     gap: 8px;
     margin-left: 8px;
+    display: flex;
 }
 .wp-subscription-title-wrap:hover .wp-subscription-row-actions {
-    display: flex;
+    visibility: visible;
 }
 .wp-subscription-row-actions a {
     color: #2271b1;

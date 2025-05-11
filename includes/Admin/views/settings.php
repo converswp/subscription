@@ -1,4 +1,4 @@
-<div class="wrap woocommerce">
+<div class="woocommerce">
 	<h1 class="wp-heading-inline"><?php esc_html_e( 'Subscription Settings', 'wp_subscription' ); ?></h1>
 	<hr class="wp-header-end">
 	<form method="post" action="options.php" class="woocommerce-settings">
