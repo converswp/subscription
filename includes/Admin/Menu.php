@@ -56,6 +56,16 @@ class Menu {
             array( $this, 'render_subscriptions_page' )
         );
 
+        // Legacy Subscriptions List
+        add_submenu_page(
+            $parent_slug,
+            __( 'Legacy Subscriptions', 'wp_subscription' ),
+            __( 'Legacy Subscriptions', 'wp_subscription' ),
+            'manage_woocommerce',
+            'edit.php?post_type=subscrpt_order',
+            null
+        );
+
         // Stats Overview
         add_submenu_page(
             $parent_slug,
@@ -146,10 +156,34 @@ class Menu {
         // Handle filters
         $status = isset($_GET['subscrpt_status']) ? sanitize_text_field($_GET['subscrpt_status']) : '';
         $search = isset($_GET['s']) ? sanitize_text_field($_GET['s']) : '';
-        $date_from = isset($_GET['date_from']) ? sanitize_text_field($_GET['date_from']) : '';
-        $date_to = isset($_GET['date_to']) ? sanitize_text_field($_GET['date_to']) : '';
+        $date_filter = isset($_GET['date_filter']) ? sanitize_text_field($_GET['date_filter']) : '';
+        $per_page = isset($_GET['per_page']) ? max(1, intval($_GET['per_page'])) : 20;
         $paged = isset($_GET['paged']) ? max(1, intval($_GET['paged'])) : 1;
-        $per_page = 20;
+
+        // Handle duplicate action
+        if (isset($_GET['action']) && $_GET['action'] === 'duplicate' && !empty($_GET['sub_id'])) {
+            $sub_id = intval($_GET['sub_id']);
+            $post = get_post($sub_id);
+            if ($post && $post->post_type === 'subscrpt_order') {
+                $new_post = [
+                    'post_title'   => $post->post_title . ' (Copy)',
+                    'post_content' => $post->post_content,
+                    'post_status'  => 'draft',
+                    'post_type'    => 'subscrpt_order',
+                ];
+                $new_id = wp_insert_post($new_post);
+                if ($new_id) {
+                    $meta = get_post_meta($sub_id);
+                    foreach ($meta as $key => $values) {
+                        foreach ($values as $value) {
+                            add_post_meta($new_id, $key, maybe_unserialize($value));
+                        }
+                    }
+                }
+            }
+            wp_safe_redirect(admin_url('admin.php?page=wp-subscription'));
+            exit;
+        }
 
         $args = [
             'post_type'      => 'subscrpt_order',
@@ -163,17 +197,23 @@ class Menu {
         if ($status) {
             $args['post_status'] = $status;
         }
-        if ($search) {
-            $args['s'] = $search;
+        // Search only by subscription ID
+        if ($search !== '') {
+            if (is_numeric($search)) {
+                $args['p'] = intval($search);
+            } else {
+                // If not numeric, return no results
+                $args['post__in'] = array(0);
+            }
         }
-        if ($date_from || $date_to) {
-            $args['date_query'] = [];
-            if ($date_from) {
-                $args['date_query'][] = [ 'after' => $date_from ];
-            }
-            if ($date_to) {
-                $args['date_query'][] = [ 'before' => $date_to ];
-            }
+        // Dynamic date filter (YYYY-MM)
+        if ($date_filter && preg_match('/^\d{4}-\d{2}$/', $date_filter)) {
+            $year = substr($date_filter, 0, 4);
+            $month = substr($date_filter, 5, 2);
+            $args['date_query'][] = [
+                'year'  => intval($year),
+                'month' => intval($month),
+            ];
         }
 
         $query = new \WP_Query($args);
@@ -184,13 +224,7 @@ class Menu {
         // Get all possible statuses for filter dropdown
         $all_statuses = get_post_stati(['show_in_admin_all_list' => true], 'objects');
 
-        ?>
-        <div class="wp-subscription-admin-content" style="max-width:1240px;margin:0 auto;">
-            <div class="wp-subscription-admin-box">
-                <?php include dirname(__FILE__) . '/views/subscription-list.php'; ?>
-            </div>
-        </div>
-        <?php
+        include dirname(__FILE__) . '/views/subscription-list.php';
     }
 
     /**
@@ -399,5 +433,12 @@ class Menu {
         }
         </style>
         <?php
+    }
+
+    /**
+     * Render the legacy subscriptions list page (WP_List_Table based)
+     */
+    public function render_legacy_subscriptions_page() {
+        // No longer needed, as the menu now links directly to the post type list.
     }
 }
