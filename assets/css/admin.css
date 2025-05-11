@@ -342,15 +342,11 @@ body.wp-subscription_page_wp-subscription-support #wpcontent {
 
 /* Row Actions on Title Hover */
 .wp-subscription-title-wrap {
-    display: flex;
-    align-items: center;
-    gap: 8px;
     position: relative;
 }
 .wp-subscription-row-actions {
     visibility: hidden;
     gap: 8px;
-    margin-left: 8px;
     display: flex;
 }
 .wp-subscription-title-wrap:hover .wp-subscription-row-actions {

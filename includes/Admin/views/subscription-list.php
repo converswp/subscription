@@ -31,7 +31,7 @@ for ($i = 0; $i < 12; $i++) {
                     <option value="<?php echo $n; ?>" <?php selected(isset($_GET['per_page']) ? intval($_GET['per_page']) : 20, $n); ?>><?php echo $n; ?> per page</option>
                 <?php endforeach; ?>
             </select>
-            <button type="submit" class="button button-primary">Search</button>
+            <button type="submit" class="button">Search</button>
             <?php if ($filters_active): ?>
                 <a href="<?php echo esc_url(remove_query_arg(['subscrpt_status','date_filter','s','title','paged'])); ?>" class="button">Reset</a>
             <?php endif; ?>
@@ -41,16 +41,16 @@ for ($i = 0; $i < 12; $i++) {
         </form>
     </div>
     <h2 class="screen-reader-text">Subscriptions list</h2>
-    <table class="wp-list-table wp-modern-table widefat fixed striped" style="border-radius:12px;overflow:hidden;box-shadow:0 2px 8px #e0e7ef;">
+    <table class="wp-list-table widefat fixed striped wp-subscription-modern-table" style="border-radius:6px;overflow:hidden;box-shadow:0 2px 8px #e0e7ef;">
         <thead>
             <tr>
-                <th style="width:60px;">ID</th>
+                <th style="width:200px;">ID</th>
                 <th style="min-width:320px;">Title</th>
                 <th style="width:200px;">Customer</th>
-                <th style="width:110px;">Start Date</th>
-                <th style="width:110px;">Renewal Date</th>
-                <th style="width:90px;">Status</th>
-                <th style="width:110px;">Actions</th>
+                <th style="width:100px;">Start Date</th>
+                <th style="width:100px;">Renewal Date</th>
+                <th style="width:80px;">Status</th>
+                <th style="width:80px;">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -70,20 +70,22 @@ for ($i = 0; $i < 12; $i++) {
                 $status_obj = get_post_status_object(get_post_status($subscription->ID));
             ?>
             <tr>
-                <td style="width:60px;">#<?php echo esc_html($subscription->ID); ?></td>
+                <td>
+                    <a href="<?php echo esc_url(get_edit_post_link($subscription->ID)); ?>" class="subscrpt-id-link">
+                        #<?php echo esc_html(get_the_title($subscription->ID)); ?>
+                    </a>
+                </td>
                 <td style="min-width:320px;">
-                    <div class="wp-subscription-title-wrap" style="display:flex;align-items:center;">
+                    <div class="wp-subscription-title-wrap">
                         <span><?php echo esc_html($product_name); ?></span>
-                        <div class="wp-subscription-row-actions" style="display:flex;align-items:center;gap:10px;margin-left:18px;opacity:0;pointer-events:none;transition:opacity .18s;">
-                            <a href="<?php echo esc_url(get_edit_post_link($subscription->ID)); ?>"><?php esc_html_e('View', 'wp_subscription'); ?></a>
-                            <a href="<?php echo esc_url(admin_url('admin.php?page=wp-subscription&action=duplicate&sub_id=' . $subscription->ID)); ?>"><?php esc_html_e('Duplicate', 'wp_subscription'); ?></a>
-                            <a href="<?php echo esc_url(get_delete_post_link($subscription->ID)); ?>" onclick="return confirm('<?php esc_attr_e('Are you sure you want to delete this subscription?', 'wp_subscription'); ?>');" style="color:#d93025;">
-                                <?php esc_html_e('Delete', 'wp_subscription'); ?>
-                            </a>
+                        <div class="wp-subscription-row-actions" style="">
+                            <a href="<?php echo esc_url(get_edit_post_link($subscription->ID)); ?>">View</a>
+                            <a href="<?php echo esc_url(admin_url('admin.php?page=wp-subscription&action=duplicate&sub_id=' . $subscription->ID)); ?>">Duplicate</a>
+                            <a href="<?php echo esc_url(get_delete_post_link($subscription->ID)); ?>">Delete</a>
                         </div>
                     </div>
                 </td>
-                <td style="width:200px;">
+                <td>
                     <?php if ($customer_url): ?>
                         <a href="<?php echo esc_url($customer_url); ?>" target="_blank"><?php echo esc_html($customer); ?></a>
                     <?php else: ?>
@@ -93,11 +95,15 @@ for ($i = 0; $i < 12; $i++) {
                         <div style="color:#888;font-size:12px;line-height:1.3;word-break:break-all;"><?php echo esc_html($customer_email); ?></div>
                     <?php endif; ?>
                 </td>
-                <td style="width:110px;"><?php echo $start_date ? esc_html(gmdate('F d, Y', $start_date)) : '-'; ?></td>
-                <td style="width:110px;"><?php echo $renewal_date ? esc_html(gmdate('F d, Y', $renewal_date)) : '-'; ?></td>
-                <td style="width:90px;"><span class="subscrpt-<?php echo esc_attr($status_obj->name); ?>"><?php echo esc_html($status_obj->label); ?></span></td>
-                <td style="width:110px;">
-                    <a href="<?php echo esc_url(get_edit_post_link($subscription->ID)); ?>" class="button button-small button-primary"><?php esc_html_e('View/Edit', 'wp_subscription'); ?></a>
+                <td><?php echo $start_date ? esc_html(gmdate('F d, Y', $start_date)) : '-'; ?></td>
+                <td><?php echo $renewal_date ? esc_html(gmdate('F d, Y', $renewal_date)) : '-'; ?></td>
+                <td>
+                    <span class="subscrpt-status-badge subscrpt-status-<?php echo esc_attr($status_obj->name); ?>">
+                        <?php echo esc_html($status_obj->label); ?>
+                    </span>
+                </td>
+                <td>
+                    <a href="<?php echo esc_url(get_edit_post_link($subscription->ID)); ?>" class="button button-small"><?php esc_html_e('View/Edit', 'wp_subscription'); ?></a>
                 </td>
             </tr>
             <?php endforeach; ?>
@@ -131,50 +137,78 @@ for ($i = 0; $i < 12; $i++) {
         </form>
     </div>
     <?php endif; ?>
-    <style>
-    .wp-subscription-title-wrap:hover .wp-subscription-row-actions {
-        opacity: 1 !important;
-        pointer-events: auto !important;
-    }
-    .wp-subscription-row-actions {
-        display: flex !important;
-        align-items: center;
-        gap: 10px;
-        margin-left: 18px;
-        background: none !important;
-        box-shadow: none !important;
-        position: static !important;
-        padding: 0 !important;
-        border-radius: 0 !important;
-        white-space: nowrap;
-    }
-    .wp-modern-table {
-        border-radius: 12px;
-        overflow: hidden;
-        background: #fff;
-        box-shadow: 0 2px 8px #e0e7ef;
-        border-collapse: separate;
-        border-spacing: 0;
-    }
-    .wp-modern-table th, .wp-modern-table td {
-        padding: 14px 12px;
-        font-size: 15px;
-        border-bottom: 1px solid #f0f2f5;
-    }
-    .wp-modern-table th {
-        background: #f8fafc;
-        font-weight: 600;
-        color: #222;
-    }
-    .wp-modern-table tr:last-child td {
-        border-bottom: none;
-    }
-    .wp-modern-table tbody tr:hover {
-        background: #f4f7fa;
-        transition: background 0.18s;
-    }
-    @media (max-width: 900px) {
-        .wp-modern-table th, .wp-modern-table td { font-size: 13px; padding: 10px 6px; }
-    }
-    </style>
-</div> 
+</div>
+<style>
+.wp-subscription-title-wrap:hover .wp-subscription-row-actions {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+.wp-subscription-row-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    box-shadow: none;
+    position: static;
+    padding: 0;
+    border-radius: 0;
+    white-space: nowrap;
+}
+.wp-subscription-row-actions a {
+    color: #2271b1;
+    text-decoration: none;
+    font-size: 13px;
+    padding: 2px 4px;
+    transition: color 0.15s;
+}
+
+.wp-subscription-row-actions a[style*='color:#d93025'] {
+    color: #d93025 !important;
+}
+.wp-subscription-modern-table {
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px #e0e7ef;
+    background: #fff;
+}
+.subscrpt-id-link {
+    color: #2563eb;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.16s;
+}
+.subscrpt-id-link:hover {
+    color: #1e40af;
+    text-decoration: underline;
+}
+.subscrpt-status-badge {
+    display: inline-block;
+    min-width: 48px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #222;
+    text-align: center;
+    letter-spacing: 0.01em;
+    background: #e9ecef;
+    box-shadow: none;
+    text-transform: capitalize;
+}
+.subscrpt-status-active { background: #27c775 !important; color: #ffffff !important; }
+.subscrpt-status-cancelled { background: #fee2e2 !important; color: #b91c1c !important; }
+.subscrpt-status-draft { background: #e0e7ef !important; color: #374151 !important; }
+.subscrpt-status-pending { background: #fef9c3 !important; color: #b45309 !important; }
+.subscrpt-status-expired { background: #e5e7eb !important; color: #6b7280 !important; }
+.subscrpt-status-pe_cancelled { background: #ffedd5 !important; color: #b45309 !important; }
+.subscrpt-id-title {
+    font-size: 11px;
+    color: #888;
+    margin-top: 2px;
+    line-height: 1.3;
+    max-width: 120px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+</style> 
