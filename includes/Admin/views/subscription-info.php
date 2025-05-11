@@ -34,13 +34,7 @@ $payment_method = $order ? $order->get_payment_method_title() : '-';
 $billing_address = $order ? $order->get_formatted_billing_address() : '-';
 $shipping_address = $order ? $order->get_formatted_shipping_address() : '-';
 
-// Load subscription history and activities
-ob_start();
-include dirname(__FILE__) . '/order-history.php';
-$history_html = ob_get_clean();
-ob_start();
-include dirname(__FILE__) . '/required-notice.php';
-$activities_html = ob_get_clean();
+
 ?>
 <div class="wp-subscription-admin-content">
     <div class="wp-subscription-admin-box" style="    background: #f3f4f5;max-width:600px;margin: 25px 0 18px 18px;">

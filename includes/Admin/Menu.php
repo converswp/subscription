@@ -233,7 +233,7 @@ class Menu {
     public function render_stats_page() {
         $this->render_admin_header();
         ?>
-        <div class="wp-subscription-admin-content" style="max-width:1240px;margin:0 auto;">
+        <div class="wp-subscription-admin-content" style="max-width:1240px;margin:32px auto 0 auto;">
             <div class="wp-subscription-admin-box">
                 <h1 class="wp-subscription-admin-title"><?php _e( 'Stats Overview', 'wp_subscription' ); ?></h1>
                 <!-- Stats content will go here -->
@@ -248,7 +248,7 @@ class Menu {
     public function render_settings_page() {
         $this->render_admin_header();
         ?>
-        <div class="wp-subscription-admin-content" style="max-width:1240px;margin:0 auto;">
+        <div class="wp-subscription-admin-content" style="max-width:1240px;margin:32px auto 0 auto">
             <div class="wp-subscription-admin-box">
                 <?php include_once dirname(__FILE__) . '/views/settings.php'; ?>
             </div>
@@ -262,7 +262,7 @@ class Menu {
     public function render_support_page() {
         $this->render_admin_header();
         ?>
-        <div class="wp-subscription-admin-content" style="max-width:1240px;margin:0 auto;">
+        <div class="wp-subscription-admin-content" style="max-width:1240px;margin:32px auto 0 auto">
             <!-- HERO VARIANT 1: Emoji -->
             <div class="wp-subscription-hero-upgrade" style="margin-bottom:18px;">
                 <div class="wp-subscription-hero-content">

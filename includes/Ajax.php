@@ -20,8 +20,8 @@ class Ajax {
 	 * Install the WooCommerce Plugin.
 	 */
 	public function install_woocommerce_plugin() {
-		include ABSPATH . 'wp-admin/includes/plugin-install.php';
-		include ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+		include_once ABSPATH . 'wp-admin/includes/plugin-install.php';
+		include_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
 		include_once ABSPATH . 'wp-admin/includes/file.php';
 		include_once ABSPATH . 'wp-admin/includes/misc.php';
 

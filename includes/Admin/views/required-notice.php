@@ -8,11 +8,17 @@ STYLE GUIDE FOR WP SUBSCRIPTION ADMIN PAGES:
 - All new UI/UX changes must follow these conventions.
 */
 ?>
-<div class="wp-subscription-admin-box" style="margin-bottom:18px;display:flex;align-items:center;gap:18px;justify-content:space-between;">
-	<div>
-		<h3 style="font-family:Georgia,serif;font-size:1.1em;margin:0 0 6px 0;">Upgrade to Pro</h3>
-		<p style="margin:0 0 6px 0;font-size:14px;color:#444;max-width:340px;">Unlock advanced features, analytics, and premium support with WP Subscription Pro. Take your subscriptions to the next level!</p>
-		<a href="https://wpsubscription.co" target="_blank" class="button button-primary" style="font-size:14px;padding:7px 18px;">Upgrade Now</a>
+<div class="notice notice-error sdevs-install-plugin">
+	<div class="sdevs-notice-icon">
+		<img src="<?php echo WP_SUBSCRIPTION_ASSETS . '/images/logo.png'; ?>" alt="woocommerce-logo" />
 	</div>
-	<img src="<?php echo esc_url( WP_SUBSCRIPTION_ASSETS . '/images/subscrpt-ads.png' ); ?>" alt="Upgrade to Pro" style="max-width:120px;border-radius:8px;box-shadow:0 1px 6px rgba(0,0,0,0.06);background:#f6f7f9;" />
+	<div class="sdevs-notice-content">
+		<h2><?php _e( 'Thanks for using Subscription for WooCommerce', 'sdevs_subscrpt' ); ?></h2>
+		<p>You must have <a href="https://wordpress.org/plugins/woocommerce/" target="_blank">Woocommerce </a> installed and activated on this website in order to use this plugin.</p>
+	</div>
+	<div class="sdevs-install-notice-button">
+		<a class="button-primary <?php echo $id; ?>" href="javascript:void(0);"><svg xmlns="http://www.w3.org/2000/svg" class="sdevs-loading-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+			</svg> <?php echo $label; ?></a>
+	</div>
 </div>
