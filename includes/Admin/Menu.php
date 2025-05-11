@@ -604,18 +604,3 @@ class Menu {
         // No longer needed, as the menu now links directly to the post type list.
     }
 }
-
-add_filter('parent_file', function($parent_file) {
-    global $typenow, $pagenow;
-    if ($typenow === 'subscrpt_order' && in_array($pagenow, array('post.php', 'post-new.php'), true)) {
-        return 'wp-subscription';
-    }
-    return $parent_file;
-});
-add_filter('submenu_file', function($submenu_file, $parent_file) {
-    global $typenow, $pagenow;
-    if ($typenow === 'subscrpt_order' && in_array($pagenow, array('post.php', 'post-new.php'), true)) {
-        return 'wp-subscription';
-    }
-    return $submenu_file;
-}, 10, 2);
