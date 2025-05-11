@@ -41,7 +41,7 @@ for ($i = 0; $i < 12; $i++) {
         </form>
     </div>
     <h2 class="screen-reader-text">Subscriptions list</h2>
-    <table class="wp-list-table widefat fixed striped wp-subscription-modern-table" style="border-radius:6px;overflow:hidden;box-shadow:0 2px 8px #e0e7ef;">
+    <table class="wp-list-table widefat fixed striped wp-subscription-modern-table" style="border-radius:10px;overflow:hidden;background:#fff;border:none;box-shadow:none;">
         <thead>
             <tr>
                 <th style="width:200px;">ID</th>
@@ -166,10 +166,38 @@ for ($i = 0; $i < 12; $i++) {
     color: #d93025 !important;
 }
 .wp-subscription-modern-table {
-    border-radius: 6px;
+    border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 2px 8px #e0e7ef;
     background: #fff;
+    border: none !important;
+    box-shadow: none !important;
+}
+.wp-subscription-modern-table thead tr {
+    background: #e6f0fa !important;
+    border-bottom: 2px solid #b6d4f7 !important;
+}
+.wp-subscription-modern-table th {
+    font-weight: 600 !important;
+    color: #1e293b !important;
+    background: none !important;
+}
+.wp-subscription-modern-table th,
+.wp-subscription-modern-table td {
+    border: none !important;
+    padding: 14px 18px !important;
+    background: none !important;
+}
+.wp-subscription-modern-table tr {
+    border-bottom: 1px solid #f1f3f7 !important;
+    transition: background 0.18s;
+}
+.wp-subscription-modern-table tr:last-child {
+    border-bottom: none !important;
+}
+.wp-subscription-modern-table tbody tr:hover {
+    background: #f0f6ff !important;
+    box-shadow: none !important;
+    z-index: 1;
 }
 .subscrpt-id-link {
     color: #2563eb;
