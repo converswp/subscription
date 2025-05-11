@@ -96,6 +96,70 @@
 						</td>
 					</tr>
 					<?php do_action( 'wp_subscription_setting_fields' ); ?>
+					<!-- PRO Features (subtle, grayed out) -->
+					<tr class="wp-subscription-pro-setting-row" style="opacity:0.55;pointer-events:none;">
+						<th scope="row">
+							<label><?php esc_html_e( 'Variable Product Options', 'wp_subscription' ); ?></label>
+						</th>
+						<td>
+							<input type="text" disabled placeholder="Available in PRO" style="width:220px;" />
+							<p class="description">Set flexible options for variable subscription products <span style="color:#2196f3;font-weight:600;">PRO</span></p>
+						</td>
+					</tr>
+					<tr class="wp-subscription-pro-setting-row" style="opacity:0.55;pointer-events:none;">
+						<th scope="row">
+							<label><?php esc_html_e( 'Delivery Schedule', 'wp_subscription' ); ?></label>
+						</th>
+						<td>
+							<select disabled><option><?php esc_html_e('Available in PRO', 'wp_subscription'); ?></option></select>
+							<p class="description">Custom delivery intervals for subscriptions <span style="color:#2196f3;font-weight:600;">PRO</span></p>
+						</td>
+					</tr>
+					<tr class="wp-subscription-pro-setting-row" style="opacity:0.55;pointer-events:none;">
+						<th scope="row">
+							<label><?php esc_html_e( 'Subscription History', 'wp_subscription' ); ?></label>
+						</th>
+						<td>
+							<input type="text" disabled placeholder="Available in PRO" style="width:220px;" />
+							<p class="description">View detailed subscription change history <span style="color:#2196f3;font-weight:600;">PRO</span></p>
+						</td>
+					</tr>
+					<tr class="wp-subscription-pro-setting-row" style="opacity:0.55;pointer-events:none;">
+						<th scope="row">
+							<label><?php esc_html_e( 'More Subscription Durations', 'wp_subscription' ); ?></label>
+						</th>
+						<td>
+							<input type="text" disabled placeholder="Available in PRO" style="width:220px;" />
+							<p class="description">Offer more flexible/custom subscription periods <span style="color:#2196f3;font-weight:600;">PRO</span></p>
+						</td>
+					</tr>
+					<tr class="wp-subscription-pro-setting-row" style="opacity:0.55;pointer-events:none;">
+						<th scope="row">
+							<label><?php esc_html_e( 'Sign Up Fee', 'wp_subscription' ); ?></label>
+						</th>
+						<td>
+							<input type="number" disabled placeholder="Available in PRO" style="width:120px;" />
+							<p class="description">Charge a one-time sign up fee <span style="color:#2196f3;font-weight:600;">PRO</span></p>
+						</td>
+					</tr>
+					<tr class="wp-subscription-pro-setting-row" style="opacity:0.55;pointer-events:none;">
+						<th scope="row">
+							<label><?php esc_html_e( 'Early Renewal', 'wp_subscription' ); ?></label>
+						</th>
+						<td>
+							<input type="checkbox" disabled />
+							<p class="description">Allow early renewal for subscriptions <span style="color:#2196f3;font-weight:600;">PRO</span></p>
+						</td>
+					</tr>
+					<tr class="wp-subscription-pro-setting-row" style="opacity:0.55;pointer-events:none;">
+						<th scope="row">
+							<label><?php esc_html_e( 'Renewal Price', 'wp_subscription' ); ?></label>
+						</th>
+						<td>
+							<input type="number" disabled placeholder="Available in PRO" style="width:120px;" />
+							<p class="description">Set a different price for renewals <span style="color:#2196f3;font-weight:600;">PRO</span></p>
+						</td>
+					</tr>
 				</tbody>
 			</table>
 			<?php submit_button( __( 'Save changes', 'wp_subscription' ), 'primary large' ); ?>
