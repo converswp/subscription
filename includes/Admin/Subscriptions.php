@@ -246,10 +246,29 @@ class Subscriptions {
 				do_action( 'subscrpt_order_activities', $post->ID );
 			else :
 				?>
-				<a href="https://wpsubscription.co" target="_blank">
-					<img style="width: 100%;"
-						src="<?php echo esc_html( WP_SUBSCRIPTION_ASSETS . '/images/subscrpt-ads.png' ); ?>" />
-				</a>
+				<div class="wp-subscription-admin-box wp-subscription-upgrade-pro-banner" style="margin-bottom:18px;display:flex;align-items:center;gap:18px;justify-content:space-between;background:linear-gradient(90deg,#38bdf8 0%,#6366f1 100%);border-radius:10px;padding:22px 28px;box-shadow:0 2px 12px rgba(56,189,248,0.08);color:#fff;">
+					<div style="flex:1;">
+						<div style="display:flex;align-items:center;gap:14px;">
+							<span style="font-size:2.2em;line-height:1;">🚀</span>
+							<span style="font-family:Georgia,serif;font-size:1.25em;font-weight:bold;">Upgrade to WP Subscription Pro</span>
+						</div>
+						<div style="margin-top:8px;font-size:1.08em;max-width:500px;opacity:0.95;">
+							Unlock advanced features, automation, and priority support. Take your subscription business to the next level!
+						</div>
+					</div>
+					<div style="flex-shrink:0;">
+						<a href="https://wpsubscription.co/" target="_blank" class="button button-primary" style="background:#fff;color:#6366f1;font-weight:600;font-size:1.08em;padding:12px 28px;border:none;box-shadow:0 2px 8px rgba(99,102,241,0.10);border-radius:6px;">Upgrade to Pro</a>
+					</div>
+				</div>
+				<div class="subscrpt-pro-banner-img" style="margin-top:12px;max-width:520px;width:100%;border-radius:10px;box-shadow:0 2px 12px rgba(56,189,248,0.10);overflow:hidden;transition:transform 0.22s cubic-bezier(.4,0,.2,1),box-shadow 0.22s cubic-bezier(.4,0,.2,1);">
+					<img style="width:100%;display:block;border-radius:10px;transition:inherit;" src="<?php echo esc_html( WP_SUBSCRIPTION_ASSETS . '/images/subscrpt-ads.png' ); ?>" />
+				</div>
+				<style>
+				.subscrpt-pro-banner-img:hover {
+					transform: scale(1.025) translateY(-2px);
+					box-shadow: 0 8px 32px rgba(56,189,248,0.18);
+				}
+				</style>
 				<?php
 			endif;
 		endif;

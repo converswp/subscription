@@ -5,11 +5,10 @@ Plugin URI: https://wordpress.org/plugins/subscription
 Description: Enable WooCommerce Subscriptions and Start Recurring Revenue in Minutes.
 Plugin URI: https://wpsubscription.co/
 
-Author: shamsbd71
+Author: converswp
 Author URI: https://wpsubscription.co/
 
 Version: 1.3.2
-Requires Plugins: woocommerce
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: wp_subscription

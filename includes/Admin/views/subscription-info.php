@@ -37,49 +37,59 @@ $shipping_address = $order ? $order->get_formatted_shipping_address() : '-';
 
 ?>
 <div class="wp-subscription-admin-content">
-    <div class="wp-subscription-admin-box" style="    background: #f3f4f5;max-width:600px;margin: 25px 0 18px 18px;">
-        <h2 style="font-family:Georgia,serif;font-size:1.3em;margin:0 0 12px 0;">Subscription Details</h2>
-        <table class="widefat striped wp-subscription-list-table" style="border-radius:8px;overflow:hidden;margin-bottom:16px;font-size:14px;">
-            <tbody>
-                <tr>
-                    <th style="width:120px;padding:8px 10px;">Product</th>
-                    <td style="padding:8px 10px;"><?php echo esc_html($product_name); ?></td>
-                </tr>
-                <tr>
-                    <th style="padding:8px 10px;">Cost</th>
-                    <td style="padding:8px 10px;"><?php echo $cost; ?></td>
-                </tr>
-                <tr>
-                    <th style="padding:8px 10px;">Qty</th>
-                    <td style="padding:8px 10px;"><?php echo esc_html($qty); ?></td>
-                </tr>
-                <tr>
-                    <th style="padding:8px 10px;">Started date</th>
-                    <td style="padding:8px 10px;"><?php echo $start_date ? esc_html(gmdate('F d, Y', $start_date)) : '-'; ?></td>
-                </tr>
-                <tr>
-                    <th style="padding:8px 10px;">Payment due date</th>
-                    <td style="padding:8px 10px;"><?php echo $renewal_date ? esc_html(gmdate('F d, Y', $renewal_date)) : '-'; ?></td>
-                </tr>
-                <tr>
-                    <th style="padding:8px 10px;">Status</th>
-                    <td style="padding:8px 10px;"><span class="subscrpt-status-badge subscrpt-status-<?php echo esc_attr($status_obj->name); ?>"><?php echo esc_html($status_obj->label); ?></span></td>
-                </tr>
-                <tr>
-                    <th style="padding:8px 10px;">Payment Method</th>
-                    <td style="padding:8px 10px;"><?php echo esc_html($payment_method); ?></td>
-                </tr>
-                <tr>
-                    <th style="padding:8px 10px;">Billing</th>
-                    <td style="padding:8px 10px;"><?php echo $billing_address ? wp_kses_post($billing_address) : '-'; ?></td>
-                </tr>
-                <tr>
-                    <th style="padding:8px 10px;">Shipping</th>
-                    <td style="padding:8px 10px;"><?php echo $shipping_address ? wp_kses_post($shipping_address) : '-'; ?></td>
-                </tr>
-            </tbody>
-        </table>
-
+    <div class="wp-subscription-info-grid" style="display:flex;gap:28px;align-items:flex-start;flex-wrap:nowrap;">
+        <!-- Left: Main Info -->
+        <div class="wp-subscription-admin-box wp-subscription-info-left" style="background:#f3f4f5;flex:1 1 50%;max-width:50%;margin:25px 0 18px 18px;">
+            <h2 style="font-family:Georgia,serif;font-size:1.3em;margin:0 0 12px 0;">Subscription Details</h2>
+            <table class="widefat striped wp-subscription-list-table" style="border-radius:8px;overflow:hidden;margin-bottom:16px;font-size:14px;">
+                <tbody>
+                    <tr>
+                        <th style="width:120px;padding:8px 10px;">Product</th>
+                        <td style="padding:8px 10px;"><?php echo esc_html($product_name); ?></td>
+                    </tr>
+                    <tr>
+                        <th style="padding:8px 10px;">Cost</th>
+                        <td style="padding:8px 10px;"><?php echo $cost; ?></td>
+                    </tr>
+                    <tr>
+                        <th style="padding:8px 10px;">Qty</th>
+                        <td style="padding:8px 10px;"><?php echo esc_html($qty); ?></td>
+                    </tr>
+                    <tr>
+                        <th style="padding:8px 10px;">Started date</th>
+                        <td style="padding:8px 10px;"><?php echo $start_date ? esc_html(gmdate('F d, Y', $start_date)) : '-'; ?></td>
+                    </tr>
+                    <tr>
+                        <th style="padding:8px 10px;">Payment due date</th>
+                        <td style="padding:8px 10px;"><?php echo $renewal_date ? esc_html(gmdate('F d, Y', $renewal_date)) : '-'; ?></td>
+                    </tr>
+                    <tr>
+                        <th style="padding:8px 10px;">Status</th>
+                        <td style="padding:8px 10px;"><span class="subscrpt-status-badge subscrpt-status-<?php echo esc_attr($status_obj->name); ?>"><?php echo esc_html($status_obj->label); ?></span></td>
+                    </tr>
+                    <tr>
+                        <th style="padding:8px 10px;">Payment Method</th>
+                        <td style="padding:8px 10px;"><?php echo esc_html($payment_method); ?></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- Right: Billing & Shipping -->
+        <div class="wp-subscription-admin-box wp-subscription-info-right" style="    box-shadow: 0 1px 3px rgb(29 35 39 / 30%);background:#fff;flex:1 1 50%;max-width:50%;margin:25px 0 18px 0;">
+            <h2 style="font-family:Georgia,serif;font-size:1.1em;margin:0 0 10px 0;">Billing & Shipping</h2>
+            <table class="widefat wp-subscription-list-table" style="border-radius:8px;overflow:hidden;margin-bottom:0;font-size:13px;background:none;">
+                <tbody>
+                    <tr>
+                        <th style="width:70px;padding:8px 10px;color:#888;font-weight:500;">Billing</th>
+                        <td style="padding:8px 10px;"><?php echo $billing_address ? wp_kses_post($billing_address) : '-'; ?></td>
+                    </tr>
+                    <tr>
+                        <th style="width:70px;padding:8px 10px;color:#888;font-weight:500;">Shipping</th>
+                        <td style="padding:8px 10px;"><?php echo $shipping_address ? wp_kses_post($shipping_address) : '-'; ?></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 <style>
@@ -103,4 +113,16 @@ $shipping_address = $order ? $order->get_formatted_shipping_address() : '-';
 .subscrpt-status-pending { background: #fef9c3 !important; color: #b45309 !important; }
 .subscrpt-status-expired { background: #e5e7eb !important; color: #6b7280 !important; }
 .subscrpt-status-pe_cancelled { background: #ffedd5 !important; color: #b45309 !important; }
+@media (max-width: 900px) {
+  .wp-subscription-info-left, .wp-subscription-info-right {
+    flex-basis: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  .wp-subscription-info-grid {
+    flex-direction: column !important;
+    gap: 18px !important;
+  }
+}
 </style>

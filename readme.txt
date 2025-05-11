@@ -1,5 +1,5 @@
 === Subscriptions for WooCommerce - Recurring Payments Plugins, Stripe, PayPal, Paddle & More ===
-Contributors: shamsbd71, parvezvai
+Contributors: converswp, shamsbd71
 Tags: woocommerce-subscriptions, subscriptions, subscriptions-billing, recurring-payments, woocommerce-extensions
 Requires at least: 6.0
 Tested up to: 6.8
