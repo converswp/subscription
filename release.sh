@@ -4,7 +4,7 @@
 mkdir -p release/subscription
 
 # Copy all files except development files
-cp -r assets includes vendor composer.json index.php templates release/subscription/
+cp -r assets builds includes src templates composer.json index.php readme.txt subscription.php release/subscription/
 
 # Change to release directory
 cd release/subscription
