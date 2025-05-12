@@ -8,10 +8,10 @@ for ($i = 0; $i < 12; $i++) {
     $months[date('Y-m', $month)] = date('F Y', $month);
 }
 ?>
-<div class="wp-subscription-admin-content" style="max-width:1240px;margin:32px auto 0 auto;background:#fff;padding:32px 24px 24px 24px;border-radius:12px;">
-    <div style="margin-bottom:24px;"><h1 class="wp-heading-inline">Subscriptions</h1></div>
-    <div class="wp-subscription-list-header" style="margin-bottom:28px;display:flex;justify-content:flex-start;align-items:center;flex-wrap:wrap;gap:12px;">
-        <form method="get" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+<div class="wp-subscription-admin-content list-page">
+    <div class="wp-subscription-list-title"><h1 class="wp-heading-inline">Subscriptions</h1></div>
+    <div class="wp-subscription-list-header">
+        <form method="get">
             <input type="hidden" name="page" value="wp-subscription" />
             <select name="subscrpt_status" value="<?php echo esc_attr($status); ?>">
                 <option value=""><?php esc_html_e('All Status', 'wp_subscription'); ?></option>
@@ -26,7 +26,7 @@ for ($i = 0; $i < 12; $i++) {
                 <?php endforeach; ?>
             </select>
             <input type="search" name="s" value="<?php echo esc_attr($search); ?>" placeholder="<?php esc_attr_e('Search by subscription ID...', 'wp_subscription'); ?>" />
-            <select name="per_page" style="min-width:90px;">
+            <select name="per_page">
                 <?php foreach ([10, 20, 50, 100] as $n): ?>
                     <option value="<?php echo $n; ?>" <?php selected(isset($_GET['per_page']) ? intval($_GET['per_page']) : 20, $n); ?>><?php echo $n; ?> per page</option>
                 <?php endforeach; ?>
@@ -41,7 +41,7 @@ for ($i = 0; $i < 12; $i++) {
         </form>
     </div>
     <h2 class="screen-reader-text">Subscriptions list</h2>
-    <table class="wp-list-table widefat fixed striped wp-subscription-modern-table" style="border-radius:10px;overflow:hidden;background:#fff;border:none;box-shadow:none;">
+    <table class="wp-list-table widefat fixed striped wp-subscription-modern-table">
         <thead>
             <tr>
                 <th style="width:200px;">ID</th>
@@ -78,7 +78,7 @@ for ($i = 0; $i < 12; $i++) {
                 <td style="min-width:320px;">
                     <div class="wp-subscription-title-wrap">
                         <span><?php echo esc_html($product_name); ?></span>
-                        <div class="wp-subscription-row-actions" style="">
+                        <div class="wp-subscription-row-actions">
                             <a href="<?php echo esc_url(get_edit_post_link($subscription->ID)); ?>">View</a>
                             <a href="<?php echo esc_url(admin_url('admin.php?page=wp-subscription&action=duplicate&sub_id=' . $subscription->ID)); ?>">Duplicate</a>
                             <a href="<?php echo esc_url(get_delete_post_link($subscription->ID)); ?>">Delete</a>
@@ -92,7 +92,7 @@ for ($i = 0; $i < 12; $i++) {
                         <?php echo esc_html($customer); ?>
                     <?php endif; ?>
                     <?php if ($customer_email): ?>
-                        <div style="color:#888;font-size:12px;line-height:1.3;word-break:break-all;"><?php echo esc_html($customer_email); ?></div>
+                        <div class="wp-subscription-customer-email"><?php echo esc_html($customer_email); ?></div>
                     <?php endif; ?>
                 </td>
                 <td><?php echo $start_date ? esc_html(gmdate('F d, Y', $start_date)) : '-'; ?></td>
@@ -109,7 +109,7 @@ for ($i = 0; $i < 12; $i++) {
             <?php endforeach; ?>
         <?php else : ?>
             <tr>
-                <td colspan="8" style="text-align:center; color:#888; padding:40px 0;">
+                <td colspan="8" class="wp-subscription-list-empty">
                     <?php esc_html_e('No subscriptions found.', 'wp_subscription'); ?>
                 </td>
             </tr>
@@ -117,8 +117,8 @@ for ($i = 0; $i < 12; $i++) {
         </tbody>
     </table>
     <?php if ($max_num_pages > 1): ?>
-    <div class="wp-subscription-pagination" style="display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-top:24px;">
-        <span style="color:#888;font-size:13px;">Total <?php echo intval($total); ?></span>
+    <div class="wp-subscription-pagination">
+        <span class="total">Total <?php echo intval($total); ?></span>
         <?php
         $base_url = remove_query_arg('paged');
         $show_pages = $max_num_pages > 1 || $max_num_pages == 1;
@@ -128,115 +128,13 @@ for ($i = 0; $i < 12; $i++) {
         ?>
             <a href="<?php echo esc_url($url); ?>" class="button<?php if ($is_current) echo ' button-primary'; ?>" <?php if ($is_current) echo 'disabled'; ?>><?php echo $i; ?></a>
         <?php endfor; ?>
-        <span style="margin-left:16px;color:#888;font-size:13px;">Go to</span>
-        <form method="get" style="display:inline-block;margin:0;">
+        <span class="goto-label">Go to</span>
+        <form method="get">
             <input type="hidden" name="page" value="wp-subscription" />
-            <input type="number" name="paged" min="1" max="<?php echo $max_num_pages; ?>" value="<?php echo $paged; ?>" style="width:48px;" />
+            <input type="number" name="paged" min="1" max="<?php echo $max_num_pages; ?>" value="<?php echo $paged; ?>" />
             <input type="hidden" name="per_page" value="<?php echo $per_page; ?>" />
             <button type="submit" class="button">OK</button>
         </form>
     </div>
     <?php endif; ?>
 </div>
-<style>
-.wp-subscription-title-wrap:hover .wp-subscription-row-actions {
-    opacity: 1 !important;
-    pointer-events: auto !important;
-}
-.wp-subscription-row-actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: none;
-    box-shadow: none;
-    position: static;
-    padding: 0;
-    border-radius: 0;
-    white-space: nowrap;
-}
-.wp-subscription-row-actions a {
-    color: #2271b1;
-    text-decoration: none;
-    font-size: 13px;
-    padding: 2px 4px;
-    transition: color 0.15s;
-}
-
-.wp-subscription-row-actions a[style*='color:#d93025'] {
-    color: #d93025 !important;
-}
-.wp-subscription-modern-table {
-    border-radius: 10px;
-    overflow: hidden;
-    background: #fff;
-    border: none !important;
-    box-shadow: none !important;
-}
-.wp-subscription-modern-table thead tr {
-    background: #e6f0fa !important;
-    border-bottom: 2px solid #b6d4f7 !important;
-}
-.wp-subscription-modern-table th {
-    font-weight: 600 !important;
-    color: #1e293b !important;
-    background: none !important;
-}
-.wp-subscription-modern-table th,
-.wp-subscription-modern-table td {
-    border: none !important;
-    padding: 14px 18px !important;
-    background: none !important;
-}
-.wp-subscription-modern-table tr {
-    border-bottom: 1px solid #f1f3f7 !important;
-    transition: background 0.18s;
-}
-.wp-subscription-modern-table tr:last-child {
-    border-bottom: none !important;
-}
-.wp-subscription-modern-table tbody tr:hover {
-    background: #f0f6ff !important;
-    box-shadow: none !important;
-    z-index: 1;
-}
-.subscrpt-id-link {
-    color: #2563eb;
-    font-weight: 600;
-    text-decoration: none;
-    transition: color 0.16s;
-}
-.subscrpt-id-link:hover {
-    color: #1e40af;
-    text-decoration: underline;
-}
-.subscrpt-status-badge {
-    display: inline-block;
-    min-width: 48px;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 500;
-    color: #222;
-    text-align: center;
-    letter-spacing: 0.01em;
-    background: #e9ecef;
-    box-shadow: none;
-    text-transform: capitalize;
-}
-.subscrpt-status-active { background: #27c775 !important; color: #ffffff !important; }
-.subscrpt-status-cancelled { background: #fee2e2 !important; color: #b91c1c !important; }
-.subscrpt-status-draft { background: #e0e7ef !important; color: #374151 !important; }
-.subscrpt-status-pending { background: #fef9c3 !important; color: #b45309 !important; }
-.subscrpt-status-expired { background: #e5e7eb !important; color: #6b7280 !important; }
-.subscrpt-status-pe_cancelled { background: #ffedd5 !important; color: #b45309 !important; }
-.subscrpt-id-title {
-    font-size: 11px;
-    color: #888;
-    margin-top: 2px;
-    line-height: 1.3;
-    max-width: 120px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-</style> 

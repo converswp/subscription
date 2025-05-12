@@ -390,3 +390,158 @@ body.wp-subscription_page_wp-subscription-support #wpcontent {
     font-size: 13px;
     display: inline-block;
 }
+
+/* =====================
+   Subscriptions List Page
+   ===================== */
+.wp-subscription-title-wrap:hover .wp-subscription-row-actions {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+.wp-subscription-row-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    box-shadow: none;
+    position: static;
+    padding: 0;
+    border-radius: 0;
+    white-space: nowrap;
+}
+.wp-subscription-row-actions a {
+    color: #2271b1;
+    text-decoration: none;
+    font-size: 13px;
+    padding: 2px 4px;
+    transition: color 0.15s;
+}
+.wp-subscription-row-actions a[style*='color:#d93025'] {
+    color: #d93025 !important;
+}
+.wp-subscription-modern-table {
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+    border: none !important;
+    box-shadow: none !important;
+}
+.wp-subscription-modern-table thead tr {
+    background: #e6f0fa !important;
+    border-bottom: 2px solid #b6d4f7 !important;
+}
+.wp-subscription-modern-table th {
+    font-weight: 600 !important;
+    color: #1e293b !important;
+    background: none !important;
+}
+.wp-subscription-modern-table th,
+.wp-subscription-modern-table td {
+    border: none !important;
+    padding: 14px 18px !important;
+    background: none !important;
+}
+.wp-subscription-modern-table tr {
+    border-bottom: 1px solid #f1f3f7 !important;
+    transition: background 0.18s;
+}
+.wp-subscription-modern-table tr:last-child {
+    border-bottom: none !important;
+}
+.wp-subscription-modern-table tbody tr:hover {
+    background: #f0f6ff !important;
+    box-shadow: none !important;
+    z-index: 1;
+}
+.subscrpt-id-link {
+    color: #2563eb;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.16s;
+}
+.subscrpt-id-link:hover {
+    color: #1e40af;
+    text-decoration: underline;
+}
+.subscrpt-status-badge {
+    display: inline-block;
+    min-width: 48px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #222;
+    text-align: center;
+    letter-spacing: 0.01em;
+    background: #e9ecef;
+    box-shadow: none;
+    text-transform: capitalize;
+}
+.subscrpt-status-active { background: #27c775 !important; color: #ffffff !important; }
+.subscrpt-status-cancelled { background: #fee2e2 !important; color: #b91c1c !important; }
+.subscrpt-status-draft { background: #e0e7ef !important; color: #374151 !important; }
+.subscrpt-status-pending { background: #fef9c3 !important; color: #b45309 !important; }
+.subscrpt-status-expired { background: #e5e7eb !important; color: #6b7280 !important; }
+.subscrpt-status-pe_cancelled { background: #ffedd5 !important; color: #b45309 !important; }
+.subscrpt-id-title {
+    font-size: 11px;
+    color: #888;
+    margin-top: 2px;
+    line-height: 1.3;
+    max-width: 120px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Subscriptions List Page Layout */
+.wp-subscription-admin-content.list-page {
+    max-width: 1240px;
+    margin: 32px auto 0 auto;
+    background: #fff;
+    padding: 32px 24px 24px 24px;
+    border-radius: 12px;
+}
+.wp-subscription-list-header {
+    margin-bottom: 28px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.wp-subscription-list-header form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.wp-subscription-pagination {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    margin-top: 24px;
+}
+.wp-subscription-pagination .total {
+    color: #888;
+    font-size: 13px;
+}
+.wp-subscription-pagination .goto-label {
+    margin-left: 16px;
+    color: #888;
+    font-size: 13px;
+}
+.wp-subscription-pagination form {
+    display: inline-block;
+    margin: 0;
+}
+.wp-subscription-pagination input[type="number"] {
+    width: 48px;
+}
+.wp-subscription-customer-email {
+    color: #888;
+    font-size: 12px;
+    line-height: 1.3;
+    word-break: break-all;
+}
