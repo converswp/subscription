@@ -125,6 +125,8 @@ class Menu {
                 'url'  => admin_url('admin.php?page=wp-subscription-support'),
             ],
         ];
+        // Allow pro plugin to inject menu items
+        $menu_items = apply_filters('wp_subscription_admin_header_menu_items', $menu_items, $current);
         ?>
         <div class="wp-subscription-admin-header">
             <div style="width:1240px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;">
