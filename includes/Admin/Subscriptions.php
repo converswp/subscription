@@ -525,15 +525,17 @@ class Subscriptions {
 			'',
 			1
 		);
-		add_submenu_page(
-			'edit.php?post_type=subscrpt_order',
-			__( 'Go Pro', 'wp_subscription' ),
-			__( 'Go Pro', 'wp_subscription' ),
-			'manage_options',
-			'wp_subscription_go_pro',
-			array( $this, 'render_go_pro_page' ),
-			99
-		);
+		if ( ! class_exists('Sdevs_Wc_Subscription_Pro') ) {
+			add_submenu_page(
+				'edit.php?post_type=subscrpt_order',
+				__( 'Go Pro', 'wp_subscription' ),
+				__( 'Go Pro', 'wp_subscription' ),
+				'manage_options',
+				'wp_subscription_go_pro',
+				array( $this, 'render_go_pro_page' ),
+				99
+			);
+		}
 	}
 
 	public function render_overview_page() {
@@ -613,6 +615,10 @@ class Subscriptions {
 	}
 
 	public function render_go_pro_page() {
+		if ( class_exists('Sdevs_Wc_Subscription_Pro') ) {
+			echo '<div class="notice notice-info" style="margin:40px auto;max-width:700px;text-align:center;font-size:1.2em;">Pro is already active.</div>';
+			return;
+		}
 		?>
 		<div class="wrap wpsubscription-go-pro" style="max-width:900px;margin:40px auto 0 auto;">
 			<div class="wpsubscription-go-pro-card" style="background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.06);padding:40px 32px 32px 32px;">

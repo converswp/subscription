@@ -142,7 +142,9 @@ class Menu {
                     </nav>
                 </div>
                 <div class="wp-subscription-admin-header-right">
+                    <?php if ( ! class_exists('Sdevs_Wc_Subscription_Pro') ) : ?>
                     <a target="_blank" href="https://wpsubscription.co/?utm_source=plugin&utm_medium=admin&utm_campaign=upgrade_pro" class="wp-subscription-upgrade-btn"><?php _e( 'Upgrade to Pro', 'wp_subscription' ); ?></a>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -419,6 +421,7 @@ class Menu {
         $this->render_admin_header();
         ?>
         <div class="wp-subscription-admin-content" style="max-width:1240px;margin:32px auto 0 auto">
+            <?php if ( ! class_exists('Sdevs_Wc_Subscription_Pro') ) : ?>
             <!-- HERO VARIANT 1: Emoji -->
             <div class="wp-subscription-hero-upgrade" style="margin-bottom:18px;">
                 <div class="wp-subscription-hero-content">
@@ -434,6 +437,7 @@ class Menu {
                     UPGRADE TO PRO
                 </a>
             </div>
+            <?php endif; ?>
             
             <!-- Product Overview & Video -->
             <div class="wp-subscription-admin-box" style="margin-bottom:24px;display:flex;gap:32px;align-items:flex-start;flex-wrap:wrap;">
