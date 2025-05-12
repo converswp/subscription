@@ -34,7 +34,11 @@ class Menu {
      */
     public function create_admin_menu() {
         $parent_slug = 'wp-subscription';
-        
+        // Determine if the menu is active
+        $is_active = isset($_GET['page']) && strpos($_GET['page'], 'wp-subscription') === 0;
+        $icon_url = $is_active
+            ? WP_SUBSCRIPTION_ASSETS . '/images/icons/subscription-20.png'
+            : WP_SUBSCRIPTION_ASSETS . '/images/icons/subscription-20-gray.png';
         // Main menu
         add_menu_page(
             __( 'WP Subscription', 'wp_subscription' ),
@@ -42,7 +46,7 @@ class Menu {
             'manage_woocommerce',
             $parent_slug,
             array( $this, 'render_subscriptions_page' ),
-            WP_SUBSCRIPTION_ASSETS . '/images/icons/subscription-20-gray.png',
+            $icon_url,
             40
         );
 
