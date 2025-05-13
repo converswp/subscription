@@ -65,8 +65,8 @@ class Menu {
         // Stats Overview
         add_submenu_page(
             $parent_slug,
-            __( 'Stats Overview', 'wp_subscription' ),
-            __( 'Stats Overview', 'wp_subscription' ),
+            __( 'Reports', 'wp_subscription' ),
+            __( 'Reports', 'wp_subscription' ),
             'manage_woocommerce',
             'wp-subscription-stats',
             array( $this, 'render_stats_page' )
@@ -110,9 +110,9 @@ class Menu {
         <div style="text-align:center;margin:38px 0 0 0;font-size:14px;color:#888;">
             Made with <span style="color:#e25555;font-size:1.1em;">♥</span> by the WP Subscription Team
             <div style="margin-top:6px;">
-                <a href="https://wpsubscription.com/support" target="_blank" style="color:#2563eb;text-decoration:none;">Support</a>
+                <a href="https://wpsubscription.co/support" target="_blank" style="color:#2563eb;text-decoration:none;">Support</a>
                 &nbsp;/&nbsp;
-                <a href="https://wpsubscription.com/docs" target="_blank" style="color:#2563eb;text-decoration:none;">Docs</a>
+                <a href="https://wpsubscription.co/docs" target="_blank" style="color:#2563eb;text-decoration:none;">Docs</a>
             </div>
         </div>
         <?php
@@ -131,7 +131,7 @@ class Menu {
             ],
             [
                 'slug' => 'wp-subscription-stats',
-                'label' => __('Stats Overview', 'wp_subscription'),
+                'label' => __('Reports', 'wp_subscription'),
                 'url'  => admin_url('admin.php?page=wp-subscription-stats'),
             ],
             [
@@ -151,8 +151,7 @@ class Menu {
         <div class="wp-subscription-admin-header">
             <div style="width:1240px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;">
                 <div class="wp-subscription-admin-header-left" style="display:flex;align-items:center;gap:14px;">
-                    <img src="<?php echo esc_url( WP_SUBSCRIPTION_ASSETS . '/images/logo.png' ); ?>" alt="WP Subscription" class="wp-subscription-logo">
-                    <span style="font-family:Georgia,serif;font-size:1.5em;font-weight:bold;color:#222;">WP Subscription</span>
+                    <img style="height:30px;" src="<?php echo esc_url( WP_SUBSCRIPTION_ASSETS . '/images/logo-title.svg' ); ?>" alt="WP Subscription" class="wp-subscription-logo">
                     <nav class="wp-subscription-admin-header-menu">
                         <?php foreach ($menu_items as $item): ?>
                             <a href="<?php echo esc_url($item['url']); ?>" class="<?php echo ($current === $item['slug']) ? 'current' : ''; ?>">
@@ -253,9 +252,9 @@ class Menu {
         <div style="text-align:center;margin:38px 0 0 0;font-size:14px;color:#888;">
             Made with <span style="color:#e25555;font-size:1.1em;">♥</span> by the WP Subscription Team
             <div style="margin-top:6px;">
-                <a href="https://wpsubscription.com/support" target="_blank" style="color:#2563eb;text-decoration:none;">Support</a>
+                <a href="https://wpsubscription.co/support" target="_blank" style="color:#2563eb;text-decoration:none;">Support</a>
                 &nbsp;/&nbsp;
-                <a href="https://wpsubscription.com/docs" target="_blank" style="color:#2563eb;text-decoration:none;">Docs</a>
+                <a href="https://wpsubscription.co/docs" target="_blank" style="color:#2563eb;text-decoration:none;">Docs</a>
             </div>
         </div>
         <?php
@@ -342,30 +341,30 @@ class Menu {
         <div class="wp-subscription-admin-content" style="max-width:1240px;margin:32px auto 0 auto;">
             <div class="wp-subscription-admin-box" style="margin-bottom:32px;">
                 <h1 class="wp-subscription-admin-title" style="margin-bottom:18px;">Monthly Subscription Report</h1>
-                <div style="display:flex;gap:24px;flex-wrap:wrap;margin-bottom:24px;">
+                <div style="display:flex;gap:24px;flex-wrap:wrap;margin-bottom:50px;">
                     <div style="flex:1;min-width:180px;background:#f7fafd;border-radius:8px;padding:18px 22px;text-align:center;">
-                        <div style="font-size:2em;font-weight:700;color:#2563eb;"><?php echo intval($months[array_key_last($months)]['total']); ?></div>
+                        <div style="margin-bottom:10px;font-size:2em;font-weight:700;color:#2563eb;"><?php echo intval($months[array_key_last($months)]['total']); ?></div>
                         <div style="color:#888;font-size:13px;">Subscriptions This Month</div>
                     </div>
                     <div style="flex:1;min-width:180px;background:#f7fafd;border-radius:8px;padding:18px 22px;text-align:center;">
-                        <div style="font-size:2em;font-weight:700;color:#27c775;"><?php echo intval($months[array_key_last($months)]['active']); ?></div>
+                        <div style="margin-bottom:10px;font-size:2em;font-weight:700;color:#27c775;"><?php echo intval($months[array_key_last($months)]['active']); ?></div>
                         <div style="color:#888;font-size:13px;">Active Subscriptions</div>
                     </div>
                     <div style="flex:1;min-width:180px;background:#f7fafd;border-radius:8px;padding:18px 22px;text-align:center;">
-                        <div style="font-size:2em;font-weight:700;color:#d93025;"><?php echo intval($months[array_key_last($months)]['cancelled']); ?></div>
+                        <div style="margin-bottom:10px;font-size:2em;font-weight:700;color:#d93025;"><?php echo intval($months[array_key_last($months)]['cancelled']); ?></div>
                         <div style="color:#888;font-size:13px;">Cancelled This Month</div>
                     </div>
                     <div style="flex:1;min-width:180px;background:#f7fafd;border-radius:8px;padding:18px 22px;text-align:center;">
-                        <div style="font-size:2em;font-weight:700;color:#7f54b3;">$<?php echo number_format($months[array_key_last($months)]['revenue'], 2); ?></div>
+                        <div style="margin-bottom:10px;font-size:2em;font-weight:700;color:#7f54b3;">$<?php echo number_format($months[array_key_last($months)]['revenue'], 2); ?></div>
                         <div style="color:#888;font-size:13px;">Revenue This Month</div>
                     </div>
                     <div style="flex:1;min-width:180px;background:#f4f7fa;border-radius:8px;padding:18px 22px;text-align:center;">
+                        <div style="margin-bottom:10px;font-size:1.5em;font-weight:700;color:#7f54b3;">$<?php echo number_format($prev_month_revenue, 2); ?></div>
                         <div style="font-size:1.1em;font-weight:600;color:#888;margin-bottom:2px;">Previous Month (<?php echo esc_html($prev_month_label); ?>)</div>
-                        <div style="font-size:1.5em;font-weight:700;color:#7f54b3;">$<?php echo number_format($prev_month_revenue, 2); ?></div>
                     </div>
                     <div style="flex:1;min-width:180px;background:#e6f0fa;border-radius:8px;padding:18px 22px;text-align:center;">
+                        <div style="margin-bottom:10px;font-size:1.5em;font-weight:700;color:#2196f3;">$<?php echo number_format($projection, 2); ?></div>
                         <div style="font-size:1.1em;font-weight:600;color:#888;margin-bottom:2px;">Next Month Projection (<?php echo esc_html($next_month_label); ?>)</div>
-                        <div style="font-size:1.5em;font-weight:700;color:#2196f3;">$<?php echo number_format($projection, 2); ?></div>
                     </div>
                 </div>
                 <canvas id="wpsubscription-report-chart" height="110"></canvas>
@@ -448,9 +447,9 @@ class Menu {
         <div style="text-align:center;margin:38px 0 0 0;font-size:14px;color:#888;">
             Made with <span style="color:#e25555;font-size:1.1em;">♥</span> by the WP Subscription Team
             <div style="margin-top:6px;">
-                <a href="https://wpsubscription.com/support" target="_blank" style="color:#2563eb;text-decoration:none;">Support</a>
+                <a href="https://wpsubscription.co/support" target="_blank" style="color:#2563eb;text-decoration:none;">Support</a>
                 &nbsp;/&nbsp;
-                <a href="https://wpsubscription.com/docs" target="_blank" style="color:#2563eb;text-decoration:none;">Docs</a>
+                <a href="https://wpsubscription.co/docs" target="_blank" style="color:#2563eb;text-decoration:none;">Docs</a>
             </div>
         </div>
         <?php
@@ -546,18 +545,18 @@ class Menu {
             <div class="wp-subscription-support-resources" style="display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-bottom:24px;">
                 <div class="wp-subscription-admin-box">
                     <h3>Documentation</h3>
-                    <p style="font-size:14px;margin:0 0 8px 0;">Read our <a href="https://wpsubscription.com/docs\" target=\"_blank\" style=\"color:#2271b1;\">comprehensive docs</a> for setup, migration, and advanced usage.</p>
-                    <a href="https://wpsubscription.com/docs" target="_blank" class="button button-small" style="font-size:13px;padding:5px 14px;">View Docs</a>
+                    <p style="font-size:14px;margin:0 0 8px 0;">Read our <a href="https://wpsubscription.co/docs\" target=\"_blank\" style=\"color:#2271b1;\">comprehensive docs</a> for setup, migration, and advanced usage.</p>
+                    <a href="https://wpsubscription.co/docs" target="_blank" class="button button-small" style="font-size:13px;padding:5px 14px;">View Docs</a>
                 </div>
                 <div class="wp-subscription-admin-box">
                     <h3>Facing An Issue?</h3>
-                    <p style="font-size:14px;margin:0 0 8px 0;">If you have a problem, <a href="https://wpsubscription.com/support\" target=\"_blank\" style=\"color:#d93025;\">open a support ticket</a> or check our FAQ.</p>
-                    <a href="https://wpsubscription.com/support" target="_blank" class="button button-small" style="font-size:13px;padding:5px 14px;">Get Support</a>
+                    <p style="font-size:14px;margin:0 0 8px 0;">If you have a problem, <a href="https://wpsubscription.co/support\" target=\"_blank\" style=\"color:#d93025;\">open a support ticket</a> or check our FAQ.</p>
+                    <a href="https://wpsubscription.co/support" target="_blank" class="button button-small" style="font-size:13px;padding:5px 14px;">Get Support</a>
                 </div>
                 <div class="wp-subscription-admin-box">
                     <h3>Request a Feature</h3>
-                    <p style="font-size:14px;margin:0 0 8px 0;">Have an idea? <a href="https://wpsubscription.com/feature-request\" target=\"_blank\" style=\"color:#2271b1;\">Request a feature</a> or vote on others.</p>
-                    <a href="https://wpsubscription.com/feature-request" target="_blank" class="button button-small" style="font-size:13px;padding:5px 14px;">Request Feature</a>
+                    <p style="font-size:14px;margin:0 0 8px 0;">Have an idea? <a href="https://wpsubscription.co/feature-request\" target=\"_blank\" style=\"color:#2271b1;\">Request a feature</a> or vote on others.</p>
+                    <a href="https://wpsubscription.co/feature-request" target="_blank" class="button button-small" style="font-size:13px;padding:5px 14px;">Request Feature</a>
                 </div>
                 <div class="wp-subscription-admin-box">
                     <h3>Show Your Love</h3>
@@ -569,9 +568,9 @@ class Menu {
         <div style="text-align:center;margin:38px 0 0 0;font-size:14px;color:#888;">
             Made with <span style="color:#e25555;font-size:1.1em;">♥</span> by the WP Subscription Team
             <div style="margin-top:6px;">
-                <a href="https://wpsubscription.com/support" target="_blank" style="color:#2563eb;text-decoration:none;">Support</a>
+                <a href="https://wpsubscription.co/support" target="_blank" style="color:#2563eb;text-decoration:none;">Support</a>
                 &nbsp;/&nbsp;
-                <a href="https://wpsubscription.com/docs" target="_blank" style="color:#2563eb;text-decoration:none;">Docs</a>
+                <a href="https://wpsubscription.co/docs" target="_blank" style="color:#2563eb;text-decoration:none;">Docs</a>
             </div>
         </div>
         <?php

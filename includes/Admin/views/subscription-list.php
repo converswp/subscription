@@ -103,7 +103,7 @@ for ($i = 0; $i < 12; $i++) {
                     </span>
                 </td>
                 <td>
-                    <a href="<?php echo esc_url(get_edit_post_link($subscription->ID)); ?>" class="button button-small"><?php esc_html_e('View/Edit', 'wp_subscription'); ?></a>
+                    <a href="<?php echo esc_url(get_edit_post_link($subscription->ID)); ?>" class="button button-small"><?php esc_html_e('Edit', 'wp_subscription'); ?></a>
                 </td>
             </tr>
             <?php endforeach; ?>

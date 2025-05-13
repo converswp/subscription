@@ -4,3 +4,4 @@
 /.idea
 .phpunit.result.cache
 /release
+/svn

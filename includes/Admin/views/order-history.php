@@ -16,14 +16,15 @@ STYLE GUIDE FOR WP SUBSCRIPTION ADMIN PAGES:
 <table class="wp-list-table widefat fixed striped wp-subscription-modern-table" style="border-radius:6px;overflow:hidden;box-shadow:0 2px 8px #e0e7ef;">
 	<thead>
 		<tr>
-			<th><?php
-			esc_html_e( 'Order', 'wp_subscription' ); ?></th>
+			<th style="width: 100px;"><?php
+			esc_html_e( 'ID', 'wp_subscription' ); ?></th>
 			<th></th>
 			<th><?php esc_html_e( 'Date', 'wp_subscription' ); ?></th>
 			<th><?php esc_html_e( 'Status', 'wp_subscription' ); ?></th>
 			<th><?php esc_html_e( 'Amount', 'wp_subscription' ); ?></th>
 		</tr>
 	</thead>
+	
 	<tbody>
 		<?php foreach ( $order_histories as $order_history ) : ?>
 			<?php

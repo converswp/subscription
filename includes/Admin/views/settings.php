@@ -48,7 +48,7 @@
 					<tr>
 						<th scope="row">
 							<label for="wp_subscription_unactive_role">
-								<?php esc_html_e( 'Subscriber Unactive Role', 'wp_subscription' ); ?>
+								<?php esc_html_e( 'Subscriber Inactive Role', 'wp_subscription' ); ?>
 							</label>
 						</th>
 						<td>
