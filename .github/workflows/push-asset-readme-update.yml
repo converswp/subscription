@@ -8,6 +8,10 @@ jobs:
         name: Push to main
         runs-on: ubuntu-latest
         steps:
+            # - name: Install Act dependencies
+            #   if: ${{ env.ACT }}
+            #   run: |
+            #     apt-get update && apt-get install composer -y && apt-get install git -y
             - uses: actions/checkout@master
             - name: Stash changes
               run: git stash
