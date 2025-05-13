@@ -21,12 +21,6 @@
                 "hooks": "wps_",
                 "postTypes": "wps_",
                 "taxonomies": "wps_"
-            },
-            "fileNames": {
-                "php": "class-{name}.php",
-                "js": "{name}.js",
-                "css": "{name}.css",
-                "scss": "{name}.scss"
             }
         },
         "structure": {
