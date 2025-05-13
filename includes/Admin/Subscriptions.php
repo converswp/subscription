@@ -5,6 +5,11 @@ namespace SpringDevs\Subscription\Admin;
 use SpringDevs\Subscription\Illuminate\Action;
 use SpringDevs\Subscription\Illuminate\Helper;
 
+// HPOS: This file is compatible with WooCommerce High-Performance Order Storage (HPOS).
+// All WooCommerce order data is accessed via WooCommerce CRUD methods (wc_get_order, etc.).
+// All direct post meta access is for subscription data only, not WooCommerce order data.
+// If you add new order data access, use WooCommerce CRUD for HPOS compatibility.
+
 /**
  * Subscriptions class
  *
@@ -29,6 +34,8 @@ class Subscriptions {
 		add_action( 'save_post', array( $this, 'save_subscrpt_order' ) );
 		add_filter( 'woocommerce_order_item_get_formatted_meta_data', array( $this, 'remove_order_meta' ), 10, 1 );
 		add_filter( 'bulk_actions-edit-subscrpt_order', array( $this, 'remove_bulk_actions' ) );
+		add_action( 'restrict_manage_posts', array( $this, 'add_subscription_filter_select' ) );
+		add_action( 'admin_menu', array( $this, 'add_overview_submenu' ), 40 );
 	}
 
 	/**
@@ -120,8 +127,9 @@ class Subscriptions {
 	 * @return void
 	 */
 	public function add_custom_columns_data( $column, $post_id ) {
-		$order_id = get_post_meta( $post_id, '_subscrpt_order_id', true );
-		$order    = wc_get_order( $order_id );
+		// HPOS: Safe. Only retrieves WooCommerce order via CRUD, and subscription meta via post meta.
+		$order_id = get_post_meta( $post_id, '_subscrpt_order_id', true ); // HPOS: Only subscription meta, not order meta.
+		$order = wc_get_order( $order_id ); // HPOS: Safe, uses WooCommerce CRUD.
 		if ( $order ) {
 			if ( 'subscrpt_start_date' === $column ) {
 				$start_date = get_post_meta( $post_id, '_subscrpt_start_date', true );
@@ -238,10 +246,29 @@ class Subscriptions {
 				do_action( 'subscrpt_order_activities', $post->ID );
 			else :
 				?>
-				<a href="https://springdevs.com/subscription" target="_blank">
-					<img style="width: 100%;"
-						src="<?php echo esc_html( SUBSCRPT_ASSETS . '/images/subscrpt-ads.png' ); ?>" />
-				</a>
+				<div class="wp-subscription-admin-box wp-subscription-upgrade-pro-banner" style="margin-bottom:18px;display:flex;align-items:center;gap:18px;justify-content:space-between;background:linear-gradient(90deg,#38bdf8 0%,#6366f1 100%);border-radius:10px;padding:22px 28px;box-shadow:0 2px 12px rgba(56,189,248,0.08);color:#fff;">
+					<div style="flex:1;">
+						<div style="display:flex;align-items:center;gap:14px;">
+							<span style="font-size:2.2em;line-height:1;">🚀</span>
+							<span style="font-family:Georgia,serif;font-size:1.25em;font-weight:bold;">Upgrade to WP Subscription Pro</span>
+						</div>
+						<div style="margin-top:8px;font-size:1.08em;max-width:500px;opacity:0.95;">
+							Unlock advanced features, automation, and priority support. Take your subscription business to the next level!
+						</div>
+					</div>
+					<div style="flex-shrink:0;">
+						<a href="https://wpsubscription.co/" target="_blank" class="button button-primary" style="background:#fff;color:#6366f1;font-weight:600;font-size:1.08em;padding:12px 28px;border:none;box-shadow:0 2px 8px rgba(99,102,241,0.10);border-radius:6px;">Upgrade to Pro</a>
+					</div>
+				</div>
+				<div class="subscrpt-pro-banner-img" style="margin-top:12px;max-width:520px;width:100%;border-radius:10px;box-shadow:0 2px 12px rgba(56,189,248,0.10);overflow:hidden;transition:transform 0.22s cubic-bezier(.4,0,.2,1),box-shadow 0.22s cubic-bezier(.4,0,.2,1);">
+					<img style="width:100%;display:block;border-radius:10px;transition:inherit;" src="<?php echo esc_html( WP_SUBSCRIPTION_ASSETS . '/images/subscrpt-ads.png' ); ?>" />
+				</div>
+				<style>
+				.subscrpt-pro-banner-img:hover {
+					transform: scale(1.025) translateY(-2px);
+					box-shadow: 0 8px 32px rgba(56,189,248,0.18);
+				}
+				</style>
 				<?php
 			endif;
 		endif;
@@ -471,5 +498,187 @@ class Subscriptions {
 		} else {
 			Action::status( $action, $post_id );
 		}
+	}
+
+	public function add_subscription_filter_select() {
+		// Implementation of add_subscription_filter_select method
+	}
+
+	public function add_overview_submenu() {
+		// Remove and re-add submenu to ensure Overview is first
+		remove_submenu_page('edit.php?post_type=subscrpt_order', 'edit.php?post_type=subscrpt_order');
+		add_submenu_page(
+			'edit.php?post_type=subscrpt_order',
+			__( 'Overview', 'wp_subscription' ),
+			__( 'Overview', 'wp_subscription' ),
+			'manage_options',
+			'subscription_overview',
+			array( $this, 'render_overview_page' ),
+			0
+		);
+		add_submenu_page(
+			'edit.php?post_type=subscrpt_order',
+			__( 'All Subscriptions', 'wp_subscription' ),
+			__( 'All Subscriptions', 'wp_subscription' ),
+			'manage_options',
+			'edit.php?post_type=subscrpt_order',
+			'',
+			1
+		);
+		if ( ! class_exists('Sdevs_Wc_Subscription_Pro') ) {
+			add_submenu_page(
+				'edit.php?post_type=subscrpt_order',
+				__( 'Go Pro', 'wp_subscription' ),
+				__( 'Go Pro', 'wp_subscription' ),
+				'manage_options',
+				'wp_subscription_go_pro',
+				array( $this, 'render_go_pro_page' ),
+				99
+			);
+		}
+	}
+
+	public function render_overview_page() {
+		?>
+		<div class="wrap wpsubscription-overview" style="max-width:1100px;margin:40px auto 0 auto;">
+			<div class="wpsubscription-overview-card" style="background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.06);padding:40px 32px 32px 32px;">
+				<div class="wpsubscription-overview-top" style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;margin-bottom:40px;">
+					<div class="wpsubscription-overview-info" style="display:flex;flex-direction:column;gap:18px;">
+						<h1 style="margin-bottom:0.2em;"><?php esc_html_e( 'WP Subscription Overview', 'wp_subscription' ); ?></h1>
+						<p class="product-desc" style="font-size:1.15em;line-height:1.6;max-width:500px;">
+							<?php esc_html_e( 'WP Subscription is the most seamless and reliable WooCommerce subscription solution for store owners looking to grow recurring revenue. Easily manage recurring payments, automate renewals, and delight your customers with flexible plans.', 'wp_subscription' ); ?>
+						</p>
+						<div class="wpsubscription-links" style="display:flex;gap:12px;flex-wrap:wrap;">
+							<a href="https://converslabs.thrivedeskdocs.com/en" target="_blank" class="button button-secondary"><?php esc_html_e( 'Documentation', 'wp_subscription' ); ?></a>
+							<a href="https://wpsubscription.co/" target="_blank" class="button button-secondary"><?php esc_html_e( 'Website', 'wp_subscription' ); ?></a>
+						</div>
+					</div>
+					<div class="promo-video" style="text-align:center;">
+						<iframe width="420" height="236" src="https://www.youtube.com/embed/2e6o5p0M7L4" title="WP Subscription Promo" frameborder="0" allowfullscreen style="max-width:100%;border-radius:8px;"></iframe>
+					</div>
+				</div>
+
+				<div class="wpsubscription-what-section" style="margin-bottom:40px;">
+					<h2><?php esc_html_e( 'What does Subscriptions for WooCommerce do?', 'wp_subscription' ); ?></h2>
+					<p style="font-size:1.08em;max-width:900px;line-height:1.7;">
+						<?php esc_html_e( 'Subscriptions for WooCommerce enables you to create and manage recurring payment products and services with ease. Automate renewals, offer flexible billing schedules, and provide your customers with a seamless subscription experience. Whether you sell digital content, physical goods, or memberships, WP Subscription gives you the tools to grow your recurring revenue.', 'wp_subscription' ); ?>
+					</p>
+				</div>
+
+				<h2 style="margin-top:2em;"><?php esc_html_e( 'Highlights', 'wp_subscription' ); ?></h2>
+				<div class="wpsubscription-features-grid">
+					<div class="feature-box"><span class="dashicons dashicons-admin-generic"></span><h3>Easy Setup</h3><p>Get started in minutes with our intuitive onboarding wizard.</p></div>
+					<div class="feature-box"><span class="dashicons dashicons-money"></span><h3>Multiple Gateways</h3><p>Support for Stripe, PayPal, and Paddle out of the box.</p></div>
+					<div class="feature-box"><span class="dashicons dashicons-schedule"></span><h3>Flexible Plans</h3><p>Create and manage various subscription types and delivery schedules.</p></div>
+					<div class="feature-box"><span class="dashicons dashicons-chart-line"></span><h3>Comprehensive Dashboard</h3><p>Monitor and manage all subscriptions in one place.</p></div>
+				</div>
+			</div>
+		</div>
+		<style>
+		.wpsubscription-overview .promo-video { text-align:center; }
+		.wpsubscription-features-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+			gap: 24px;
+			margin-top: 32px;
+		}
+		.feature-box {
+			background: #fff;
+			border-radius: 10px;
+			box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+			padding: 24px 18px 18px 18px;
+			text-align: center;
+			transition: transform 0.2s, box-shadow 0.2s;
+			will-change: transform;
+		}
+		.feature-box:hover {
+			transform: translateY(-6px) scale(1.03);
+			box-shadow: 0 6px 24px rgba(0,0,0,0.10);
+		}
+		.feature-box .dashicons {
+			font-size: 2.2em;
+			color: #7f54b3;
+			margin-bottom: 10px;
+			display: block;
+		}
+		.feature-box h3 {
+			margin: 12px 0 8px 0;
+			font-size: 1.15em;
+		}
+		.feature-box p {
+			color: #555;
+			font-size: 1em;
+			margin: 0;
+		}
+		</style>
+		<?php
+	}
+
+	public function render_go_pro_page() {
+		if ( class_exists('Sdevs_Wc_Subscription_Pro') ) {
+			echo '<div class="notice notice-info" style="margin:40px auto;max-width:700px;text-align:center;font-size:1.2em;">Pro is already active.</div>';
+			return;
+		}
+		?>
+		<div class="wrap wpsubscription-go-pro" style="max-width:900px;margin:40px auto 0 auto;">
+			<div class="wpsubscription-go-pro-card" style="background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.06);padding:40px 32px 32px 32px;">
+				<h1 style="margin-bottom:0.5em;"><?php esc_html_e( 'Upgrade to WP Subscription Pro', 'wp_subscription' ); ?></h1>
+				<p style="font-size:1.12em;max-width:600px;line-height:1.6;">
+					<?php esc_html_e( 'Unlock the full power of subscriptions for WooCommerce. Get advanced features, priority support, and more ways to grow your recurring revenue.', 'wp_subscription' ); ?>
+				</p>
+				<table class="wpsubscription-compare-table" style="width:100%;margin:32px 0 40px 0;border-collapse:separate;border-spacing:0;box-shadow:0 1px 4px rgba(0,0,0,0.04);background:#fafbfc;border-radius:8px;overflow:hidden;">
+					<thead>
+						<tr style="background:#f8f9fa;">
+							<th style="padding:18px 12px 18px 24px;font-size:1.08em;text-align:left;border:none;"></th>
+							<th style="padding:18px 12px;font-size:1.08em;text-align:center;border:none;">Free</th>
+							<th style="padding:18px 12px;font-size:1.08em;text-align:center;border:none;color:#7f54b3;">Pro</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td style="padding:16px 12px 16px 24px;">Simple subscription products</td>
+							<td style="text-align:center;">✔️</td>
+							<td style="text-align:center;">✔️</td>
+						</tr>
+						<tr style="background:#f6f7f7;">
+							<td style="padding:16px 12px 16px 24px;">Automated recurring billing</td>
+							<td style="text-align:center;">✔️</td>
+							<td style="text-align:center;">✔️</td>
+						</tr>
+						<tr>
+							<td style="padding:16px 12px 16px 24px;">Multiple payment gateways</td>
+							<td style="text-align:center;">✔️</td>
+							<td style="text-align:center;">✔️</td>
+						</tr>
+						<tr style="background:#f6f7f7;">
+							<td style="padding:16px 12px 16px 24px;">Customer self-service portal</td>
+							<td style="text-align:center;">✔️</td>
+							<td style="text-align:center;">✔️</td>
+						</tr>
+						<tr>
+							<td style="padding:16px 12px 16px 24px;">Priority support</td>
+							<td style="text-align:center;">—</td>
+							<td style="text-align:center;">✔️</td>
+						</tr>
+						<tr style="background:#f6f7f7;">
+							<td style="padding:16px 12px 16px 24px;">Advanced reporting & analytics</td>
+							<td style="text-align:center;">—</td>
+							<td style="text-align:center;">✔️</td>
+						</tr>
+						<tr>
+							<td style="padding:16px 12px 16px 24px;">Variable product support</td>
+							<td style="text-align:center;">—</td>
+							<td style="text-align:center;font-weight:600;color:#43a047;">✔️</td>
+						</tr>
+					</tbody>
+				</table>
+				<div style="text-align:center;margin-top:24px;">
+					<a href="https://wpsubscription.co/" target="_blank" class="button button-primary button-hero" style="font-size:1.2em;padding:16px 40px 16px 40px;background:#7f54b3;border:none;box-shadow:0 2px 8px rgba(127,84,179,0.10);">
+						<?php esc_html_e( 'Upgrade to Pro', 'wp_subscription' ); ?>
+					</a>
+				</div>
+			</div>
+		</div>
+		<?php
 	}
 }

@@ -1,6 +1,16 @@
+<?php
+/*
+STYLE GUIDE FOR WP SUBSCRIPTION ADMIN PAGES:
+- Use .wp-subscription-admin-content for main content area.
+- Use .wp-subscription-admin-box for white card/box with shadow and 6-8px border-radius.
+- Use compact, modern, visually unified design for all sections.
+- Use Georgia, serif for titles, system sans-serif for body.
+- All new UI/UX changes must follow these conventions.
+*/
+?>
 <div class="notice notice-error sdevs-install-plugin">
 	<div class="sdevs-notice-icon">
-		<img src="<?php echo SUBSCRPT_ASSETS . '/images/woocommerce.png'; ?>" alt="woocommerce-logo" />
+		<img src="<?php echo WP_SUBSCRIPTION_ASSETS . '/images/logo.png'; ?>" alt="woocommerce-logo" />
 	</div>
 	<div class="sdevs-notice-content">
 		<h2><?php _e( 'Thanks for using Subscription for WooCommerce', 'sdevs_subscrpt' ); ?></h2>

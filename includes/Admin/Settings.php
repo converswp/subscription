@@ -15,6 +15,7 @@ class Settings {
 	public function __construct() {
 		add_action( 'admin_menu', array( $this, 'admin_menu' ), 30 );
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_wc_admin_styles' ) );
 	}
 
 	/**
@@ -24,19 +25,28 @@ class Settings {
 	 */
 	public function admin_menu() {
 		$post_type_link = 'edit.php?post_type=subscrpt_order';
-		add_submenu_page( $post_type_link, 'Subscription Settings', 'Settings', 'manage_options', 'subscrpt_settings', array( $this, 'settings_content' ) );
+
+		add_submenu_page( 
+			$post_type_link, 
+			__( 'WP Subscription Settings', 'wp_subscription' ),
+			__( 'Settings', 'wp_subscription' ), 
+			'manage_options', 
+			'edit.php?post_type=wp_subscription_settings',
+			array( $this, 'settings_content' ),
+			40
+		);
 	}
 
 	/**
 	 * Register settings options.
 	 **/
 	public function register_settings() {
-		register_setting( 'subscrpt_settings', 'subscrpt_renewal_process' );
-		register_setting( 'subscrpt_settings', 'subscrpt_manual_renew_cart_notice' );
-		register_setting( 'subscrpt_settings', 'subscrpt_active_role' );
-		register_setting( 'subscrpt_settings', 'subscrpt_unactive_role' );
-		register_setting( 'subscrpt_settings', 'subscrpt_stripe_auto_renew' );
-		register_setting( 'subscrpt_settings', 'subscrpt_auto_renewal_toggle' );
+		register_setting( 'wp_subscription_settings', 'wp_subscription_renewal_process' );
+		register_setting( 'wp_subscription_settings', 'wp_subscription_manual_renew_cart_notice' );
+		register_setting( 'wp_subscription_settings', 'wp_subscription_active_role' );
+		register_setting( 'wp_subscription_settings', 'wp_subscription_unactive_role' );
+		register_setting( 'wp_subscription_settings', 'wp_subscription_stripe_auto_renew' );
+		register_setting( 'wp_subscription_settings', 'wp_subscription_auto_renewal_toggle' );
 
 		do_action( 'subscrpt_register_settings', 'subscrpt_settings' );
 	}
@@ -46,5 +56,19 @@ class Settings {
 	 */
 	public function settings_content() {
 		include 'views/settings.php';
+	}
+
+	/**
+	 * Enqueue WooCommerce admin styles for settings page.
+	 */
+	public function enqueue_wc_admin_styles( $hook ) {
+		// Only load on our settings page
+		if ( isset( $_GET['post_type'] ) && strpos( $_GET['post_type'], 'subscrpt_order' ) !== false ) {
+			// WooCommerce admin styles
+			wp_enqueue_style( 'woocommerce_admin_styles', WC()->plugin_url() . '/assets/css/admin.css', array(), WC_VERSION );
+			// Optional: WooCommerce enhanced select2
+			wp_enqueue_style( 'woocommerce_admin_select2', WC()->plugin_url() . '/assets/css/select2.css', array(), WC_VERSION );
+			wp_enqueue_script( 'select2' );
+		}
 	}
 }

@@ -1,12 +1,13 @@
 {
-  "name": "springdevs/subscription",
-  "description": "woocommerce subscription",
+  "name": "converswp/subscription",
+  "description": "WooCommerce Subscription Management Plugin",
   "type": "wordpress-plugin",
-  "license": "GPLv2",
+  "license": "GPL-2.0-or-later",
   "authors": [
     {
-      "name": "https://springdevs.com/",
-      "email": "contact@springdevs.com"
+      "name": "Convers Labs",
+      "email": "contact@converslabs.com",
+      "homepage": "https://wpsubscription.co"
     }
   ],
   "minimum-stability": "dev",

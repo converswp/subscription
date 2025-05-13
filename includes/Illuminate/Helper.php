@@ -2,6 +2,11 @@
 
 namespace SpringDevs\Subscription\Illuminate;
 
+// HPOS: This file is compatible with WooCommerce High-Performance Order Storage (HPOS).
+// All WooCommerce order data is accessed via WooCommerce CRUD methods (wc_get_order, wc_get_orders, etc.).
+// All direct post meta access is for subscription data only, not WooCommerce order data.
+// If you add new order data access, use WooCommerce CRUD for HPOS compatibility.
+
 /**
  * Class Helper || Some Helper Methods
  *
@@ -589,3 +594,5 @@ class Helper {
 		$new_order->set_shipping_postcode( $customer->get_shipping_postcode() );
 	}
 }
+
+// HPOS: All order data access below uses WooCommerce CRUD and is HPOS compatible.

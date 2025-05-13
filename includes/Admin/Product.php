@@ -4,6 +4,10 @@ namespace SpringDevs\Subscription\Admin;
 
 use SpringDevs\Subscription\Illuminate\Helper;
 
+// HPOS: This file does not access WooCommerce order data directly.
+// All meta access is for product or subscription data only, not WooCommerce order data.
+// If you add new order data access, use WooCommerce CRUD for HPOS compatibility.
+
 /**
  * Product class
  *

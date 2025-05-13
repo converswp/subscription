@@ -1,18 +1,17 @@
 <?php
 /*
-Plugin Name: Subscription for WooCommerce
+Plugin Name: Subscriptions for WooCommerce
 Plugin URI: https://wordpress.org/plugins/subscription
 Description: Enable WooCommerce Subscriptions and Start Recurring Revenue in Minutes.
 Plugin URI: https://wpsubscription.co/
 
-Author: shamsbd71
+Author: converswp
 Author URI: https://wpsubscription.co/
 
 Version: 1.3.2
-Requires Plugins: woocommerce
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
-Text Domain: sdevs_subscrpt
+Text Domain: wp_subscription
 Domain Path: /languages
 */
 
@@ -110,13 +109,13 @@ final class Sdevs_Subscription {
 	 * @return void
 	 */
 	public function define_constants() {
-		define( 'SUBSCRPT_VERSION', self::version );
-		define( 'SUBSCRPT_FILE', __FILE__ );
-		define( 'SUBSCRPT_PATH', dirname( SUBSCRPT_FILE ) );
-		define( 'SUBSCRPT_INCLUDES', SUBSCRPT_PATH . '/includes' );
-		define( 'SUBSCRPT_TEMPLATES', SUBSCRPT_PATH . '/templates/' );
-		define( 'SUBSCRPT_URL', plugins_url( '', SUBSCRPT_FILE ) );
-		define( 'SUBSCRPT_ASSETS', SUBSCRPT_URL . '/assets' );
+		define( 'WP_SUBSCRIPTION_VERSION', self::version );
+		define( 'WP_SUBSCRIPTION_FILE', __FILE__ );
+		define( 'WP_SUBSCRIPTION_PATH', dirname( WP_SUBSCRIPTION_FILE ) );
+		define( 'WP_SUBSCRIPTION_INCLUDES', WP_SUBSCRIPTION_PATH . '/includes' );
+		define( 'WP_SUBSCRIPTION_TEMPLATES', WP_SUBSCRIPTION_PATH . '/templates/' );
+		define( 'WP_SUBSCRIPTION_URL', plugins_url( '', WP_SUBSCRIPTION_FILE ) );
+		define( 'WP_SUBSCRIPTION_ASSETS', WP_SUBSCRIPTION_URL . '/assets' );
 	}
 
 	/**
@@ -172,6 +171,29 @@ final class Sdevs_Subscription {
 		add_action( 'init', array( $this, 'init_classes' ) );
 		add_action( 'init', array( $this, 'localization_setup' ) );
 		add_action( 'init', array( $this, 'run_update' ) );
+		
+		// HPOS Compatibility: Declare support for custom order tables
+		add_action('before_woocommerce_init', function() {
+			if (class_exists(\Automattic\WooCommerce\Utilities\FeaturesUtil::class)) {
+				\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility('custom_order_tables', __FILE__, true);
+			}
+		});
+
+		// HPOS Compatibility: Register subscription post type with HPOS support
+		add_action('init', function() {
+			register_post_type('subscrpt_order', array(
+				'hpos' => true,
+				'public' => false,
+				'show_ui' => true,
+				'show_in_menu' => false,
+				'supports' => array('title'),
+				'capability_type' => 'post',
+				'capabilities' => array(
+					'create_posts' => false,
+				),
+				'map_meta_cap' => true,
+			));
+		}, 0);
 	}
 
 	/**
@@ -204,7 +226,7 @@ final class Sdevs_Subscription {
 	 * @uses load_plugin_textdomain()
 	 */
 	public function localization_setup() {
-		load_plugin_textdomain( 'sdevs_subscrpt', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+		load_plugin_textdomain( 'wp_subscription', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 	}
 
 	/**

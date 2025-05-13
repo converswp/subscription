@@ -1,0 +1,100 @@
+{
+    "version": 1,
+    "rules": {
+        "general": {
+            "indentation": {
+                "php": 4,
+                "js": 2,
+                "css": 2,
+                "scss": 2
+            },
+            "lineEnding": "lf",
+            "charset": "utf-8",
+            "trimTrailingWhitespace": true,
+            "insertFinalNewline": true
+        },
+        "naming": {
+            "prefixes": {
+                "classes": "WPS_",
+                "functions": "wps_",
+                "constants": "WPS_",
+                "hooks": "wps_",
+                "postTypes": "wps_",
+                "taxonomies": "wps_"
+            }
+        },
+        "structure": {
+            "directories": {
+                "src": {
+                    "description": "Main plugin source code",
+                    "subdirs": {
+                        "Admin": "Admin-related functionality",
+                        "Frontend": "Frontend-related functionality",
+                        "Gateways": "Payment gateway integrations",
+                        "Templates": "Template files",
+                        "Models": "Data models and database interactions"
+                    }
+                },
+                "assets": {
+                    "description": "Static assets",
+                    "subdirs": {
+                        "css": "Stylesheets",
+                        "js": "JavaScript files",
+                        "images": "Images and icons",
+                        "fonts": "Font files"
+                    }
+                },
+                "templates": {
+                    "description": "Template files for frontend display",
+                    "subdirs": {
+                        "admin": "Admin template files",
+                        "frontend": "Frontend template files",
+                        "emails": "Email template files"
+                    }
+                }
+            }
+        },
+        "documentation": {
+            "required": {
+                "classes": true,
+                "methods": true,
+                "functions": true,
+                "hooks": true,
+                "filters": true
+            },
+            "format": {
+                "php": "PHPDoc",
+                "js": "JSDoc"
+            }
+        },
+        "security": {
+            "required": {
+                "nonceVerification": true,
+                "capabilityChecks": true,
+                "dataSanitization": true,
+                "escaping": true
+            }
+        },
+        "compatibility": {
+            "php": ">=7.0",
+            "wordpress": ">=4.6",
+            "woocommerce": ">=3.0"
+        },
+        "features": {
+            "onboarding": {
+                "required": {
+                    "wizard": true,
+                    "setupGuide": true,
+                    "templates": true
+                }
+            },
+            "ui": {
+                "required": {
+                    "responsive": true,
+                    "accessibility": true,
+                    "modernDesign": true
+                }
+            }
+        }
+    }
+} 
