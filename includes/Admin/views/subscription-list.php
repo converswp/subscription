@@ -109,7 +109,7 @@ for ($i = 0; $i < 12; $i++) {
             <?php endforeach; ?>
         <?php else : ?>
             <tr>
-                <td colspan="8" class="wp-subscription-list-empty">
+                <td colspan="7" class="wp-subscription-list-empty">
                     <?php esc_html_e('No subscriptions found.', 'wp_subscription'); ?>
                 </td>
             </tr>

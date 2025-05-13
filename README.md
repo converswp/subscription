@@ -67,6 +67,6 @@ This plugin is licensed under the GPL v2 or later.
 
 - [Website](https://wpsubscription.co)
 - [WordPress.org Plugin Page](https://wordpress.org/plugins/subscription/)
-- [Support](https://wpsubscription.co/support)
+- [Support](https://wpsubscription.co/contact)
 - [Pro Version](https://wpsubscription.co)
 - [GitHub Repository](https://github.com/converswp/subscription)

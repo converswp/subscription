@@ -110,9 +110,9 @@ class Menu {
         <div style="text-align:center;margin:38px 0 0 0;font-size:14px;color:#888;">
             Made with <span style="color:#e25555;font-size:1.1em;">♥</span> by the WP Subscription Team
             <div style="margin-top:6px;">
-                <a href="https://wpsubscription.co/support" target="_blank" style="color:#2563eb;text-decoration:none;">Support</a>
+                <a href="https://wpsubscription.co/contact" target="_blank" style="color:#2563eb;text-decoration:none;">Support</a>
                 &nbsp;/&nbsp;
-                <a href="https://wpsubscription.co/docs" target="_blank" style="color:#2563eb;text-decoration:none;">Docs</a>
+                <a href="https://converslabs.thrivedeskdocs.com/en" target="_blank" style="color:#2563eb;text-decoration:none;">Docs</a>
             </div>
         </div>
         <?php
@@ -252,9 +252,9 @@ class Menu {
         <div style="text-align:center;margin:38px 0 0 0;font-size:14px;color:#888;">
             Made with <span style="color:#e25555;font-size:1.1em;">♥</span> by the WP Subscription Team
             <div style="margin-top:6px;">
-                <a href="https://wpsubscription.co/support" target="_blank" style="color:#2563eb;text-decoration:none;">Support</a>
+                <a href="https://wpsubscription.co/contact" target="_blank" style="color:#2563eb;text-decoration:none;">Support</a>
                 &nbsp;/&nbsp;
-                <a href="https://wpsubscription.co/docs" target="_blank" style="color:#2563eb;text-decoration:none;">Docs</a>
+                <a href="https://converslabs.thrivedeskdocs.com/en" target="_blank" style="color:#2563eb;text-decoration:none;">Docs</a>
             </div>
         </div>
         <?php
@@ -447,9 +447,9 @@ class Menu {
         <div style="text-align:center;margin:38px 0 0 0;font-size:14px;color:#888;">
             Made with <span style="color:#e25555;font-size:1.1em;">♥</span> by the WP Subscription Team
             <div style="margin-top:6px;">
-                <a href="https://wpsubscription.co/support" target="_blank" style="color:#2563eb;text-decoration:none;">Support</a>
+                <a href="https://wpsubscription.co/contact" target="_blank" style="color:#2563eb;text-decoration:none;">Support</a>
                 &nbsp;/&nbsp;
-                <a href="https://wpsubscription.co/docs" target="_blank" style="color:#2563eb;text-decoration:none;">Docs</a>
+                <a href="https://converslabs.thrivedeskdocs.com/en" target="_blank" style="color:#2563eb;text-decoration:none;">Docs</a>
             </div>
         </div>
         <?php
@@ -489,8 +489,8 @@ class Menu {
                         <li>Modern, compact admin interface</li>
                         <li>Advanced filtering & search</li>
                         <li>Subscription history & activities</li>
-                        <li>Easy migration from other plugins</li>
-                        <li>Pro: Analytics, automation, integrations, and more!</li>
+                        <!-- <li>Easy migration from other plugins</li> -->
+                        <!-- <li>Pro: Analytics, automation, integrations, and more!</li> -->
                     </ul>
                 </div>
                 <div style="flex:1;min-width:220px;max-width:320px;">
@@ -545,18 +545,18 @@ class Menu {
             <div class="wp-subscription-support-resources" style="display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-bottom:24px;">
                 <div class="wp-subscription-admin-box">
                     <h3>Documentation</h3>
-                    <p style="font-size:14px;margin:0 0 8px 0;">Read our <a href="https://wpsubscription.co/docs\" target=\"_blank\" style=\"color:#2271b1;\">comprehensive docs</a> for setup, migration, and advanced usage.</p>
-                    <a href="https://wpsubscription.co/docs" target="_blank" class="button button-small" style="font-size:13px;padding:5px 14px;">View Docs</a>
+                    <p style="font-size:14px;margin:0 0 8px 0;">Read our <a href="https://converslabs.thrivedeskdocs.com/en\" target=\"_blank\" style=\"color:#2271b1;\">comprehensive docs</a> for setup, migration, and advanced usage.</p>
+                    <a href="https://converslabs.thrivedeskdocs.com/en" target="_blank" class="button button-small" style="font-size:13px;padding:5px 14px;">View Docs</a>
                 </div>
                 <div class="wp-subscription-admin-box">
                     <h3>Facing An Issue?</h3>
-                    <p style="font-size:14px;margin:0 0 8px 0;">If you have a problem, <a href="https://wpsubscription.co/support\" target=\"_blank\" style=\"color:#d93025;\">open a support ticket</a> or check our FAQ.</p>
-                    <a href="https://wpsubscription.co/support" target="_blank" class="button button-small" style="font-size:13px;padding:5px 14px;">Get Support</a>
+                    <p style="font-size:14px;margin:0 0 8px 0;">If you have a problem, <a href="https://wpsubscription.co/contact\" target=\"_blank\" style=\"color:#d93025;\">open a support ticket</a> or check our FAQ.</p>
+                    <a href="https://wpsubscription.co/contact" target="_blank" class="button button-small" style="font-size:13px;padding:5px 14px;">Get Support</a>
                 </div>
                 <div class="wp-subscription-admin-box">
                     <h3>Request a Feature</h3>
-                    <p style="font-size:14px;margin:0 0 8px 0;">Have an idea? <a href="https://wpsubscription.co/feature-request\" target=\"_blank\" style=\"color:#2271b1;\">Request a feature</a> or vote on others.</p>
-                    <a href="https://wpsubscription.co/feature-request" target="_blank" class="button button-small" style="font-size:13px;padding:5px 14px;">Request Feature</a>
+                    <p style="font-size:14px;margin:0 0 8px 0;">Have an idea? <a href="https://wpsubscription.co/contact\" target=\"_blank\" style=\"color:#2271b1;\">Request a feature</a> or vote on others.</p>
+                    <a href="https://wpsubscription.co/contact" target="_blank" class="button button-small" style="font-size:13px;padding:5px 14px;">Request Feature</a>
                 </div>
                 <div class="wp-subscription-admin-box">
                     <h3>Show Your Love</h3>
@@ -568,9 +568,9 @@ class Menu {
         <div style="text-align:center;margin:38px 0 0 0;font-size:14px;color:#888;">
             Made with <span style="color:#e25555;font-size:1.1em;">♥</span> by the WP Subscription Team
             <div style="margin-top:6px;">
-                <a href="https://wpsubscription.co/support" target="_blank" style="color:#2563eb;text-decoration:none;">Support</a>
+                <a href="https://wpsubscription.co/contact" target="_blank" style="color:#2563eb;text-decoration:none;">Support</a>
                 &nbsp;/&nbsp;
-                <a href="https://wpsubscription.co/docs" target="_blank" style="color:#2563eb;text-decoration:none;">Docs</a>
+                <a href="https://converslabs.thrivedeskdocs.com/en" target="_blank" style="color:#2563eb;text-decoration:none;">Docs</a>
             </div>
         </div>
         <?php
