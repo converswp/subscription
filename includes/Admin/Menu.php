@@ -2,6 +2,8 @@
 
 namespace SpringDevs\Subscription\Admin;
 
+use function Avifinfo\read;
+
 /**
  * Menu class
  *
@@ -100,7 +102,21 @@ class Menu {
             array( $this, 'render_subscriptions_page' )
         );
     }
-
+    /**
+     * Render the admin header
+     */
+    private function render_admin_footer() {
+        ?>
+        <div style="text-align:center;margin:38px 0 0 0;font-size:14px;color:#888;">
+            Made with <span style="color:#e25555;font-size:1.1em;">♥</span> by the WP Subscription Team
+            <div style="margin-top:6px;">
+                <a href="https://wpsubscription.com/support" target="_blank" style="color:#2563eb;text-decoration:none;">Support</a>
+                &nbsp;/&nbsp;
+                <a href="https://wpsubscription.com/docs" target="_blank" style="color:#2563eb;text-decoration:none;">Docs</a>
+            </div>
+        </div>
+        <?php
+    }
     /**
      * Render the admin header
      */
@@ -249,7 +265,34 @@ class Menu {
      * Render Stats page
      */
     public function render_stats_page() {
-        $this->render_admin_header();
+        $this->render_admin_header();   
+        // if ( ! class_exists('Sdevs_Wc_Subscription_Pro') ){
+        //     $this->render_admin_footer();
+        //     return;
+        // }
+
+        if ( ! class_exists('Sdevs_Wc_Subscription_Pro') ) { ?>
+            <div class="wp-subscription-admin-content" style="max-width:1240px;margin:32px auto 0 auto">
+                <div class="wp-subscription-hero-upgrade" style="margin-bottom:18px;">
+                    <div class="wp-subscription-hero-content">
+                        <span class="wp-subscription-hero-icon">✨</span>
+                        <span class="wp-subscription-hero-title">
+                            Unlock advanced features, priority support,<br>
+                            and more subscription control and reporting.
+                        </span>
+                    </div>
+                    <a href="https://wpsubscription.co/?utm_source=plugin&utm_medium=admin&utm_campaign=upgrade_pro"
+                    target="_blank"
+                    class="wp-subscription-hero-btn">
+                        UPGRADE TO PRO
+                    </a>
+                </div>
+            </div>
+        <?php 
+            $this->render_admin_footer();
+            return;
+        }
+
         global $wpdb;
         $months = [];
         $now = current_time('timestamp');
@@ -328,14 +371,9 @@ class Menu {
                 <canvas id="wpsubscription-report-chart" height="110"></canvas>
             </div>
         </div>
-        <div style="text-align:center;margin:38px 0 0 0;font-size:14px;color:#888;">
-            Made with <span style="color:#e25555;font-size:1.1em;">♥</span> by the WP Subscription Team
-            <div style="margin-top:6px;">
-                <a href="https://wpsubscription.com/support" target="_blank" style="color:#2563eb;text-decoration:none;">Support</a>
-                &nbsp;/&nbsp;
-                <a href="https://wpsubscription.com/docs" target="_blank" style="color:#2563eb;text-decoration:none;">Docs</a>
-            </div>
-        </div>
+        
+        <?php $this->render_admin_footer(); ?>
+
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script>
         const ctx = document.getElementById('wpsubscription-report-chart').getContext('2d');
@@ -536,74 +574,6 @@ class Menu {
                 <a href="https://wpsubscription.com/docs" target="_blank" style="color:#2563eb;text-decoration:none;">Docs</a>
             </div>
         </div>
-        <style>
-        @keyframes floatY { 0% { transform: translateY(0); } 100% { transform: translateY(-10px); } }
-        .wp-subscription-admin-box:hover { box-shadow:0 4px 16px #e0e7ef; transition:box-shadow .2s; }
-        .wp-subscription-pro-callout { background:#2271b1!important; }
-        .wp-subscription-pro-callout h2, .wp-subscription-pro-callout p { color:#fff!important; }
-        .wp-subscription-pro-callout .button-primary { background:#fff!important;color:#2271b1!important; }
-        .wp-subscription-pro-callout .button-primary:hover { background:#e0e7ef!important; }
-        @media (max-width: 900px) {
-            .wp-subscription-support-resources { grid-template-columns:1fr!important; }
-        }
-        .wp-subscription-hero-upgrade {
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #2196f3;
-            border-radius: 12px;
-            padding: 32px 36px;
-            margin-bottom: 28px;
-            overflow: hidden;
-            min-height: 90px;
-        }
-        .wp-subscription-hero-upgrade::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background-image: repeating-linear-gradient(135deg, rgba(255,255,255,0.07) 0 2px, transparent 2px 40px);
-            opacity: 0.25;
-            pointer-events: none;
-        }
-        .wp-subscription-hero-content {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-            z-index: 1;
-        }
-        .wp-subscription-hero-icon {
-            font-size: 2em;
-            line-height: 1;
-        }
-        .wp-subscription-hero-title {
-            font-size: 2em;
-            font-weight: bold;
-            color: #fff;
-            line-height: 1.2;
-        }
-        .wp-subscription-hero-btn {
-            z-index: 1;
-            background: #fff;
-            color: #2196f3;
-            font-weight: 600;
-            font-size: 1.1em;
-            padding: 16px 32px;
-            border-radius: 8px;
-            text-decoration: none;
-            box-shadow: 0 2px 8px rgba(33,150,243,0.08);
-            transition: background 0.18s, color 0.18s, transform 0.18s;
-            border: none;
-            outline: none;
-            display: inline-block;
-            text-align: center;
-        }
-        .wp-subscription-hero-btn:hover {
-            background: #e3f0fd;
-            color: #1565c0;
-            transform: translateY(-2px) scale(1.03);
-        }
-        </style>
         <?php
     }
 
