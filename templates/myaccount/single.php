@@ -100,7 +100,7 @@ do_action( 'before_single_subscrpt_content' );
 
 <?php do_action( 'subscrpt_before_subscription_totals', (int) $id ); ?>
 
-<h2><?php echo esc_html_e( 'Subscription totals', 'sdevs_subscrpt' ); ?></h2>
+<h2><?php echo esc_html_e( 'Subscription Totals', 'sdevs_subscrpt' ); ?></h2>
 <table class="woocommerce-table woocommerce-table--order-details shop_table order_details">
 	<thead>
 		<tr>

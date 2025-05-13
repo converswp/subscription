@@ -39,9 +39,8 @@ $shipping_address = $order ? $order->get_formatted_shipping_address() : '-';
 <div class="wp-subscription-admin-content">
     <div class="wp-subscription-info-grid" style="display:flex;gap:28px;align-items:flex-start;flex-wrap:nowrap;">
         <!-- Left: Main Info -->
-        <div class="wp-subscription-admin-box wp-subscription-info-left" style="background:#f3f4f5;flex:1 1 50%;max-width:50%;margin:25px 0 18px 18px;">
-            <h2 style="font-family:Georgia,serif;font-size:1.3em;margin:0 0 12px 0;">Subscription Details</h2>
-            <table class="widefat striped wp-subscription-list-table" style="border-radius:8px;overflow:hidden;margin-bottom:16px;font-size:14px;">
+        <div class="wp-subscription-admin-box wp-subscription-info-left" style="    box-shadow: 0 1px 3px rgb(29 35 39 / 30%);flex:1 1 50%;max-width:50%;margin:25px 0 18px 18px;">
+            <table class="widefat striped wp-subscription-list-table" style="border-radius:8px;overflow:hidden;margin-bottom:16px;">
                 <tbody>
                     <tr>
                         <th style="width:120px;padding:8px 10px;">Product</th>
@@ -76,15 +75,14 @@ $shipping_address = $order ? $order->get_formatted_shipping_address() : '-';
         </div>
         <!-- Right: Billing & Shipping -->
         <div class="wp-subscription-admin-box wp-subscription-info-right" style="    box-shadow: 0 1px 3px rgb(29 35 39 / 30%);background:#fff;flex:1 1 50%;max-width:50%;margin:25px 0 18px 0;">
-            <h2 style="font-family:Georgia,serif;font-size:1.1em;margin:0 0 10px 0;">Billing & Shipping</h2>
-            <table class="widefat wp-subscription-list-table" style="border-radius:8px;overflow:hidden;margin-bottom:0;font-size:13px;background:none;">
+            <table class="widefat wp-subscription-list-table" style="border-radius:8px;overflow:hidden;margin-bottom:0;background:none;">
                 <tbody>
                     <tr>
-                        <th style="width:70px;padding:8px 10px;color:#888;font-weight:500;">Billing</th>
+                        <th style="width:70px;padding:8px 10px;">Billing</th>
                         <td style="padding:8px 10px;"><?php echo $billing_address ? wp_kses_post($billing_address) : '-'; ?></td>
                     </tr>
                     <tr>
-                        <th style="width:70px;padding:8px 10px;color:#888;font-weight:500;">Shipping</th>
+                        <th style="width:70px;padding:8px 10px;">Shipping</th>
                         <td style="padding:8px 10px;"><?php echo $shipping_address ? wp_kses_post($shipping_address) : '-'; ?></td>
                     </tr>
                 </tbody>

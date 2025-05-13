@@ -3,7 +3,7 @@ Contributors: converswp, shamsbd71
 Tags: woocommerce-subscriptions, subscriptions, subscriptions-billing, recurring-payments, woocommerce-extensions
 Requires at least: 6.0
 Tested up to: 6.8
-Stable tag: 1.3.2
+Stable tag: 1.4.0
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -224,6 +224,10 @@ Learn more: [WPSubscription](https://wpsubscription.co/)
 
 
 == Changelog ==
+
+= 1.4.0 =
+- **New**: New Admin interface
+- **New**: Improved user experience
 
 = 1.3.2 =
 - **Fix**: Astra theme support added.
