@@ -1,0 +1,27 @@
+name: Deploy to WordPress.org
+
+on:
+    push:
+        tags:
+            - '*'
+
+jobs:
+    deploy:
+        name: Deploy to WordPress.org
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Build
+              uses: actions/checkout@master
+              run: |
+                  composer install
+                  npm install
+                  npm run build
+
+            - name: WordPress Plugin Deploy
+              uses: 10up/action-wordpress-plugin-deploy@stable
+              env:
+                  SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+                  SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+              with:
+                  slug: subscription
