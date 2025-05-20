@@ -1,14 +1,14 @@
-=== WP Subscriptions for WooCommerce - Recurring Payments Plugins, Stripe, PayPal, Paddle & More ===
+=== WooCommerce Subscription & Recurring Payment Plugin - Stripe, Paddle, Paypal and More ===
 Contributors: converswp, shamsbd71
 Tags: woocommerce-subscriptions, subscriptions, subscriptions-billing, recurring-payments, woocommerce-extensions
 Requires at least: 6.0
 Tested up to: 6.8
-Stable tag: 1.4.1
+Stable tag: 1.4.2
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-**WP Subscriptions for WooCommerce **is the** best plugin to enable recurring payments, subscriptions, and auto-renewals** for digital and physical products. Supports Stripe, PayPal, Paddle, and more.
+**WPSubscription ** is best plugin to enable recurring payments, subscriptions, and auto-renewals** for digital and physical products. Supports Stripe, PayPal, Paddle, and more.
 
 == Description ==
 
@@ -30,7 +30,7 @@ The **WooCommerce subscriptions plugin** works with popular payment gateways lik
 
 Among the best WooCommerce recurring payment plugins, this tool gives your store the flexibility to offer subscriptions in minutes.
 
-Need help? [Read our full documentation and setup guide here →](https://converslabs.thrivedeskdocs.com/en/category/subscriptions)
+Need help? [Read our full documentation and setup guide here →](https://docs.converslabs.com/en)
 
 
 ### Start Earning with Subscriptions for WooCommerce - Recurring Payment Plugin 
@@ -167,7 +167,7 @@ No coding is needed at all! The setup is beginner-friendly and very easy to use,
 If a payment fails, the system will automatically retry the payment and send alerts to notify you and the customer, helping to avoid missed renewals.
 
 =Where can I find the full documentation and setup steps?=
-You can find the complete guide, configuration tutorials, and troubleshooting help in our [Subscriptions for WooCommerce Docs](https://converslabs.thrivedeskdocs.com/en/category/subscriptions) section.
+You can find the complete guide, configuration tutorials, and troubleshooting help in our [Subscriptions for WooCommerce Docs](https://docs.converslabs.com/en) section.
 
 =Is this one of the best WooCommerce recurring payment plugins?=
 Yes! We’ve designed it to be fast, reliable, and full-featured, with support for auto-renewals, variable products, free trials, and more—everything you expect from a top-tier **WooCommerce subscriptions plugin**.
@@ -224,6 +224,9 @@ Learn more: [WPSubscription](https://wpsubscription.co/)
 
 
 == Changelog ==
+
+= 1.4.2 =
+- **Doc**: Plugin description and Documentation link update
 
 = 1.4.1 =
 - **Fix**: Table style.

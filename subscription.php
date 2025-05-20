@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Subscriptions for WooCommerce
+Plugin Name: WPSubscription - WooCommerce Subscription & Recurring Payment Plugin
 Plugin URI: https://wordpress.org/plugins/subscription
 Description: Enable WooCommerce Subscriptions and Start Recurring Revenue in Minutes.
 Plugin URI: https://wpsubscription.co/
@@ -8,7 +8,7 @@ Plugin URI: https://wpsubscription.co/
 Author: converswp
 Author URI: https://wpsubscription.co/
 
-Version: 1.4.1
+Version: 1.4.2
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: wp_subscription
@@ -35,7 +35,7 @@ final class Sdevs_Subscription {
 	 *
 	 * @var string
 	 */
-	const version = '1.3.2';
+	const version = '1.4.2';
 
 	/**
 	 * Holds various class instances

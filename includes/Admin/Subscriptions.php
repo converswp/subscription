@@ -540,7 +540,7 @@ class Subscriptions {
 							<?php esc_html_e( 'WP Subscription is the most seamless and reliable WooCommerce subscription solution for store owners looking to grow recurring revenue. Easily manage recurring payments, automate renewals, and delight your customers with flexible plans.', 'wp_subscription' ); ?>
 						</p>
 						<div class="wpsubscription-links" style="display:flex;gap:12px;flex-wrap:wrap;">
-							<a href="https://converslabs.thrivedeskdocs.com/en" target="_blank" class="button button-secondary"><?php esc_html_e( 'Documentation', 'wp_subscription' ); ?></a>
+							<a href="https://docs.converslabs.com/en" target="_blank" class="button button-secondary"><?php esc_html_e( 'Documentation', 'wp_subscription' ); ?></a>
 							<a href="https://wpsubscription.co/" target="_blank" class="button button-secondary"><?php esc_html_e( 'Website', 'wp_subscription' ); ?></a>
 						</div>
 					</div>
