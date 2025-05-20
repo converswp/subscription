@@ -112,7 +112,7 @@ class Menu {
             <div style="margin-top:6px;">
                 <a href="https://wpsubscription.co/contact" target="_blank" style="color:#2563eb;text-decoration:none;">Support</a>
                 &nbsp;/&nbsp;
-                <a href="https://converslabs.thrivedeskdocs.com/en" target="_blank" style="color:#2563eb;text-decoration:none;">Docs</a>
+                <a href="https://docs.converslabs.com/en" target="_blank" style="color:#2563eb;text-decoration:none;">Docs</a>
             </div>
         </div>
         <?php
@@ -254,7 +254,7 @@ class Menu {
             <div style="margin-top:6px;">
                 <a href="https://wpsubscription.co/contact" target="_blank" style="color:#2563eb;text-decoration:none;">Support</a>
                 &nbsp;/&nbsp;
-                <a href="https://converslabs.thrivedeskdocs.com/en" target="_blank" style="color:#2563eb;text-decoration:none;">Docs</a>
+                <a href="https://docs.converslabs.com/en" target="_blank" style="color:#2563eb;text-decoration:none;">Docs</a>
             </div>
         </div>
         <?php
@@ -449,7 +449,7 @@ class Menu {
             <div style="margin-top:6px;">
                 <a href="https://wpsubscription.co/contact" target="_blank" style="color:#2563eb;text-decoration:none;">Support</a>
                 &nbsp;/&nbsp;
-                <a href="https://converslabs.thrivedeskdocs.com/en" target="_blank" style="color:#2563eb;text-decoration:none;">Docs</a>
+                <a href="https://docs.converslabs.com/en" target="_blank" style="color:#2563eb;text-decoration:none;">Docs</a>
             </div>
         </div>
         <?php
@@ -484,21 +484,26 @@ class Menu {
             <div class="wp-subscription-admin-box" style="margin-bottom:24px;display:flex;gap:32px;align-items:flex-start;flex-wrap:wrap;">
                 <div style="flex:2;min-width:260px;">
                     <h3>Product Overview</h3>
-                    <p style="font-size:14px;line-height:1.7;margin:0 0 10px 0;">WP Subscription helps you manage WooCommerce subscriptions with ease. Enjoy a modern admin UI, powerful filters, detailed history, and seamless customer management. Designed for speed, clarity, and growth.</p>
+                    <p style="font-size:14px;line-height:1.7;margin:0 0 10px 0;">
+                        WPSubscription helps you to sell products and services on a recurring basis using your existing WooCommerce store. Whether you're offering digital licenses, physical product boxes, or ongoing service plans, this plugin provides the tools to build and manage subscription models.
+                    </p>
                     <ul style="font-size:14px;line-height:1.6;margin:0 0 0 18px;padding:0;list-style:disc;">
-                        <li>Modern, compact admin interface</li>
-                        <li>Advanced filtering & search</li>
-                        <li>Subscription history & activities</li>
-                        <!-- <li>Easy migration from other plugins</li> -->
-                        <!-- <li>Pro: Analytics, automation, integrations, and more!</li> -->
+                        <li>Create simple or variable subscription products</li>
+                        <li>Set billing intervals (daily, weekly, monthly, yearly)</li>
+                        <li>Offer free trials and sign-up fees</li>
+                        <li>Allow customers to cancel or renew subscriptions manually</li>
+                        <li>View and manage subscriptions from the admin dashboard</li>
+                        <li>Customize subscription behavior and role assignment</li>
+                        <li>Integrate with payment gateways that support recurring billing (Stripe, PayPal)</li>
                     </ul>
                 </div>
                 <div style="flex:1;min-width:220px;max-width:320px;">
                     <div style="background:#f4f7fa;border-radius:8px;padding:10px 10px 6px 10px;box-shadow:0 2px 8px #e0e7ef;">
-                        <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:6px;">
-                            <iframe src="https://www.youtube.com/embed/XXXXXXXX" title="WP Subscription Overview" frameborder="0" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;border-radius:6px;"></iframe>
+                        <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:6px;text-align: center;">
+                            <!-- <iframe src="https://www.youtube.com/embed/XXXXXXXX" title="WP Subscription Overview" frameborder="0" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;border-radius:6px;"></iframe> -->
+                            <img src="<?php echo WP_SUBSCRIPTION_ASSETS; ?>/images/logo.png" alt="WP Subscription Overview" style="width:160px;height:160px;border-radius:6px;">
                         </div>
-                        <div style="text-align:center;font-size:13px;color:#888;margin-top:4px;">Watch: Quick Product Tour</div>
+                        <!-- <div style="text-align:center;font-size:13px;color:#888;margin-top:4px;">Watch: Quick Product Tour</div> -->
                     </div>
                 </div>
             </div>
@@ -545,8 +550,8 @@ class Menu {
             <div class="wp-subscription-support-resources" style="display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-bottom:24px;">
                 <div class="wp-subscription-admin-box">
                     <h3>Documentation</h3>
-                    <p style="font-size:14px;margin:0 0 8px 0;">Read our <a href="https://converslabs.thrivedeskdocs.com/en\" target=\"_blank\" style=\"color:#2271b1;\">comprehensive docs</a> for setup, migration, and advanced usage.</p>
-                    <a href="https://converslabs.thrivedeskdocs.com/en" target="_blank" class="button button-small" style="font-size:13px;padding:5px 14px;">View Docs</a>
+                    <p style="font-size:14px;margin:0 0 8px 0;">Read our <a href="https://docs.converslabs.com/en\" target=\"_blank\" style=\"color:#2271b1;\">comprehensive docs</a> for setup, migration, and advanced usage.</p>
+                    <a href="https://docs.converslabs.com/en" target="_blank" class="button button-small" style="font-size:13px;padding:5px 14px;">View Docs</a>
                 </div>
                 <div class="wp-subscription-admin-box">
                     <h3>Facing An Issue?</h3>
@@ -570,7 +575,7 @@ class Menu {
             <div style="margin-top:6px;">
                 <a href="https://wpsubscription.co/contact" target="_blank" style="color:#2563eb;text-decoration:none;">Support</a>
                 &nbsp;/&nbsp;
-                <a href="https://converslabs.thrivedeskdocs.com/en" target="_blank" style="color:#2563eb;text-decoration:none;">Docs</a>
+                <a href="https://docs.converslabs.com/en" target="_blank" style="color:#2563eb;text-decoration:none;">Docs</a>
             </div>
         </div>
         <?php

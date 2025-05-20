@@ -51,9 +51,9 @@ bash clean.sh
 
 ## �� Documentation
 
-- [Help Center & Documentation](https://converslabs.thrivedeskdocs.com/en)
-- [Developer Documentation](https://converslabs.thrivedeskdocs.com/en)
-- [API Reference](https://converslabs.thrivedeskdocs.com/en)
+- [Help Center & Documentation](https://docs.converslabs.com/en)
+- [Developer Documentation](https://docs.converslabs.com/en)
+- [API Reference](https://docs.converslabs.com/en)
 
 ## 🤝 Contributing
 
