@@ -34,6 +34,11 @@ class Action {
 
 		// Trigger status change action
 		do_action('subscrpt_subscription_status_changed', $subscription_id, $old_status, $status);
+
+		// Trigger resumption event if subscription is being activated from cancelled or pending cancellation
+		if ($status === 'active' && in_array($old_status, array('cancelled', 'pe_cancelled'))) {
+			do_action('subscrpt_subscription_resumed', $subscription_id, $old_status);
+		}
 	}
 
 	/**
