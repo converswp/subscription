@@ -449,13 +449,24 @@ class Helper {
 	 * @return void
 	 */
 	public static function clone_stripe_metadata_for_renewal( $subscription_id, $old_order, $new_order ) {
-		$is_auto_renew  = get_post_meta( $subscription_id, '_subscrpt_auto_renew', true );
-		$stripe_enabled = ( 'stripe' === $old_order->get_payment_method() && in_array( $is_auto_renew, array( 1, '1' ), true ) && subscrpt_is_auto_renew_enabled() && '1' === get_option( 'subscrpt_stripe_auto_renew', '1' ) );
+		$is_auto_renew = get_post_meta( $subscription_id, '_subscrpt_auto_renew', true );
+		if ( empty( $is_auto_renew ) && subscrpt_is_auto_renew_enabled() ) {
+			$is_auto_renew = true;
+			update_post_meta( $subscription_id, '_subscrpt_auto_renew', true );
+		}
+
+		$stripe_enabled = ( 'stripe' === $old_order->get_payment_method() && in_array( $is_auto_renew, array( '1', 1, true ), true ) && subscrpt_is_auto_renew_enabled() && '1' === get_option( 'subscrpt_stripe_auto_renew', '1' ) );
+
 		if ( $stripe_enabled ) {
 			$new_order->update_meta_data( '_stripe_customer_id', $old_order->get_meta( '_stripe_customer_id' ) );
 			$new_order->update_meta_data( '_stripe_source_id', $old_order->get_meta( '_stripe_source_id' ) );
 			$new_order->set_payment_method( $old_order->get_payment_method() );
 			$new_order->set_payment_method_title( $old_order->get_payment_method_title() );
+
+			// Add debug log.
+			wp_subscrpt_write_debug_log( "Stripe metadata cloned for renewal order #{$new_order->get_id()} from old order #{$old_order->get_id()}" );
+		} else {
+			wp_subscrpt_write_debug_log( "Stripe metadata did not clone for renewal order #{$new_order->get_id()} from old order #{$old_order->get_id()}" );
 		}
 	}
 
@@ -530,6 +541,9 @@ class Helper {
 				'trial' => null,
 			)
 		);
+
+		// Add debug log.
+		wp_subscrpt_write_debug_log( "Renewal order #{$new_order->get_id()} created for old order #{$old_order->get_id()}" );
 
 		return array(
 			'order'         => $new_order,
