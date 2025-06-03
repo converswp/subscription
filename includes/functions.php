@@ -179,3 +179,33 @@ function sdevs_get_subscription_product( $product ): Product {
 
 	return ProductFactory::load( $product );
 }
+
+/**
+ * Logger
+ *
+ * @param mixed $message      Message.
+ * @param bool  $should_print Print the output.
+ */
+function wp_subscrpt_write_log( $message, bool $should_print = false ): void {
+	$logger = wc_get_logger();
+
+	$message = is_array( $message ) || is_object( $message ) ? wp_json_encode( $message ) : $message;
+	$logger->add( 'wp_subcription', $message );
+
+	echo esc_html( $should_print ? $message : '' );
+}
+
+/**
+ * Debug Logger
+ *
+ * @param mixed $log logs.
+ */
+function wp_subscrpt_write_debug_log( $log ): void {
+	if ( defined( 'WP_DEBUG' ) && WP_DEBUG === true ) {
+		if ( is_array( $log ) || is_object( $log ) ) {
+			error_log( print_r( $log, true ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions
+		} else {
+			error_log( 'wp_subcription: ' . $log ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions
+		}
+	}
+}

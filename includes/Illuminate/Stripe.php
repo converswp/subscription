@@ -42,6 +42,7 @@ class Stripe extends \WC_Stripe_Payment_Gateway {
 	 * @throws \WC_Stripe_Exception $e excepttion.
 	 */
 	public function pay_renew_order( $renewal_order ) {
+		wp_subscrpt_write_debug_log( "Processing renewal order #{$renewal_order->get_id()} for payment." );
 
 		try {
 			$this->validate_minimum_order_amount( $renewal_order );
@@ -79,6 +80,7 @@ class Stripe extends \WC_Stripe_Payment_Gateway {
 			$this->unlock_order_payment( $renewal_order );
 		} catch ( \WC_Stripe_Exception $e ) {
 			\WC_Stripe_Logger::log( 'Error: ' . $e->getMessage() );
+			wp_subscrpt_write_debug_log( "Error processing renewal order #{$renewal_order->get_id()}: " . $e->getMessage() );
 			do_action( 'wc_gateway_stripe_process_payment_error', $e, $renewal_order );
 		}
 	}
