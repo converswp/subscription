@@ -10,6 +10,7 @@ use SpringDevs\Subscription\Illuminate\Email;
 use SpringDevs\Subscription\Illuminate\Order;
 use SpringDevs\Subscription\Illuminate\Post;
 use SpringDevs\Subscription\Illuminate\Stripe;
+use SpringDevs\Subscription\Illuminate\Gateways\Paypal;
 
 /**
  * Globally Load Scripts.
@@ -21,6 +22,7 @@ class Illuminate {
 	 */
 	public function __construct() {
 		$this->stripe_initialization();
+		$this->paypal_initialization();
 		new Order();
 		new Cron();
 		new Post();
@@ -44,5 +46,26 @@ class Illuminate {
 
 			new Stripe();
 		}
+	}
+
+	/**
+	 * PayPal Gateway Initialization.
+	 *
+	 * @return void
+	 */
+	public function paypal_initialization() {
+		// Register the PayPal gateway with WooCommerce
+		add_filter( 'woocommerce_payment_gateways', array( $this, 'register_paypal_gateway' ) );
+	}
+
+	/**
+	 * Register our custom PayPal gateway with WooCommerce
+	 *
+	 * @param array $gateways Payment gateways.
+	 * @return array
+	 */
+	public function register_paypal_gateway( $gateways ) {
+		$gateways[] = 'SpringDevs\\Subscription\\Illuminate\\Gateways\\Paypal';
+		return $gateways;
 	}
 }
