@@ -1,6 +1,6 @@
 <?php
 
-namespace SpringDevs\Subscription\Illuminate\Gateways;
+namespace SpringDevs\Subscription\Illuminate\Gateways\Paypal;
 
 /**
  * Class Paypal
@@ -40,7 +40,7 @@ class Paypal extends \WC_Payment_Gateway {
 		$this->method_title       = __( 'Paypal for WPSubscription', 'wp_subscription' );
 		$this->method_description = __( 'Accept wp subscription recurring payments through PayPal.', 'wp_subscription' );
 		$this->supports           = [ 'products', 'subscriptions', 'refunds' ];
-		$this->icon               = apply_filters( 'wp_subscription_paypal_icon', plugins_url( 'assets/images/paypal.svg', dirname( dirname( __DIR__ ) ) ) );
+		$this->icon               = apply_filters( 'wp_subscription_paypal_icon', WP_SUBSCRIPTION_URL . '/assets/images/paypal.svg' );
 
 		// Load the settings.
 		$this->init_form_fields();
@@ -137,6 +137,8 @@ class Paypal extends \WC_Payment_Gateway {
 	 * @return array
 	 */
 	public function process_payment( $order_id ) {
+		dd( '🔽 order_id', $order_id );
+
 		$order = wc_get_order( $order_id );
 
 		// Return thankyou redirect.

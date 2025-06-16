@@ -10,7 +10,6 @@ use SpringDevs\Subscription\Illuminate\Email;
 use SpringDevs\Subscription\Illuminate\Order;
 use SpringDevs\Subscription\Illuminate\Post;
 use SpringDevs\Subscription\Illuminate\Stripe;
-use SpringDevs\Subscription\Illuminate\Gateways\Paypal;
 
 /**
  * Globally Load Scripts.
@@ -65,7 +64,7 @@ class Illuminate {
 	 * @return array
 	 */
 	public function register_paypal_gateway( $gateways ) {
-		$gateways[] = 'SpringDevs\\Subscription\\Illuminate\\Gateways\\Paypal';
+		$gateways[] = 'SpringDevs\\Subscription\\Illuminate\\Gateways\\Paypal\\Paypal';
 		return $gateways;
 	}
 }
