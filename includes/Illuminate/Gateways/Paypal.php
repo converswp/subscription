@@ -52,7 +52,7 @@ class Paypal extends \WC_Payment_Gateway {
 		$this->description = $this->get_option( 'description' );
 
 		// Paypal Credentials.
-		$this->sandbox_mode  = 'yes' === $this->get_option( 'sandbox_mode', 'no' );
+		$this->sandbox_mode  = 'yes' === $this->get_option( 'testmode', 'no' );
 		$this->client_id     = $this->get_option( 'client_id' );
 		$this->client_secret = $this->get_option( 'client_secret' );
 
@@ -98,7 +98,7 @@ class Paypal extends \WC_Payment_Gateway {
 					'https://developer.paypal.com/dashboard/applications'
 				),
 			],
-			'sandbox_mode'       => [
+			'testmode'           => [
 				'title'       => __( 'PayPal Sandbox', 'wp_subscription' ),
 				'type'        => 'checkbox',
 				'label'       => __( 'Enable PayPal Sandbox', 'wp_subscription' ),
