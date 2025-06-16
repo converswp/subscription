@@ -1,5 +1,4 @@
 const settings = window.wc.wcSettings.getSetting("wp_subscription_paypal_data", {});
-console.log(settings);
 
 const createLabel = (title, iconUrl) => {
   return wp.element.createElement(

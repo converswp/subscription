@@ -55,7 +55,7 @@ final class Paypal_Blocks_Integration extends AbstractPaymentMethodType {
 			'wp_subscription_paypal-blocks-integration',
 			WP_SUBSCRIPTION_URL . '/assets/js/wp_subscription_paypal-block.js',
 			[ 'wc-blocks-registry', 'wc-settings', 'wp-element', 'wp-html-entities', 'wp-i18n' ],
-			2,
+			1,
 			true
 		);
 		if ( function_exists( 'wp_set_script_translations' ) ) {

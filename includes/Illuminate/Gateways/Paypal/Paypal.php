@@ -137,7 +137,8 @@ class Paypal extends \WC_Payment_Gateway {
 	 * @return array
 	 */
 	public function process_payment( $order_id ) {
-		dd( '🔽 order_id', $order_id );
+		echo 'Processing payment for order ID: ' . $order_id;
+		die();
 
 		$order = wc_get_order( $order_id );
 
