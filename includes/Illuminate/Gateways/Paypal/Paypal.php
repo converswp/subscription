@@ -2,6 +2,9 @@
 
 namespace SpringDevs\Subscription\Illuminate\Gateways\Paypal;
 
+use Exception;
+use WC_Order;
+
 /**
  * Class Paypal
  * PayPal Payment Gateway for Subscription Plugin
@@ -172,16 +175,66 @@ class Paypal extends \WC_Payment_Gateway {
 	}
 
 	/**
+	 * Get Paypal Access Token.
+	 */
+	protected function get_paypal_access_token(): ?string {
+		$endpoint = $this->sandbox_mode ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com';
+
+		try {
+			$response = wp_remote_post(
+				$endpoint . '/v1/oauth2/token',
+				[
+					'method'      => 'POST',
+					'timeout'     => 45,
+					'redirection' => 5,
+					'httpversion' => '1.0',
+					'blocking'    => true,
+					'headers'     => [
+						'Accept'          => 'application/json',
+						'Accept-Language' => 'en_US',
+						'Authorization'   => 'Basic ' . base64_encode( $this->client_id . ':' . $this->client_secret ),
+					],
+					'body'        => [
+						'grant_type' => 'client_credentials',
+					],
+				]
+			);
+
+			$response_data = json_decode( wp_remote_retrieve_body( $response ) );
+
+			if ( isset( $response_data->error ) || ! isset( $response_data->access_token ) ) {
+				$log_message = 'Error retrieving PayPal access token: ' . $response_data->error_description;
+				wp_subscrpt_write_log( $log_message );
+				wp_subscrpt_write_debug_log( $log_message );
+
+				return null;
+			}
+
+			return $response_data->access_token;
+		} catch ( Exception $e ) {
+			$log_message = 'Error retrieving PayPal access token: ' . $e->getMessage();
+			wp_subscrpt_write_log( $log_message );
+			wp_subscrpt_write_debug_log( $log_message );
+
+			return null;
+		}
+	}
+
+	/**
 	 * Process Payment.
 	 *
 	 * @param int $order_id Order ID.
 	 * @return array
 	 */
 	public function process_payment( $order_id ) {
-		echo 'Processing payment for order ID: ' . $order_id;
-		die();
+		// echo 'Processing payment for order ID: ' . $order_id;
+		// die();
 
 		$order = wc_get_order( $order_id );
+
+		$response = $this->process_paypal_payments( $order );
+
+		dd( '🔽 order', $order );
 
 		// Return thankyou redirect.
 		return array(
@@ -191,13 +244,17 @@ class Paypal extends \WC_Payment_Gateway {
 	}
 
 	/**
-	 * Check if a product is a subscription product.
+	 * Process payments in PayPal.
 	 *
-	 * @param object $product The product.
-	 * @return boolean
+	 * TODO: add return types.
+	 *
+	 * @param WC_Order $order The order object.
 	 */
-	public function is_subscription_product( $product ) {
-		// Implement your subscription product check logic here.
-		return false;
+	protected function process_paypal_payments( WC_Order $order ) {
+		$access_token = $this->get_paypal_access_token();
+
+		print_r( "access_token \n" );
+		print_r( $access_token );
+		die();
 	}
 }
