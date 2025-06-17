@@ -25,14 +25,21 @@ class Paypal extends \WC_Payment_Gateway {
 	 *
 	 * @var string
 	 */
-	public $client_id;
+	protected $client_id;
 
 	/**
 	 * PayPal Client Secret.
 	 *
 	 * @var string
 	 */
-	public $client_secret;
+	protected $client_secret;
+
+	/**
+	 * API endpoint for PayPal.
+	 *
+	 * @var string
+	 */
+	protected $api_endpoint;
 
 	/**
 	 * Constructor for the gateway.
@@ -58,6 +65,9 @@ class Paypal extends \WC_Payment_Gateway {
 		$this->sandbox_mode  = 'yes' === $this->get_option( 'testmode', 'no' );
 		$this->client_id     = $this->get_option( 'client_id' );
 		$this->client_secret = $this->get_option( 'client_secret' );
+
+		// Set API endpoint.
+		$this->api_endpoint = $this->sandbox_mode ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com';
 
 		// Actions.
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
@@ -178,28 +188,25 @@ class Paypal extends \WC_Payment_Gateway {
 	 * Get Paypal Access Token.
 	 */
 	protected function get_paypal_access_token(): ?string {
-		$endpoint = $this->sandbox_mode ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com';
-
 		try {
-			$response = wp_remote_post(
-				$endpoint . '/v1/oauth2/token',
-				[
-					'method'      => 'POST',
-					'timeout'     => 45,
-					'redirection' => 5,
-					'httpversion' => '1.0',
-					'blocking'    => true,
-					'headers'     => [
-						'Accept'          => 'application/json',
-						'Accept-Language' => 'en_US',
-						'Authorization'   => 'Basic ' . base64_encode( $this->client_id . ':' . $this->client_secret ),
-					],
-					'body'        => [
-						'grant_type' => 'client_credentials',
-					],
-				]
-			);
+			$url  = $this->api_endpoint . '/v1/oauth2/token';
+			$args = [
+				'method'      => 'POST',
+				'timeout'     => 45,
+				'redirection' => 5,
+				'httpversion' => '1.0',
+				'blocking'    => true,
+				'headers'     => [
+					'Accept'          => 'application/json',
+					'Accept-Language' => 'en_US',
+					'Authorization'   => 'Basic ' . base64_encode( $this->client_id . ':' . $this->client_secret ),
+				],
+				'body'        => [
+					'grant_type' => 'client_credentials',
+				],
+			];
 
+			$response      = wp_remote_post( $url, $args );
 			$response_data = json_decode( wp_remote_retrieve_body( $response ) );
 
 			if ( isset( $response_data->error ) || ! isset( $response_data->access_token ) ) {
@@ -252,6 +259,20 @@ class Paypal extends \WC_Payment_Gateway {
 	 */
 	protected function process_paypal_payments( WC_Order $order ) {
 		$access_token = $this->get_paypal_access_token();
+		if ( ! $access_token ) {
+			return array(
+				'result'   => 'error',
+				'redirect' => '',
+				'response' => 'Error retrieving PayPal access token. Please check your PayPal credentials.',
+			);
+		}
+
+		try {
+			$request_id = uniqid( 'wps-paypal-', true );
+			$url        = $this->api_endpoint . '/v2/checkout/orders';
+		} catch ( Exception $e ) {
+			// throw $th;
+		}
 
 		print_r( "access_token \n" );
 		print_r( $access_token );
