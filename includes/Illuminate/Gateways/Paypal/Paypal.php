@@ -131,6 +131,47 @@ class Paypal extends \WC_Payment_Gateway {
 	}
 
 	/**
+	 * Check if paypal can be used for the currency selected in the store.
+	 *
+	 * @return boolean
+	 */
+	public function is_currency_supported() {
+		return in_array(
+			get_woocommerce_currency(),
+			apply_filters(
+				'wp_subs_paypal_supported_currencies',
+				[ 'AUD', 'BRL', 'CAD', 'MXN', 'NZD', 'HKD', 'SGD', 'USD', 'EUR', 'JPY', 'NOK', 'CZK', 'DKK', 'HUF', 'ILS', 'MYR', 'PHP', 'PLN', 'SEK', 'CHF', 'TWD', 'THB', 'GBP', 'RUB', 'INR' ]
+			),
+			true
+		);
+	}
+
+	/**
+	 * Show admin options is valid for use.
+	 *
+	 * @since 1.0.0
+	 */
+	public function admin_options() {
+		if ( $this->is_currency_supported() ) {
+			parent::admin_options();
+		} else {
+			$currency_not_supported_message = sprintf(
+				// Translators: %s is the title of the payment gateway.
+				__( '<strong>%s</strong> options are disabled. PayPal Standard does not support your store currency.', 'wp_subscription' ),
+				$this->title
+			);
+
+			?>
+			<div class="inline error">
+				<p>
+					<?php echo wp_kses_post( $currency_not_supported_message ); ?>
+				</p>
+			</div>
+			<?php
+		}
+	}
+
+	/**
 	 * Process Payment.
 	 *
 	 * @param int $order_id Order ID.
