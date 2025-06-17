@@ -4,6 +4,8 @@ namespace SpringDevs\Subscription\Illuminate\Gateways\Paypal;
 
 use Exception;
 use WC_Order;
+use WC_Order_Item_Product;
+use WC_Product;
 
 /**
  * Class Paypal
@@ -185,23 +187,245 @@ class Paypal extends \WC_Payment_Gateway {
 	}
 
 	/**
+	 * Process Payment.
+	 *
+	 * @param int $order_id Order ID.
+	 * @return array
+	 */
+	public function process_payment( $order_id ) {
+		$order = wc_get_order( $order_id );
+
+		$response = $this->process_paypal_payment( $order );
+
+		print_r( "🔽 order - response \n" );
+		print_r( $response );
+		die();
+
+		// Return thankyou redirect.
+		return array(
+			'result'   => 'success',
+			'redirect' => $this->get_return_url( $order ),
+		);
+	}
+
+	/**
+	 * Process payments in PayPal.
+	 *
+	 * TODO: add return types.
+	 *
+	 * @param WC_Order $order The order object.
+	 */
+	protected function process_paypal_payment( WC_Order $order ) {
+		$access_token = $this->get_paypal_access_token();
+		if ( ! $access_token ) {
+			return array(
+				'result'   => 'error',
+				'redirect' => '',
+				'response' => 'Error retrieving PayPal access token. Please check your PayPal credentials.',
+			);
+		}
+
+		// Get the first order item.
+		// Based on the logic, the order contains only one subscription item.
+		$order_items = $order->get_items();
+		$order_item  = ! empty( $order_items ) ? reset( $order_items ) : null;
+
+		// Get WooCommerce Product.
+		$wc_product_id   = null;
+		$wc_variation_id = null;
+		$wc_product      = null;
+		if ( $order_item && $order_item instanceof WC_Order_Item_Product ) {
+			$wc_product_id   = $order_item->get_product_id();
+			$wc_variation_id = $order_item->get_variation_id();
+			$wc_product      = wc_get_product( $wc_product_id );
+		}
+
+		if ( ! $wc_product ) {
+			return array(
+				'result'   => 'error',
+				'redirect' => '',
+				'response' => 'Invalid product in order. Please check the order details.',
+			);
+		}
+
+		// Get Paypal Product ID.
+		$paypal_product_id = $this->get_paypal_product_id( $wc_product, $access_token );
+
+		print_r( "paypal_product_id \n" );
+		print_r( $paypal_product_id );
+		die();
+
+		try {
+			$request_id = uniqid( 'wp-subs-paypal-', true );
+			$url        = $this->api_endpoint . '/v2/checkout/orders';
+			$args       = array(
+				'method'  => 'POST',
+				'headers' => [
+					'Authorization'                 => 'Bearer ' . $access_token,
+					'Content-Type'                  => 'application/json',
+					'Prefer'                        => 'return=representation',
+					'PayPal-Request-Id'             => $request_id,
+					'PayPal-Partner-Attribution-Id' => 'woo-wp-subs-paypal',
+				],
+				'body'    => wp_json_encode(
+					array(
+						'intent'              => 'CAPTURE',
+						'purchase_units'      => array(
+							self::get_purchase_details( $order ),
+						),
+						'application_context' => array(
+							'brand_name'          => get_bloginfo( 'name' ),
+							'return_url'          => $order->get_checkout_order_received_url(),
+							'cancel_url'          => wc_get_checkout_url(),
+							'landing_page'        => 'NO_PREFERENCE',
+							'shipping_preference' => 'SET_PROVIDED_ADDRESS',
+							'user_action'         => 'PAY_NOW',
+						),
+						'payment_method'      => array(
+							'payee_preferred' => 'UNRESTRICTED',
+							'payer_selected'  => 'PAYPAL',
+						),
+						'payer'               => array(
+							'name'          => array(
+								'given_name' => $order->get_billing_first_name(),
+								'surname'    => $order->get_billing_last_name(),
+							),
+							'email_address' => $order->get_billing_email(),
+							'address'       => array(
+								'country_code'   => $order->get_shipping_country() ? $order->get_shipping_country() : $order->get_billing_country(),
+								'address_line_1' => $order->get_shipping_address_1() ? $order->get_shipping_address_1() : $order->get_billing_address_1(),
+								'address_line_2' => $order->get_shipping_address_2() ? $order->get_shipping_address_2() : $order->get_billing_address_2(),
+								'postal_code'    => $order->get_shipping_postcode() ? $order->get_shipping_postcode() : $order->get_billing_postcode(),
+
+							),
+						),
+						'payment_source'      => array(
+							'paypal' => array(
+								'attributes' => array(
+									'customer' => array(
+										'id' => 'wps_paypal_' . get_current_user_id(),
+									),
+									'vault'    => array(
+										'confirm_payment_token' => 'ON_ORDER_COMPLETION',
+										'usage_type'    => 'MERCHANT',
+										'customer_type' => 'CONSUMER',
+									),
+								),
+							),
+						),
+					)
+				),
+			);
+		} catch ( Exception $e ) {
+			// throw $th;
+		}
+
+		print_r( "access_token \n" );
+		print_r( $access_token );
+		die();
+	}
+
+	/**
+	 * Get PayPal product ID.
+	 *
+	 * @param WC_Product $wc_product WooCommerce Product.
+	 * @return string|null PayPal Product ID or null if not found.
+	 */
+	public function get_paypal_product_id( WC_Product $wc_product, string $access_token ): ?string {
+		// Get data from product meta.
+		// TODO: add home_url, wc_product_id etc to avoid duplication in paypal.
+		$paypal_data = get_post_meta( $wc_product->get_id(), '_wp_subs_paypal_data', true );
+
+		$paypal_product_id = $paypal_data['product_id'] ?? null;
+		$paypal_image_url  = $paypal_data['image_url'] ?? null;
+
+		// If PayPal product ID is not available in meta, get or create a new PayPal product.
+		if ( ! $paypal_product_id ) {
+			$paypal_product = $this->get_or_create_paypal_product( $wc_product, $access_token );
+
+			if ( $paypal_product ) {
+				$paypal_product_id = $paypal_product->id;
+
+				// Save PayPal product ID in WooCommerce product meta.
+				$data = [
+					'product_id' => $paypal_product->id,
+					'image_url'  => $paypal_product->image_url ?? '',
+					'home_url'   => $product_data->home_url ?? '',
+				];
+				update_post_meta( $wc_product->get_id(), '_wp_subs_paypal_data', $data );
+			}
+		}
+
+		// TODO: add logic to update image url if changed.
+		// $current_image_url = $this->truncate_string( wp_get_attachment_url( $wc_product->get_image_id() ), 2000 );
+		// if ( $paypal_product_id && $paypal_image_url !== $current_image_url ) {}
+
+		// Return PayPal product ID or null if not found.
+		return $paypal_product_id;
+	}
+
+	/**
+	 * Get or create PayPal product.
+	 *
+	 * @param WC_Product $wc_product WooCommerce Product.
+	 * @param string     $access_token PayPal Access Token.
+	 */
+	public function get_or_create_paypal_product( WC_Product $wc_product, string $access_token ) {
+		// Prepare product data.
+		$product_data = [
+			'name'        => $this->truncate_string( $wc_product->get_name(), 126 ),
+			'description' => $this->truncate_string( $wc_product->get_short_description(), 256 ),
+			'type'        => $wc_product->get_virtual() ? 'DIGITAL' : 'PHYSICAL',
+			'image_url'   => $wc_product->get_image_id() ? $this->truncate_string( wp_get_attachment_url( $wc_product->get_image_id() ), 2000 ) : '',
+			'home_url'    => $this->truncate_string( get_permalink( $wc_product->get_id() ), 2000 ),
+		];
+
+		// TODO: implement logic to find existing PayPal product.
+		// $paypal_product = $this->find_paypal_product( $product_data, $access_token );
+
+		// If not found, create a new PayPal product.
+		$paypal_product = $this->create_paypal_product( $product_data, $access_token );
+
+		// Return PayPal product or null.
+		return $paypal_product;
+	}
+
+	// * ------------------------------------------------------------------------ * //
+	// * -------------------- Utility Methods [start] --------------------------- * //
+
+	/**
+	 * Truncate long string.
+	 *
+	 * @param string $long_string The long string to truncate.
+	 * @param int    $max_length  The maximum length of the string.
+	 * @return string The truncated string if it exceeds the maximum length, otherwise the original string
+	 */
+	public function truncate_string( string $long_string, int $max_length = 48 ): string {
+		return strlen( $long_string ) <= $max_length ? $long_string : substr( $long_string, 0, $max_length );
+	}
+
+	// * -------------------- Utility Methods [end] --------------------------- * //
+	// * ---------------------------------------------------------------------- * //
+
+
+	// * ---------------------------------------------------------------- * //
+	// * -------------------- API Operations [start] -------------------- * //
+	// ? Keep this section strictly for API operations. No other logic like data extraction should be added here.
+
+	/**
 	 * Get Paypal Access Token.
 	 */
 	protected function get_paypal_access_token(): ?string {
 		try {
 			$url  = $this->api_endpoint . '/v1/oauth2/token';
 			$args = [
-				'method'      => 'POST',
-				'timeout'     => 45,
-				'redirection' => 5,
-				'httpversion' => '1.0',
-				'blocking'    => true,
-				'headers'     => [
+				'method'  => 'POST',
+				'headers' => [
 					'Accept'          => 'application/json',
 					'Accept-Language' => 'en_US',
 					'Authorization'   => 'Basic ' . base64_encode( $this->client_id . ':' . $this->client_secret ),
 				],
-				'body'        => [
+				'body'    => [
 					'grant_type' => 'client_credentials',
 				],
 			];
@@ -228,54 +452,69 @@ class Paypal extends \WC_Payment_Gateway {
 	}
 
 	/**
-	 * Process Payment.
+	 * Create PayPal product.
 	 *
-	 * @param int $order_id Order ID.
-	 * @return array
+	 * @param array  $product_data   Product data to create.
+	 * @param string $access_token   PayPal Access Token.
 	 */
-	public function process_payment( $order_id ) {
-		// echo 'Processing payment for order ID: ' . $order_id;
-		// die();
+	protected function create_paypal_product( array $product_data, string $access_token ): ?object {
+		if ( empty( $product_data['name'] ?? null ) || empty( $product_data['type'] ?? null ) ) {
+			$log_message = __( 'Paypal Product Creation Error: Product data is incomplete. Name and type are required.', 'wp_subscription' );
+			wp_subscrpt_write_log( $log_message );
+			wp_subscrpt_write_debug_log( $log_message );
+			return null;
+		}
 
-		$order = wc_get_order( $order_id );
-
-		$response = $this->process_paypal_payments( $order );
-
-		dd( '🔽 order', $order );
-
-		// Return thankyou redirect.
-		return array(
-			'result'   => 'success',
-			'redirect' => $this->get_return_url( $order ),
-		);
-	}
-
-	/**
-	 * Process payments in PayPal.
-	 *
-	 * TODO: add return types.
-	 *
-	 * @param WC_Order $order The order object.
-	 */
-	protected function process_paypal_payments( WC_Order $order ) {
-		$access_token = $this->get_paypal_access_token();
-		if ( ! $access_token ) {
-			return array(
-				'result'   => 'error',
-				'redirect' => '',
-				'response' => 'Error retrieving PayPal access token. Please check your PayPal credentials.',
-			);
+		// Prepare the body for the API request.
+		$body = [
+			'name' => $product_data['name'],
+			'type' => $product_data['type'],
+		];
+		if ( ! empty( $product_data['description'] ?? null ) ) {
+			$body['description'] = $product_data['description'];
+		}
+		if ( ! empty( $product_data['category'] ?? null ) ) {
+			$body['category'] = $product_data['category'];
+		}
+		if ( ! empty( $product_data['image_url'] ?? null ) && ! strpos( $product_data['image_url'], '.test' ) ) {
+			$body['image_url'] = $product_data['image_url'];
+		}
+		if ( ! empty( $product_data['home_url'] ?? null ) && ! strpos( $product_data['home_url'], '.test' ) ) {
+			$body['home_url'] = $product_data['home_url'];
 		}
 
 		try {
-			$request_id = uniqid( 'wps-paypal-', true );
-			$url        = $this->api_endpoint . '/v2/checkout/orders';
-		} catch ( Exception $e ) {
-			// throw $th;
-		}
+			$url  = $this->api_endpoint . '/v1/catalogs/products';
+			$args = [
+				'method'  => 'POST',
+				'headers' => [
+					'Authorization'     => 'Bearer ' . $access_token,
+					'Content-Type'      => 'application/json',
+					'Prefer'            => 'return=representation',
+					'PayPal-Request-Id' => uniqid( 'wp-subs-paypal-', true ),
+				],
+				'body'    => wp_json_encode( $body ),
+			];
 
-		print_r( "access_token \n" );
-		print_r( $access_token );
-		die();
+			$response      = wp_remote_post( $url, $args );
+			$response_data = json_decode( wp_remote_retrieve_body( $response ) );
+
+			if ( empty( $response_data->id ?? null ) ) {
+				$log_message = 'Error creating PayPal product: ' . ( $response_data->message ?? 'Unknown error' );
+				wp_subscrpt_write_log( $log_message );
+				wp_subscrpt_write_debug_log( $log_message . ' ' . wp_json_encode( $response_data ) );
+				return null;
+			}
+
+			return $response_data;
+		} catch ( Exception $e ) {
+			$log_message = 'Error creating PayPal product: ' . $e->getMessage();
+			wp_subscrpt_write_log( $log_message );
+			wp_subscrpt_write_debug_log( $log_message );
+			return null;
+		}
 	}
+
+	// * -------------------- API Operations [end] -------------------- * //
+	// * -------------------------------------------------------------- * //
 }
