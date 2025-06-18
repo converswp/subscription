@@ -226,7 +226,7 @@ class Paypal extends \WC_Payment_Gateway {
 		}
 
 		// Get the first order item.
-		// Based on the logic, the order contains only one subscription item.
+		// Based on the logic, the order sould contain only one subscription item.
 		$order_items = $order->get_items();
 		$order_item  = ! empty( $order_items ) ? reset( $order_items ) : null;
 
@@ -249,10 +249,13 @@ class Paypal extends \WC_Payment_Gateway {
 		}
 
 		// Get Paypal Product ID.
-		$paypal_product_id = $this->get_paypal_product_id( $wc_product, $access_token );
+		$paypal_product_id = $this->get_paypal_product_id( $wc_product_id, $access_token );
 
-		print_r( "paypal_product_id \n" );
-		print_r( $paypal_product_id );
+		// Get Paypal Plan ID.
+		$paypal_plan_id = $this->get_paypal_plan_id( $wc_product_id, $wc_variation_id, $paypal_product_id, $access_token );
+
+		print_r( "paypal_plan_id \n" );
+		print_r( $paypal_plan_id );
 		die();
 
 		try {
@@ -328,13 +331,15 @@ class Paypal extends \WC_Payment_Gateway {
 	/**
 	 * Get PayPal product ID.
 	 *
-	 * @param WC_Product $wc_product WooCommerce Product.
-	 * @return string|null PayPal Product ID or null if not found.
+	 * @param int    $wc_product_id WooCommerce Product ID.
+	 * @param string $access_token  PayPal Access Token.
 	 */
-	public function get_paypal_product_id( WC_Product $wc_product, string $access_token ): ?string {
+	public function get_paypal_product_id( int $wc_product_id, string $access_token ): ?string {
+		$wc_product = wc_get_product( $wc_product_id );
+
 		// Get data from product meta.
 		// TODO: add home_url, wc_product_id etc to avoid duplication in paypal.
-		$paypal_data = get_post_meta( $wc_product->get_id(), '_wp_subs_paypal_data', true );
+		$paypal_data = get_post_meta( $wc_product_id, $this->get_meta_key( 'product_data' ), true );
 
 		$paypal_product_id = $paypal_data['product_id'] ?? null;
 		$paypal_image_url  = $paypal_data['image_url'] ?? null;
@@ -352,7 +357,7 @@ class Paypal extends \WC_Payment_Gateway {
 					'image_url'  => $paypal_product->image_url ?? '',
 					'home_url'   => $product_data->home_url ?? '',
 				];
-				update_post_meta( $wc_product->get_id(), '_wp_subs_paypal_data', $data );
+				update_post_meta( $wc_product_id, $this->get_meta_key( 'product_data' ), $data );
 			}
 		}
 
@@ -362,6 +367,32 @@ class Paypal extends \WC_Payment_Gateway {
 
 		// Return PayPal product ID or null if not found.
 		return $paypal_product_id;
+	}
+
+	/**
+	 * Get PayPal plan ID.
+	 *
+	 * @param int    $wc_product_id WooCommerce Product ID.
+	 * @param int    $wc_variation_id WooCommerce Variation ID.
+	 * @param string $paypal_product_id PayPal Product ID.
+	 * @param string $access_token  PayPal Access Token.
+	 */
+	public function get_paypal_plan_id( int $wc_product_id, int $wc_variation_id, string $paypal_product_id, string $access_token ): ?string {
+		$wc_product = wc_get_product( $wc_product_id );
+		if ( 0 !== $wc_variation_id ) {
+			$wc_product = wc_get_product( $wc_variation_id );
+		}
+
+		// Get data from product meta.
+		$plan_id          = get_post_meta( $wc_product_id, $this->get_meta_key( 'plan_id' ), true );
+		$plan_description = get_post_meta( $wc_product_id, $this->get_meta_key( 'plan_desc' ), true );
+
+		// Generate plan data.
+		$plan_data = $this->generate_plan_data( $wc_product, $paypal_product_id );
+
+		print_r( "plan_data \n" );
+		print_r( $plan_data );
+		die();
 	}
 
 	/**
@@ -404,6 +435,150 @@ class Paypal extends \WC_Payment_Gateway {
 		return strlen( $long_string ) <= $max_length ? $long_string : substr( $long_string, 0, $max_length );
 	}
 
+	/**
+	 * Get Prefixed Meta Key.
+	 * Prefix the key with '_wp_subs_' to avoid possible conflicts with other plugins.
+	 *
+	 * @param string $key The key to prefix.
+	 */
+	public function get_meta_key( string $key ): string {
+		$keys         = [
+			'product_data' => 'product_data',
+			'plan_id'      => 'plan_id',
+			'plan_desc'    => 'plan_description',
+		];
+		$selected_key = $keys[ $key ] ?? $key;
+		return '_wp_subs_paypal_' . $selected_key;
+	}
+
+	/**
+	 * Function to remove thousands separator.
+	 */
+	public function wpsubs_format_price( string $price ): string {
+		$thousand_separator = wc_get_price_thousand_separator();
+		$decimal_separator  = wc_get_price_decimal_separator();
+
+		// Remove thousand separators.
+		$price = str_replace( $thousand_separator, '', $price );
+
+		// Remove trailing zeros.
+		if ( strpos( $price, $decimal_separator ) !== false ) {
+			$parts = explode( $decimal_separator, $price );
+
+			// Remove trailing zeros from the decimal part.
+			$parts[1] = rtrim( $parts[1], '0' );
+
+			// Rejoin the parts.
+			$price = '' === $parts[1] ? $parts[0] : $parts[0] . $decimal_separator . $parts[1];
+		}
+		return $price;
+	}
+
+	/**
+	 * Generate Paypal Plan Data.
+	 *
+	 * @param WC_Product $wc_product WooCommerce Product.
+	 * @param string     $paypal_product_id PayPal Product ID.
+	 */
+	public function generate_plan_data( WC_Product $wc_product, string $paypal_product_id ): array {
+		// Get WPSubscription wrapped product.
+		$wpsubs_product = sdevs_get_subscription_product( $wc_product );
+
+		// Name.
+		$name = $this->truncate_string( $wc_product->get_name(), 126 );
+
+		// Description.
+		$description = $this->truncate_string( $wc_product->get_short_description(), 126 );
+
+		// Price.
+		$price = wc_get_price_including_tax( $wpsubs_product );
+		$price = $this->wpsubs_format_price( $price );
+
+		// Convert plural interval to singular.
+		// subscrpt_get_typos function of the plugin have translator on the intervals. PayPal will only accept english.
+		$convert_interval = function ( $interval ) {
+			switch ( strtolower( $interval ) ) {
+				case 'day':
+				case 'days':
+					return 'DAY';
+				case 'week':
+				case 'weeks':
+					return 'WEEK';
+				case 'month':
+				case 'months':
+					return 'MONTH';
+				case 'year':
+				case 'years':
+					return 'YEAR';
+				default:
+					return 'MONTH';
+			}
+		};
+
+		// Recurring Details.
+		$plan_length    = $wpsubs_product->get_timing_per();
+		$plan_interval  = $convert_interval( $wpsubs_product->get_timing_option() );
+		$trial_length   = $wpsubs_product->get_trial_timing_per();
+		$trial_interval = $convert_interval( $wpsubs_product->get_trial_timing_option() );
+		$signup_fee     = $wpsubs_product->get_signup_fee();
+
+		// Billing Cycles.
+		$billing_cycles = [];
+
+		// Add trial cycle in billing cycles if available.
+		if ( (int) $trial_length > 0 ) {
+			$billing_cycles[] = [
+				'tenure_type'  => 'TRIAL',
+				'sequence'     => 1,
+				'total_cycles' => 1,
+				'frequency'    => [
+					'interval_unit'  => $trial_interval,
+					'interval_count' => (int) $trial_length,
+				],
+			];
+		}
+
+		// Add regular cycle in billing cycles.
+		$billing_cycles[] = [
+			'tenure_type'    => 'REGULAR',
+			'sequence'       => count( $billing_cycles ) + 1,
+			'total_cycles'   => 0,
+			'pricing_scheme' => [
+				'pricing_model' => 'VOLUME',
+				'fixed_price'   => [
+					'value'         => $price,
+					'currency_code' => get_woocommerce_currency(),
+				],
+			],
+			'frequency'      => [
+				'interval_unit'  => $plan_interval,
+				'interval_count' => (int) $plan_length,
+			],
+		];
+
+		// Payment Preferences.
+		$payment_preferences = [
+			'auto_bill_outstanding'     => true,
+			'setup_fee_failure_action'  => 'CANCEL',
+			'payment_failure_threshold' => 3,
+			'setup_fee'                 => [
+				'value'         => (string) $signup_fee,
+				'currency_code' => get_woocommerce_currency(),
+			],
+		];
+
+		// Final Data.
+		$plan_data = [
+			'product_id'          => $paypal_product_id,
+			'name'                => $name,
+			'description'         => $description,
+			'billing_cycles'      => $billing_cycles,
+			'quantity_supported'  => false,
+			'payment_preferences' => $payment_preferences,
+		];
+		return $plan_data;
+	}
+
 	// * -------------------- Utility Methods [end] --------------------------- * //
 	// * ---------------------------------------------------------------------- * //
 
@@ -415,7 +590,7 @@ class Paypal extends \WC_Payment_Gateway {
 	/**
 	 * Get Paypal Access Token.
 	 */
-	protected function get_paypal_access_token(): ?string {
+	private function get_paypal_access_token(): ?string {
 		try {
 			$url  = $this->api_endpoint . '/v1/oauth2/token';
 			$args = [
@@ -457,7 +632,7 @@ class Paypal extends \WC_Payment_Gateway {
 	 * @param array  $product_data   Product data to create.
 	 * @param string $access_token   PayPal Access Token.
 	 */
-	protected function create_paypal_product( array $product_data, string $access_token ): ?object {
+	private function create_paypal_product( array $product_data, string $access_token ): ?object {
 		if ( empty( $product_data['name'] ?? null ) || empty( $product_data['type'] ?? null ) ) {
 			$log_message = __( 'Paypal Product Creation Error: Product data is incomplete. Name and type are required.', 'wp_subscription' );
 			wp_subscrpt_write_log( $log_message );
