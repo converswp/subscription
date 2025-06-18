@@ -221,7 +221,7 @@ class Paypal extends \WC_Payment_Gateway {
 			return array(
 				'result'   => 'error',
 				'redirect' => '',
-				'response' => 'Error retrieving PayPal access token. Please check your PayPal credentials.',
+				'response' => 'PayPal payment failed. Please retry.',
 			);
 		}
 
@@ -251,80 +251,38 @@ class Paypal extends \WC_Payment_Gateway {
 		// Get Paypal Product ID.
 		$paypal_product_id = $this->get_paypal_product_id( $wc_product_id, $access_token );
 
+		if ( ! $paypal_product_id ) {
+			return array(
+				'result'   => 'error',
+				'redirect' => '',
+				'response' => 'PayPal payment failed. Please retry.',
+			);
+		}
+
 		// Get Paypal Plan ID.
 		$paypal_plan_id = $this->get_paypal_plan_id( $wc_product_id, $wc_variation_id, $paypal_product_id, $access_token );
 
-		print_r( "paypal_plan_id \n" );
-		print_r( $paypal_plan_id );
-		die();
-
-		try {
-			$request_id = uniqid( 'wp-subs-paypal-', true );
-			$url        = $this->api_endpoint . '/v2/checkout/orders';
-			$args       = array(
-				'method'  => 'POST',
-				'headers' => [
-					'Authorization'                 => 'Bearer ' . $access_token,
-					'Content-Type'                  => 'application/json',
-					'Prefer'                        => 'return=representation',
-					'PayPal-Request-Id'             => $request_id,
-					'PayPal-Partner-Attribution-Id' => 'woo-wp-subs-paypal',
-				],
-				'body'    => wp_json_encode(
-					array(
-						'intent'              => 'CAPTURE',
-						'purchase_units'      => array(
-							self::get_purchase_details( $order ),
-						),
-						'application_context' => array(
-							'brand_name'          => get_bloginfo( 'name' ),
-							'return_url'          => $order->get_checkout_order_received_url(),
-							'cancel_url'          => wc_get_checkout_url(),
-							'landing_page'        => 'NO_PREFERENCE',
-							'shipping_preference' => 'SET_PROVIDED_ADDRESS',
-							'user_action'         => 'PAY_NOW',
-						),
-						'payment_method'      => array(
-							'payee_preferred' => 'UNRESTRICTED',
-							'payer_selected'  => 'PAYPAL',
-						),
-						'payer'               => array(
-							'name'          => array(
-								'given_name' => $order->get_billing_first_name(),
-								'surname'    => $order->get_billing_last_name(),
-							),
-							'email_address' => $order->get_billing_email(),
-							'address'       => array(
-								'country_code'   => $order->get_shipping_country() ? $order->get_shipping_country() : $order->get_billing_country(),
-								'address_line_1' => $order->get_shipping_address_1() ? $order->get_shipping_address_1() : $order->get_billing_address_1(),
-								'address_line_2' => $order->get_shipping_address_2() ? $order->get_shipping_address_2() : $order->get_billing_address_2(),
-								'postal_code'    => $order->get_shipping_postcode() ? $order->get_shipping_postcode() : $order->get_billing_postcode(),
-
-							),
-						),
-						'payment_source'      => array(
-							'paypal' => array(
-								'attributes' => array(
-									'customer' => array(
-										'id' => 'wps_paypal_' . get_current_user_id(),
-									),
-									'vault'    => array(
-										'confirm_payment_token' => 'ON_ORDER_COMPLETION',
-										'usage_type'    => 'MERCHANT',
-										'customer_type' => 'CONSUMER',
-									),
-								),
-							),
-						),
-					)
-				),
+		if ( ! $paypal_plan_id ) {
+			return array(
+				'result'   => 'error',
+				'redirect' => '',
+				'response' => 'PayPal payment failed. Please retry.',
 			);
-		} catch ( Exception $e ) {
-			// throw $th;
 		}
 
-		print_r( "access_token \n" );
-		print_r( $access_token );
+		// Create Subscription in PayPal.
+		$paypal_subscription_data = [
+			'plan_id'             => $paypal_plan_id,
+			'application_context' => [
+				'return_url' => $this->get_return_url( $order ),
+				'cancel_url' => $order->get_cancel_order_url(),
+			],
+		];
+
+		$paypal_subscription = $this->create_paypal_subscription( $paypal_subscription_data, $access_token );
+
+		print_r( "paypal_subscription \n" );
+		print_r( $paypal_subscription );
 		die();
 	}
 
@@ -697,7 +655,7 @@ class Paypal extends \WC_Payment_Gateway {
 			$response_data = json_decode( wp_remote_retrieve_body( $response ) );
 
 			if ( empty( $response_data->id ?? null ) ) {
-				$log_message = 'Error creating PayPal product: ' . ( $response_data->message ?? 'Unknown error' );
+				$log_message = 'Error creating PayPal product: ' . ( $response_data->error_description ?? 'Unknown error' );
 				wp_subscrpt_write_log( $log_message );
 				wp_subscrpt_write_debug_log( $log_message . ' ' . wp_json_encode( $response_data ) );
 				return null;
@@ -759,6 +717,51 @@ class Paypal extends \WC_Payment_Gateway {
 			return $response_data;
 		} catch ( Exception $e ) {
 			$log_message = 'Error creating PayPal plan: ' . $e->getMessage();
+			wp_subscrpt_write_log( $log_message );
+			wp_subscrpt_write_debug_log( $log_message );
+			return null;
+		}
+	}
+
+	/**
+	 * Create PayPal subscription.
+	 *
+	 * @param array  $paypal_subscription_data PayPal subscription data.
+	 * @param string $access_token    PayPal Access Token.
+	 */
+	private function create_paypal_subscription( array $paypal_subscription_data, string $access_token ): ?object {
+		// Prepare the body for the API request.
+		$body = [
+			'plan_id'             => $paypal_subscription_data['plan_id'],
+			'application_context' => $paypal_subscription_data['application_context'],
+		];
+
+		try {
+			$url  = $this->api_endpoint . '/v1/billing/subscriptions';
+			$args = [
+				'method'  => 'POST',
+				'headers' => [
+					'Authorization'     => 'Bearer ' . $access_token,
+					'Content-Type'      => 'application/json',
+					'Prefer'            => 'return=representation',
+					'PayPal-Request-Id' => uniqid( 'wp-subs-paypal-', true ),
+				],
+				'body'    => wp_json_encode( $body ),
+			];
+
+			$response      = wp_remote_post( $url, $args );
+			$response_data = json_decode( wp_remote_retrieve_body( $response ) );
+
+			if ( empty( $response_data->id ?? null ) ) {
+				$log_message = 'Error creating PayPal subscription: ' . ( $response_data->error_description ?? 'Unknown error' );
+				wp_subscrpt_write_log( $log_message );
+				wp_subscrpt_write_debug_log( $log_message . ' ' . wp_json_encode( $response_data ) );
+				return null;
+			}
+
+			return $response_data;
+		} catch ( Exception $e ) {
+			$log_message = 'Error creating PayPal subscription: ' . $e->getMessage();
 			wp_subscrpt_write_log( $log_message );
 			wp_subscrpt_write_debug_log( $log_message );
 			return null;
