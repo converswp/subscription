@@ -72,7 +72,7 @@ class Paypal extends \WC_Payment_Gateway {
 		$this->api_endpoint = $this->sandbox_mode ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com';
 
 		// Actions.
-		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
+		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, [ $this, 'process_admin_options' ] );
 	}
 
 	/**
@@ -195,34 +195,23 @@ class Paypal extends \WC_Payment_Gateway {
 	public function process_payment( $order_id ) {
 		$order = wc_get_order( $order_id );
 
-		$response = $this->process_paypal_payment( $order );
-
-		print_r( "🔽 order - response \n" );
-		print_r( $response );
-		die();
-
-		// Return thankyou redirect.
-		return array(
-			'result'   => 'success',
-			'redirect' => $this->get_return_url( $order ),
-		);
+		return $this->process_paypal_payment( $order );
 	}
 
 	/**
 	 * Process payments in PayPal.
 	 *
-	 * TODO: add return types.
-	 *
 	 * @param WC_Order $order The order object.
 	 */
-	protected function process_paypal_payment( WC_Order $order ) {
+	protected function process_paypal_payment( WC_Order $order ): array {
+		// Get PayPal Access Token.
 		$access_token = $this->get_paypal_access_token();
 		if ( ! $access_token ) {
-			return array(
+			return [
 				'result'   => 'error',
 				'redirect' => '',
-				'response' => 'PayPal payment failed. Please retry.',
-			);
+				'response' => 'PayPal payment failed. Please try again.',
+			];
 		}
 
 		// Get the first order item.
@@ -241,33 +230,33 @@ class Paypal extends \WC_Payment_Gateway {
 		}
 
 		if ( ! $wc_product ) {
-			return array(
+			return [
 				'result'   => 'error',
 				'redirect' => '',
 				'response' => 'Invalid product in order. Please check the order details.',
-			);
+			];
 		}
 
 		// Get Paypal Product ID.
 		$paypal_product_id = $this->get_paypal_product_id( $wc_product_id, $access_token );
 
 		if ( ! $paypal_product_id ) {
-			return array(
+			return [
 				'result'   => 'error',
 				'redirect' => '',
-				'response' => 'PayPal payment failed. Please retry.',
-			);
+				'response' => 'PayPal payment failed. Please try again.',
+			];
 		}
 
 		// Get Paypal Plan ID.
 		$paypal_plan_id = $this->get_paypal_plan_id( $wc_product_id, $wc_variation_id, $paypal_product_id, $access_token );
 
 		if ( ! $paypal_plan_id ) {
-			return array(
+			return [
 				'result'   => 'error',
 				'redirect' => '',
-				'response' => 'PayPal payment failed. Please retry.',
-			);
+				'response' => 'PayPal payment failed. Please try again.',
+			];
 		}
 
 		// Create Subscription in PayPal.
@@ -281,9 +270,35 @@ class Paypal extends \WC_Payment_Gateway {
 
 		$paypal_subscription = $this->create_paypal_subscription( $paypal_subscription_data, $access_token );
 
-		print_r( "paypal_subscription \n" );
-		print_r( $paypal_subscription );
-		die();
+		if ( empty( $paypal_subscription->id ?? null ) ) {
+			return [
+				'result'   => 'error',
+				'redirect' => '',
+				'response' => 'PayPal payment failed. Please try again.',
+			];
+		}
+
+		// Get payment link.
+		$paypal_subscription_pay_link = null;
+		foreach ( ( $paypal_subscription->links ?? [] ) as $link_obj ) {
+			if ( 'approve' === $link_obj->rel ) {
+				$paypal_subscription_pay_link = $link_obj->href;
+				break;
+			}
+		}
+
+		if ( empty( $paypal_subscription_pay_link ) ) {
+			return [
+				'result'   => 'error',
+				'redirect' => '',
+				'response' => 'PayPal payment failed. Please try again.',
+			];
+		} else {
+			return [
+				'result'   => 'success',
+				'redirect' => $paypal_subscription_pay_link,
+			];
+		}
 	}
 
 	/**
