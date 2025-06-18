@@ -384,15 +384,36 @@ class Paypal extends \WC_Payment_Gateway {
 		}
 
 		// Get data from product meta.
-		$plan_id          = get_post_meta( $wc_product_id, $this->get_meta_key( 'plan_id' ), true );
-		$plan_description = get_post_meta( $wc_product_id, $this->get_meta_key( 'plan_desc' ), true );
+		$plan_id = get_post_meta( $wc_product_id, $this->get_meta_key( 'plan_id' ), true );
+		// $plan_description = get_post_meta( $wc_product_id, $this->get_meta_key( 'plan_desc' ), true );
+
+		if ( empty( $plan_id ) ) {
+			$plan_id = null;
+		}
 
 		// Generate plan data.
 		$plan_data = $this->generate_plan_data( $wc_product, $paypal_product_id );
 
-		print_r( "plan_data \n" );
-		print_r( $plan_data );
-		die();
+		// TODO: implement logic to find and get plan.
+		// ---------- .
+
+		// Create plan if not available.
+		if ( empty( $plan_id ) ) {
+			$paypal_plan = $this->create_paypal_plan( $plan_data, $access_token );
+
+			if ( $paypal_plan ) {
+				$plan_id = $paypal_plan->id;
+
+				// Save PayPal plan ID and description in WooCommerce product meta.
+				update_post_meta( $wc_product_id, $this->get_meta_key( 'plan_id' ), $plan_id );
+				update_post_meta( $wc_product_id, $this->get_meta_key( 'plan_desc' ), $paypal_plan->description ?? '' );
+			}
+		}
+
+		// TODO: implement logic to update plan if changed.
+		// ---------- .
+
+		return $plan_id;
 	}
 
 	/**
@@ -453,6 +474,8 @@ class Paypal extends \WC_Payment_Gateway {
 
 	/**
 	 * Function to remove thousands separator.
+	 *
+	 * @param string $price The price to format.
 	 */
 	public function wpsubs_format_price( string $price ): string {
 		$thousand_separator = wc_get_price_thousand_separator();
@@ -544,8 +567,7 @@ class Paypal extends \WC_Payment_Gateway {
 			'sequence'       => count( $billing_cycles ) + 1,
 			'total_cycles'   => 0,
 			'pricing_scheme' => [
-				'pricing_model' => 'VOLUME',
-				'fixed_price'   => [
+				'fixed_price' => [
 					'value'         => $price,
 					'currency_code' => get_woocommerce_currency(),
 				],
@@ -684,6 +706,59 @@ class Paypal extends \WC_Payment_Gateway {
 			return $response_data;
 		} catch ( Exception $e ) {
 			$log_message = 'Error creating PayPal product: ' . $e->getMessage();
+			wp_subscrpt_write_log( $log_message );
+			wp_subscrpt_write_debug_log( $log_message );
+			return null;
+		}
+	}
+
+	/**
+	 * Create PayPal plan.
+	 *
+	 * @param array  $plan_data     Plan data to create.
+	 * @param string $access_token  PayPal Access Token.
+	 */
+	private function create_paypal_plan( array $plan_data, string $access_token ): ?object {
+		// Prepare the body for the API request.
+		$body = [
+			'product_id'          => $plan_data['product_id'],
+			'name'                => $plan_data['name'],
+			'billing_cycles'      => $plan_data['billing_cycles'],
+			'payment_preferences' => $plan_data['payment_preferences'],
+		];
+		if ( ! empty( $plan_data['description'] ?? null ) ) {
+			$body['description'] = $plan_data['description'];
+		}
+		if ( ! empty( $plan_data['quantity_supported'] ?? null ) ) {
+			$body['quantity_supported'] = $plan_data['quantity_supported'];
+		}
+
+		try {
+			$url  = $this->api_endpoint . '/v1/billing/plans';
+			$args = [
+				'method'  => 'POST',
+				'headers' => [
+					'Authorization'     => 'Bearer ' . $access_token,
+					'Content-Type'      => 'application/json',
+					'Prefer'            => 'return=representation',
+					'PayPal-Request-Id' => uniqid( 'wp-subs-paypal-', true ),
+				],
+				'body'    => wp_json_encode( $body ),
+			];
+
+			$response      = wp_remote_post( $url, $args );
+			$response_data = json_decode( wp_remote_retrieve_body( $response ) );
+
+			if ( empty( $response_data->id ?? null ) ) {
+				$log_message = 'Error creating PayPal plan: ' . ( $response_data->error_description ?? 'Unknown error' );
+				wp_subscrpt_write_log( $log_message );
+				wp_subscrpt_write_debug_log( $log_message . ' ' . wp_json_encode( $response_data ) );
+				return null;
+			}
+
+			return $response_data;
+		} catch ( Exception $e ) {
+			$log_message = 'Error creating PayPal plan: ' . $e->getMessage();
 			wp_subscrpt_write_log( $log_message );
 			wp_subscrpt_write_debug_log( $log_message );
 			return null;
