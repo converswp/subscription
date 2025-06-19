@@ -37,6 +37,13 @@ class Paypal extends \WC_Payment_Gateway {
 	protected $client_secret;
 
 	/**
+	 * Paypal Webhook ID.
+	 *
+	 * @var string
+	 */
+	protected $webhook_id;
+
+	/**
 	 * API endpoint for PayPal.
 	 *
 	 * @var string
@@ -67,6 +74,7 @@ class Paypal extends \WC_Payment_Gateway {
 		$this->sandbox_mode  = 'yes' === $this->get_option( 'testmode', 'no' );
 		$this->client_id     = $this->get_option( 'client_id' );
 		$this->client_secret = $this->get_option( 'client_secret' );
+		$this->webhook_id    = $this->get_option( 'webhook_id' );
 
 		// Set API endpoint.
 		$this->api_endpoint = $this->sandbox_mode ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com';
@@ -158,6 +166,13 @@ class Paypal extends \WC_Payment_Gateway {
 				'default'     => '',
 				'desc_tip'    => true,
 			],
+			'webhook_id'         => [
+				'title'       => __( 'Webhook ID', 'wp_subscription' ),
+				'type'        => 'text',
+				'description' => __( 'Enter your PayPal webhook ID copied from Paypal Apps & Credentials.', 'wp_subscription' ),
+				'default'     => '',
+				'desc_tip'    => true,
+			],
 		];
 	}
 
@@ -200,6 +215,13 @@ class Paypal extends \WC_Payment_Gateway {
 			</div>
 			<?php
 		}
+	}
+
+	/**
+	 * Get webhook URL for PayPal.
+	 */
+	public function get_webhook_url(): string {
+		return add_query_arg( 'wc-api', $this->id, trailingslashit( get_home_url() ) );
 	}
 
 	/**
@@ -255,6 +277,7 @@ class Paypal extends \WC_Payment_Gateway {
 
 		// Get Webhook Data.
 		$webhook_data = stripslashes_deep( $_POST ); // phpcs:ignore WordPress.Security.NonceVerification
+		$headers      = getallheaders();
 
 		if ( empty( $webhook_data ) || ! count( $webhook_data ) ) {
 			$post_data    = file_get_contents( 'php://input' );
@@ -267,7 +290,58 @@ class Paypal extends \WC_Payment_Gateway {
 			}
 		}
 
+		// Verify webhook.
+		$this->verify_webhook( $headers, $webhook_data );
+
+		// ! aushamim - check webhook : subs_id : I-RN532V30MCW1
+
+		$subscription_id = $webhook_data['resource']['billing_agreement_id'] ?? null;
+		dd( '🔽 subscription_id', $subscription_id );
+
+		// Get order by Subscription ID.
+		$order_id = wc_get_orders(
+			[
+				'limit'      => 1,
+				'meta_key'   => $this->get_meta_key( 'subscription_id' ),
+				'meta_value' => 'your_value',
+				'return'     => 'ids',
+			]
+		);
+
 		dd( '🔽 webhook_data', $webhook_data );
+	}
+
+	/**
+	 * Verify webhook data from PayPal.
+	 *
+	 * @param array $headers       Headers from the request.
+	 * @param array $webhook_data Webhook data from PayPal.
+	 */
+	public function verify_webhook( array $headers, array $webhook_data ) {
+		// Get PayPal Access Token.
+		$access_token = $this->get_paypal_access_token();
+		if ( ! $access_token ) {
+			wp_die( 'Error: Access token not available. Cannot verify webhook.', '401 Unauthorized', array( 'response' => 401 ) );
+		}
+
+		// Prepare the request to verify the webhook.
+		$payload = [
+			'auth_algo'         => $headers['Paypal-Auth-Algo'] ?? '',
+			'cert_url'          => $headers['Paypal-Cert-Url'] ?? '',
+			'transmission_id'   => $headers['Paypal-Transmission-Id'] ?? '',
+			'transmission_sig'  => $headers['Paypal-Transmission-Sig'] ?? '',
+			'transmission_time' => $headers['Paypal-Transmission-Time'] ?? '',
+			'webhook_id'        => $this->webhook_id ?? '',
+			'webhook_event'     => $webhook_data,
+		];
+
+		$verified = $this->verify_paypal_webhook( $payload, $access_token );
+
+		if ( ! $verified ) {
+			wp_subscrpt_write_log( 'PayPal webhook verification failed.' );
+			wp_subscrpt_write_debug_log( 'Webhook verification failed for data: ' . wp_json_encode( $webhook_data ) );
+			wp_die( 'Error: PayPal webhook verification failed.', '403 Forbidden', array( 'response' => 403 ) );
+		}
 	}
 
 	/**
@@ -682,7 +756,7 @@ class Paypal extends \WC_Payment_Gateway {
 				'headers' => [
 					'Accept'          => 'application/json',
 					'Accept-Language' => 'en_US',
-					'Authorization'   => 'Basic ' . base64_encode( $this->client_id . ':' . $this->client_secret ),
+					'Authorization'   => 'Basic ' . base64_encode( $this->client_id . ':' . $this->client_secret ), // phpcs:ignore
 				],
 				'body'    => [
 					'grant_type' => 'client_credentials',
@@ -693,7 +767,7 @@ class Paypal extends \WC_Payment_Gateway {
 			$response_data = json_decode( wp_remote_retrieve_body( $response ) );
 
 			if ( isset( $response_data->error ) || ! isset( $response_data->access_token ) ) {
-				$log_message = 'Error retrieving PayPal access token: ' . $response_data->error_description;
+				$log_message = 'Error retrieving PayPal access token: ' . $response_data->error_description ?? 'Unknown error';
 				wp_subscrpt_write_log( $log_message );
 				wp_subscrpt_write_debug_log( $log_message );
 
@@ -869,6 +943,45 @@ class Paypal extends \WC_Payment_Gateway {
 			wp_subscrpt_write_log( $log_message );
 			wp_subscrpt_write_debug_log( $log_message );
 			return null;
+		}
+	}
+
+	/**
+	 * Verify PayPal webhook.
+	 *
+	 * @param array  $verification_data Verification data to verify.
+	 * @param string $access_token      PayPal Access Token.
+	 */
+	public function verify_paypal_webhook( array $verification_data, string $access_token ): bool {
+		try {
+			$url  = $this->api_endpoint . '/v1/notifications/verify-webhook-signature';
+			$args = [
+				'method'  => 'POST',
+				'headers' => [
+					'Authorization' => 'Bearer ' . $access_token,
+					'Content-Type'  => 'application/json',
+				],
+				'body'    => wp_json_encode( $verification_data ),
+			];
+
+			$response      = wp_remote_post( $url, $args );
+			$response_data = json_decode( wp_remote_retrieve_body( $response ) );
+
+			if ( empty( $response_data->verification_status ?? null ) || 'SUCCESS' !== $response_data->verification_status ) {
+				wp_subscrpt_write_debug_log( 'PayPal Webhook Verification: ' . wp_json_encode( $response_data ) );
+				return false;
+			}
+
+			if ( 'SUCCESS' === $response_data->verification_status ) {
+				return true;
+			} else {
+				return false;
+			}
+		} catch ( Exception $e ) {
+			$log_message = 'PayPal Webhook Verification Failed: ' . $e->getMessage();
+			wp_subscrpt_write_log( $log_message );
+			wp_subscrpt_write_debug_log( $log_message );
+			return false;
 		}
 	}
 
