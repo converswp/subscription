@@ -291,24 +291,34 @@ class Paypal extends \WC_Payment_Gateway {
 		}
 
 		// Verify webhook.
-		$this->verify_webhook( $headers, $webhook_data );
+		// ! aushamim - test
+		// $this->verify_webhook( $headers, $webhook_data );
 
 		// ! aushamim - check webhook : subs_id : I-RN532V30MCW1
 
-		$subscription_id = $webhook_data['resource']['billing_agreement_id'] ?? null;
-		dd( '🔽 subscription_id', $subscription_id );
+		// Get event type from webhook data.
+		$event = $webhook_data['event_type'] ?? '';
 
-		// Get order by Subscription ID.
-		$order_id = wc_get_orders(
-			[
-				'limit'      => 1,
-				'meta_key'   => $this->get_meta_key( 'subscription_id' ),
-				'meta_value' => 'your_value',
-				'return'     => 'ids',
-			]
-		);
+		// Supported transaction events.
+		$transaction_events = [ 'PAYMENT.SALE.COMPLETED' ];
 
-		dd( '🔽 webhook_data', $webhook_data );
+		// Supported subscription events.
+		$subscription_events = [ 'PAYMENT.SALE.COMPLETED' ];
+
+		if ( in_array( $event, $transaction_events, true ) ) {
+			$this->handle_transaction_event( $webhook_data );
+		} elseif ( in_array( $event, $subscription_events, true ) ) {
+			$this->handle_subscription_event( $webhook_data );
+		} else {
+			$log_message = sprintf(
+				// translators: %1$s: alert name; %2$s: order id.
+				__( 'Paypal webhook received [%s]. No actions taken.', 'wp_subscription' ),
+				$event,
+			);
+			wp_subscrpt_write_log( $log_message );
+			wp_subscrpt_write_debug_log( $log_message . ' ' . wp_json_encode( $webhook_data ) );
+			wp_die( esc_html( $log_message ), '200 success', array( 'response' => 200 ) );
+		}
 	}
 
 	/**
@@ -575,6 +585,79 @@ class Paypal extends \WC_Payment_Gateway {
 
 		// Return PayPal product or null.
 		return $paypal_product;
+	}
+
+	/**
+	 * Handle transaction event from PayPal.
+	 *
+	 * @param array $webhook_data Webhook data from PayPal.
+	 */
+	public function handle_transaction_event( array $webhook_data ) {
+		// Get event type.
+		$event = $webhook_data['event_type'] ?? 'N/A';
+
+		// Get subscription ID from webhook data.
+		$subscription_id = $webhook_data['resource']['billing_agreement_id'] ?? null;
+
+		// Get order by Subscription ID.
+		$order = null;
+		if ( ! empty( $subscription_id ) ) {
+			$order_ids = wc_get_orders(
+				[
+					'limit'      => 1,
+					'meta_key'   => $this->get_meta_key( 'subscription_id' ),
+					'meta_value' => $subscription_id,
+					'return'     => 'ids',
+				]
+			);
+
+			if ( ! empty( $order_ids ) ) {
+				$order = wc_get_order( reset( $order_ids ) );
+			}
+		}
+
+		if ( ! $order ) {
+			$log_message = sprintf(
+				// translators: %1$s: alert name; %2$s: subscription id.
+				__( 'Transaction webhook received [%1$s]. No order found for subscription ID [%2$s].', 'wp_subscription' ),
+				$event,
+				$subscription_id
+			);
+			wp_subscrpt_write_log( $log_message );
+			wp_subscrpt_write_debug_log( $log_message . ' ' . wp_json_encode( $webhook_data ) );
+			wp_die( esc_html( $log_message ), '404 not found', array( 'response' => 404 ) );
+		}
+
+		switch ( $event ) {
+			case 'PAYMENT.SALE.COMPLETED':
+				if ( $order->update_status( 'completed' ) ) {
+					$order->add_order_note( __( 'Payment completed by paypal webhook.', 'wp_subscription' ) );
+					wp_die( esc_html_e( 'Order activated.', 'wp_subscription' ), '200 Success', array( 'response' => 200 ) );
+				} else {
+					$order->add_order_note( __( 'Failed to complete payment. Requested by paypal webhook.', 'wp_subscription' ) );
+					wp_die( esc_html_e( 'Order activation failed.', 'wp_subscription' ), '506 Internal Error', array( 'response' => 506 ) );
+				}
+				break;
+
+			default:
+				$log_message = sprintf(
+					// translators: %1$s: alert name; %2$s: order id.
+					__( 'Transaction webhook received [%s]. No actions taken.', 'wp_subscription' ),
+					$event,
+				);
+				wp_subscrpt_write_log( $log_message );
+				wp_subscrpt_write_debug_log( $log_message . ' ' . wp_json_encode( $webhook_data ) );
+				wp_die( esc_html( $log_message ), '200 success', array( 'response' => 200 ) );
+		}
+	}
+
+	/**
+	 * Handle subscription event from PayPal.
+	 *
+	 * @param array $webhook_data Webhook data from PayPal.
+	 */
+	public function handle_subscription_event( array $webhook_data ) {
+		dd( '🔽 webhook_data subscription', $webhook_data );
 	}
 
 	// * ------------------------------------------------------------------------ * //
