@@ -264,11 +264,7 @@ class Menu {
      * Render Stats page
      */
     public function render_stats_page() {
-        $this->render_admin_header();   
-        // if ( ! class_exists('Sdevs_Wc_Subscription_Pro') ){
-        //     $this->render_admin_footer();
-        //     return;
-        // }
+        $this->render_admin_header();
 
         if ( ! class_exists('Sdevs_Wc_Subscription_Pro') ) { ?>
             <div class="wp-subscription-admin-content" style="max-width:1240px;margin:32px auto 0 auto">
@@ -288,149 +284,14 @@ class Menu {
                 </div>
             </div>
         <?php 
-            $this->render_admin_footer();
-            return;
+        } else {
+            // Allow pro plugin to override the entire stats page content
+            do_action('wp_subscription_render_stats_page');
         }
 
-        global $wpdb;
-        $months = [];
-        $now = current_time('timestamp');
-        for ($i = 11; $i >= 0; $i--) {
-            $month = strtotime("-{$i} month", $now);
-            $key = date('Y-m', $month);
-            $months[$key] = [
-                'label' => date('M Y', $month),
-                'total' => 0,
-                'active' => 0,
-                'cancelled' => 0,
-                'revenue' => 0.0,
-            ];
-        }
-        $start = strtotime('-11 months', $now);
-        $start = strtotime(date('Y-m-01 00:00:00', $start));
-        $end = strtotime(date('Y-m-t 23:59:59', $now));
-        $subs = $wpdb->get_results($wpdb->prepare(
-            "SELECT ID, post_status, post_date_gmt FROM {$wpdb->posts} WHERE post_type='subscrpt_order' AND post_status != 'trash' AND post_date_gmt >= %s AND post_date_gmt <= %s",
-            gmdate('Y-m-d H:i:s', $start),
-            gmdate('Y-m-d H:i:s', $end)
-        ));
-        // dd($subs);
-        foreach ($subs as $sub) {
-            $month = date('Y-m', strtotime($sub->post_date_gmt));
-            if (!isset($months[$month])) continue;
-            $months[$month]['total']++;
-            if ($sub->post_status === 'active') $months[$month]['active']++;
-            if ($sub->post_status === 'cancelled') $months[$month]['cancelled']++;
-            // Revenue: get price meta
-            $price = get_post_meta($sub->ID, '_subscrpt_price', true);
-            $months[$month]['revenue'] += floatval($price);
-        }
-        // Next month projection: current active * avg revenue per active
-        $active_now = $months[array_key_last($months)]['active'];
-        $revenue_now = $months[array_key_last($months)]['revenue'];
-        $avg_per_active = $active_now ? ($revenue_now / $active_now) : 0;
-        $projection = round($active_now * $avg_per_active, 2);
-        // Previous month
-        $month_keys = array_keys($months);
-        $prev_month_key = $month_keys[count($month_keys)-2] ?? null;
-        $prev_month_label = $prev_month_key ? $months[$prev_month_key]['label'] : '';
-        $prev_month_revenue = $prev_month_key ? $months[$prev_month_key]['revenue'] : 0;
-        // Next month name
-        $next_month_label = date('M Y', strtotime('+1 month', $now));
-        ?>
-        <div class="wp-subscription-admin-content" style="max-width:1240px;margin:32px auto 0 auto;">
-            <div class="wp-subscription-admin-box" style="margin-bottom:32px;">
-                <h1 class="wp-subscription-admin-title" style="margin-bottom:18px;">Monthly Subscription Report</h1>
-                <div style="display:flex;gap:24px;flex-wrap:wrap;margin-bottom:50px;">
-                    <div style="flex:1;min-width:180px;background:#f7fafd;border-radius:8px;padding:18px 22px;text-align:center;">
-                        <div style="margin-bottom:10px;font-size:2em;font-weight:700;color:#2563eb;"><?php echo intval($months[array_key_last($months)]['total']); ?></div>
-                        <div style="color:#888;font-size:13px;">Subscriptions This Month</div>
-                    </div>
-                    <div style="flex:1;min-width:180px;background:#f7fafd;border-radius:8px;padding:18px 22px;text-align:center;">
-                        <div style="margin-bottom:10px;font-size:2em;font-weight:700;color:#27c775;"><?php echo intval($months[array_key_last($months)]['active']); ?></div>
-                        <div style="color:#888;font-size:13px;">Active Subscriptions</div>
-                    </div>
-                    <div style="flex:1;min-width:180px;background:#f7fafd;border-radius:8px;padding:18px 22px;text-align:center;">
-                        <div style="margin-bottom:10px;font-size:2em;font-weight:700;color:#d93025;"><?php echo intval($months[array_key_last($months)]['cancelled']); ?></div>
-                        <div style="color:#888;font-size:13px;">Cancelled This Month</div>
-                    </div>
-                    <div style="flex:1;min-width:180px;background:#f7fafd;border-radius:8px;padding:18px 22px;text-align:center;">
-                        <div style="margin-bottom:10px;font-size:2em;font-weight:700;color:#7f54b3;">$<?php echo number_format($months[array_key_last($months)]['revenue'], 2); ?></div>
-                        <div style="color:#888;font-size:13px;">Revenue This Month</div>
-                    </div>
-                    <div style="flex:1;min-width:180px;background:#f4f7fa;border-radius:8px;padding:18px 22px;text-align:center;">
-                        <div style="margin-bottom:10px;font-size:1.5em;font-weight:700;color:#7f54b3;">$<?php echo number_format($prev_month_revenue, 2); ?></div>
-                        <div style="font-size:1.1em;font-weight:600;color:#888;margin-bottom:2px;">Previous Month (<?php echo esc_html($prev_month_label); ?>)</div>
-                    </div>
-                    <div style="flex:1;min-width:180px;background:#e6f0fa;border-radius:8px;padding:18px 22px;text-align:center;">
-                        <div style="margin-bottom:10px;font-size:1.5em;font-weight:700;color:#2196f3;">$<?php echo number_format($projection, 2); ?></div>
-                        <div style="font-size:1.1em;font-weight:600;color:#888;margin-bottom:2px;">Next Month Projection (<?php echo esc_html($next_month_label); ?>)</div>
-                    </div>
-                </div>
-                <canvas id="wpsubscription-report-chart" height="110"></canvas>
-            </div>
-        </div>
-        
-        <?php $this->render_admin_footer(); ?>
+        $this->render_admin_footer();
 
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script>
-        const ctx = document.getElementById('wpsubscription-report-chart').getContext('2d');
-        const chart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: <?php echo json_encode(array_column($months, 'label')); ?>,
-                datasets: [
-                    {
-                        label: 'Total',
-                        data: <?php echo json_encode(array_column($months, 'total')); ?>,
-                        backgroundColor: '#2563eb',
-                    },
-                    {
-                        label: 'Active',
-                        data: <?php echo json_encode(array_column($months, 'active')); ?>,
-                        backgroundColor: '#27c775',
-                    },
-                    {
-                        label: 'Cancelled',
-                        data: <?php echo json_encode(array_column($months, 'cancelled')); ?>,
-                        backgroundColor: '#d93025',
-                    },
-                    {
-                        label: 'Revenue',
-                        data: <?php echo json_encode(array_map('floatval', array_column($months, 'revenue'))); ?>,
-                        backgroundColor: '#7f54b3',
-                        type: 'line',
-                        yAxisID: 'y1',
-                        borderColor: '#7f54b3',
-                        fill: false,
-                        tension: 0.3,
-                        pointRadius: 3,
-                        pointBackgroundColor: '#7f54b3',
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                interaction: { mode: 'index', intersect: false },
-                plugins: {
-                    legend: { position: 'top' },
-                    title: { display: false },
-                    tooltip: { enabled: true }
-                },
-                scales: {
-                    y: { beginAtZero: true, title: { display: true, text: 'Count' } },
-                    y1: {
-                        beginAtZero: true,
-                        position: 'right',
-                        grid: { drawOnChartArea: false },
-                        title: { display: true, text: 'Revenue ($)' }
-                    }
-                }
-            }
-        });
-        </script>
-        <?php
+        return;
     }
 
     /**
