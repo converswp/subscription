@@ -86,6 +86,9 @@ class Paypal extends \WC_Payment_Gateway {
 
 		// Hide gateway if no wp_subscription products are available.
 		add_filter( 'woocommerce_available_payment_gateways', [ $this,'remove_wp_subs_paypal_gateway' ] );
+
+		// WooCommerce webhook.
+		add_action( 'woocommerce_api_' . $this->id, [ $this, 'process_webhook' ] );
 	}
 
 	/**
@@ -239,6 +242,32 @@ class Paypal extends \WC_Payment_Gateway {
 		}
 
 		return $available_gateways;
+	}
+
+	/**
+	 * Process webhook from PayPal.
+	 */
+	public function process_webhook() {
+		if ( ! isset( $_GET['wc-api'] ) || $this->id !== $_GET['wc-api'] ) {
+			wp_subscrpt_write_log( 'PayPal webhook called without valid API endpoint.' );
+			return;
+		}
+
+		// Get Webhook Data.
+		$webhook_data = stripslashes_deep( $_POST ); // phpcs:ignore WordPress.Security.NonceVerification
+
+		if ( empty( $webhook_data ) || ! count( $webhook_data ) ) {
+			$post_data    = file_get_contents( 'php://input' );
+			$webhook_data = json_decode( $post_data, true );
+
+			if ( ! $webhook_data ) {
+				wp_subscrpt_write_log( 'Webhook data is empty.' );
+				wp_subscrpt_write_debug_log( 'process_webhook EMPTY ' . file_get_contents( 'php://input' ) );
+				exit( 'Webhook data is empty.' );
+			}
+		}
+
+		dd( '🔽 webhook_data', $webhook_data );
 	}
 
 	/**
