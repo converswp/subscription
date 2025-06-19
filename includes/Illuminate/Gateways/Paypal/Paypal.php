@@ -300,7 +300,7 @@ class Paypal extends \WC_Payment_Gateway {
 		$event = $webhook_data['event_type'] ?? '';
 
 		// Supported transaction events.
-		$transaction_events = [ 'PAYMENT.SALE.COMPLETED' ];
+		$transaction_events = [ 'PAYMENT.SALE.COMPLETED', 'PAYMENT.SALE.REFUNDED' ];
 
 		// Supported subscription events.
 		$subscription_events = [ 'PAYMENT.SALE.COMPLETED' ];
@@ -596,23 +596,30 @@ class Paypal extends \WC_Payment_Gateway {
 		// Get event type.
 		$event = $webhook_data['event_type'] ?? 'N/A';
 
+		// Order object.
+		$order = null;
+
+		// Get transaction ID from webhook data.
+		$transaction_id = $webhook_data['resource']['sale_id'] ?? $webhook_data['resource']['id'] ?? '';
+
+		// Get order by Transaction ID.
+		if ( ! empty( $transaction_id ) ) {
+			$orders = wc_get_orders( [ 'transaction_id' => $transaction_id ] );
+
+			if ( ! empty( $orders ) ) {
+				$order = reset( $orders );
+			}
+		}
+
 		// Get subscription ID from webhook data.
 		$subscription_id = $webhook_data['resource']['billing_agreement_id'] ?? null;
 
 		// Get order by Subscription ID.
-		$order = null;
-		if ( ! empty( $subscription_id ) ) {
-			$order_ids = wc_get_orders(
-				[
-					'limit'      => 1,
-					'meta_key'   => $this->get_meta_key( 'subscription_id' ),
-					'meta_value' => $subscription_id,
-					'return'     => 'ids',
-				]
-			);
+		if ( ! $order && ! empty( $subscription_id ) ) {
+			$orders = wc_get_orders( [ 'subscription_id' => $subscription_id ] );
 
-			if ( ! empty( $order_ids ) ) {
-				$order = wc_get_order( reset( $order_ids ) );
+			if ( ! empty( $orders ) ) {
+				$order = reset( $orders );
 			}
 		}
 
@@ -631,11 +638,30 @@ class Paypal extends \WC_Payment_Gateway {
 		switch ( $event ) {
 			case 'PAYMENT.SALE.COMPLETED':
 				if ( $order->update_status( 'completed' ) ) {
+					$order->set_transaction_id( $transaction_id );
 					$order->add_order_note( __( 'Payment completed by paypal webhook.', 'wp_subscription' ) );
-					wp_die( esc_html_e( 'Order activated.', 'wp_subscription' ), '200 Success', array( 'response' => 200 ) );
+					$order->save();
+
+					wp_die( 'Order activated.', '200 Success', array( 'response' => 200 ) );
 				} else {
 					$order->add_order_note( __( 'Failed to complete payment. Requested by paypal webhook.', 'wp_subscription' ) );
-					wp_die( esc_html_e( 'Order activation failed.', 'wp_subscription' ), '506 Internal Error', array( 'response' => 506 ) );
+					$order->save();
+
+					wp_die( 'Order activation failed.', '506 Internal Error', array( 'response' => 506 ) );
+				}
+				break;
+
+			case 'PAYMENT.SALE.REFUNDED':
+				if ( $order->update_status( 'refunded' ) ) {
+					$order->add_order_note( __( 'Payment refunded by paypal webhook.', 'wp_subscription' ) );
+					$order->save();
+
+					wp_die( 'Order refunded.', '200 Success', array( 'response' => 200 ) );
+				} else {
+					$order->add_order_note( __( 'Failed to refund payment. Requested by paypal webhook.', 'wp_subscription' ) );
+					$order->save();
+
+					wp_die( 'Order refund failed.', '506 Internal Error', array( 'response' => 506 ) );
 				}
 				break;
 
