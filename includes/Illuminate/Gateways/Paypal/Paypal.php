@@ -72,7 +72,20 @@ class Paypal extends \WC_Payment_Gateway {
 		$this->api_endpoint = $this->sandbox_mode ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com';
 
 		// Actions.
+		$this->init_actions();
+	}
+
+	/**
+	 * Initialize actions for the gateway.
+	 */
+	protected function init_actions() {
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, [ $this, 'process_admin_options' ] );
+
+		// Process order after payment.
+		add_action( 'woocommerce_thankyou', [ $this, 'order_received_page' ] );
+
+		// Hide gateway if no wp_subscription products are available.
+		add_filter( 'woocommerce_available_payment_gateways', [ $this,'remove_wp_subs_paypal_gateway' ] );
 	}
 
 	/**
@@ -187,6 +200,48 @@ class Paypal extends \WC_Payment_Gateway {
 	}
 
 	/**
+	 * Process order after payment received.
+	 *
+	 * @param int $order_id Order ID.
+	 */
+	public function order_received_page( $order_id ) {
+		if ( ! is_order_received_page() || empty( $order_id ) ) {
+			return;
+		}
+
+		// dd( '🔽 order_id', $order_id );
+	}
+
+	/**
+	 * Remove PayPal gateway if no wp_subscription products are in checkout.
+	 *
+	 * @param array $available_gateways Available gateways.
+	 */
+	public function remove_wp_subs_paypal_gateway( $available_gateways ) {
+		if ( ! is_checkout() || ! is_array( $available_gateways ) || empty( $available_gateways ) ) {
+			return $available_gateways;
+		}
+
+		$has_subs_in_cart = false;
+		$cart_items       = WC()->cart->cart_contents;
+		foreach ( $cart_items as $cart_item ) {
+			if (
+				isset( $cart_item['subscription'] ) ||
+				$cart_item['data']->get_meta( '_subscrpt_enabled' )
+			) {
+				$has_subs_in_cart = true;
+				break;
+			}
+		}
+
+		if ( ! $has_subs_in_cart && isset( $available_gateways[ $this->id ] ) ) {
+			unset( $available_gateways[ $this->id ] );
+		}
+
+		return $available_gateways;
+	}
+
+	/**
 	 * Process Payment.
 	 *
 	 * @param int $order_id Order ID.
@@ -277,6 +332,10 @@ class Paypal extends \WC_Payment_Gateway {
 				'response' => 'PayPal payment failed. Please try again.',
 			];
 		}
+
+		// Save PayPal Subscription ID in order meta.
+		$order->update_meta_data( $this->get_meta_key( 'subscription_id' ), $paypal_subscription->id );
+		$order->save();
 
 		// Get payment link.
 		$paypal_subscription_pay_link = null;
@@ -437,9 +496,10 @@ class Paypal extends \WC_Payment_Gateway {
 	 */
 	public function get_meta_key( string $key ): string {
 		$keys         = [
-			'product_data' => 'product_data',
-			'plan_id'      => 'plan_id',
-			'plan_desc'    => 'plan_description',
+			'product_data'    => 'product_data',
+			'plan_id'         => 'plan_id',
+			'plan_desc'       => 'plan_description',
+			'subscription_id' => 'subscription_id',
 		];
 		$selected_key = $keys[ $key ] ?? $key;
 		return '_wp_subs_paypal_' . $selected_key;
