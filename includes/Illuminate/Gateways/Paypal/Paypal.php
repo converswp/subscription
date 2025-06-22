@@ -3,6 +3,9 @@
 namespace SpringDevs\Subscription\Illuminate\Gateways\Paypal;
 
 use Exception;
+use PHPUnit\TextUI\Help;
+use SpringDevs\Subscription\Illuminate\Action;
+use SpringDevs\Subscription\Illuminate\Helper;
 use WC_Order;
 use WC_Order_Item_Product;
 use WC_Product;
@@ -295,10 +298,7 @@ class Paypal extends \WC_Payment_Gateway {
 		}
 
 		// Verify webhook.
-		// ! aushamim - test
-		// $this->verify_webhook( $headers, $webhook_data );
-
-		// ! aushamim - check webhook : subs_id : I-RN532V30MCW1
+		$this->verify_webhook( $headers, $webhook_data );
 
 		// Get event type from webhook data.
 		$event = $webhook_data['event_type'] ?? '';
@@ -334,7 +334,7 @@ class Paypal extends \WC_Payment_Gateway {
 		}
 
 		// Get subscription ID from webhook data.
-		$subscription_id = $webhook_data['resource']['billing_agreement_id'] ?? null;
+		$subscription_id = $webhook_data['resource']['billing_agreement_id'] ?? $webhook_data['resource']['id'] ?? null;
 
 		// Get order by Subscription ID.
 		if ( ! $order && ! empty( $subscription_id ) ) {
@@ -354,6 +354,18 @@ class Paypal extends \WC_Payment_Gateway {
 			}
 		}
 
+		if ( empty( $order ) ) {
+			$log_message = sprintf(
+				// translators: %1$s: alert name; %2$s: order id.
+				__( 'Paypal webhook received [%s]. Order not found.', 'wp_subscription' ),
+				$event,
+			);
+			wp_subscrpt_write_log( $log_message );
+			wp_subscrpt_write_debug_log( $log_message . ' ' . wp_json_encode( $webhook_data ) );
+			wp_die( esc_html( $log_message ), '404 not found', array( 'response' => 404 ) );
+		}
+
+		// Finally, handle the webhook.
 		if ( in_array( $event, $transaction_events, true ) ) {
 			$this->handle_transaction_event( $webhook_data, $order, $transaction_id, $subscription_id );
 		} elseif ( in_array( $event, $subscription_events, true ) ) {
@@ -708,25 +720,84 @@ class Paypal extends \WC_Payment_Gateway {
 	 * @param array       $webhook_data Webhook data from PayPal.
 	 * @param WC_Order    $order Order object.
 	 * @param string|null $transaction_id Transaction ID from webhook data.
-	 * @param string|null $subscription_id Subscription ID from webhook data.
+	 * @param string|null $paypal_subscription_id Subscription ID from webhook data.
 	 */
-	public function handle_subscription_event( array $webhook_data, WC_Order $order, ?string $transaction_id, ?string $subscription_id ) {
+	public function handle_subscription_event( array $webhook_data, WC_Order $order, ?string $transaction_id, ?string $paypal_subscription_id ) {
 		// Get event type.
 		$event = $webhook_data['event_type'] ?? 'N/A';
 
-		dd( '🔽 order', $order );
+		// Subscription.
+		$subscription = Helper::get_subscriptions_from_order( $order );
+
+		// If no subscription, try to get from order item.
+		if ( empty( $subscription ) ) {
+			$log_message = __( 'Subscription not found. Attempting to get from order item.', 'wp_subscription' );
+			wp_subscrpt_write_log( $log_message );
+			wp_subscrpt_write_debug_log( $log_message );
+
+			$order_items = $order->get_items();
+			foreach ( $order_items as $item ) {
+				$tmp_subs = Helper::get_subscription_from_order_item_id( $item->get_id() );
+
+				if ( ! empty( $tmp_subs ) ) {
+					$subscription = $tmp_subs;
+					break;
+				}
+			}
+		}
+
+		// If still no subscription, exit.
+		if ( empty( $subscription ) || empty( $subscription->subscription_id ?? null ) ) {
+			$log_message = sprintf(
+					// translators: %s: alert name.
+				__( 'Subscription webhook received [%s]. Subscription not found.', 'wp_subscription' ),
+				$event,
+			);
+			wp_subscrpt_write_log( $log_message );
+			wp_subscrpt_write_debug_log( $log_message . ' ' . wp_json_encode( $webhook_data ) );
+			wp_die( esc_html( $log_message ), '404 not found', array( 'response' => 404 ) );
+		}
 
 		switch ( $event ) {
 			case 'BILLING.SUBSCRIPTION.ACTIVATED':
+				if ( ! in_array( get_post_status( $subscription->subscription_id ), [ 'active' ], true ) ) {
+					Action::status( 'active', $subscription->subscription_id );
+
+					$log_message = __( 'Subscription activated by PayPal webhook.', 'wp_subscription' );
+					wp_subscrpt_write_log( $log_message );
+					wp_subscrpt_write_debug_log( $log_message . ' ' . wp_json_encode( $webhook_data ) );
+					wp_die( esc_html( $log_message ), '200 success', array( 'response' => 200 ) );
+				}
+
+				wp_die( esc_html( __( 'Subscription webhook received. No actions taken.', 'wp_subscription' ) ), '200 success', array( 'response' => 200 ) );
 				break;
-			case 'BILLING.SUBSCRIPTION.UPDATED':
-				break;
+
 			case 'BILLING.SUBSCRIPTION.EXPIRED':
+				if ( in_array( get_post_status( $subscription->subscription_id ), [ 'active', 'pe_cancelled' ], true ) ) {
+					Action::status( 'expired', $subscription->subscription_id );
+
+					$log_message = __( 'Subscription expired by PayPal webhook.', 'wp_subscription' );
+					wp_subscrpt_write_log( $log_message );
+					wp_subscrpt_write_debug_log( $log_message . ' ' . wp_json_encode( $webhook_data ) );
+					wp_die( esc_html( $log_message ), '200 success', array( 'response' => 200 ) );
+				}
+
+				wp_die( esc_html( __( 'Subscription webhook received. No actions taken.', 'wp_subscription' ) ), '200 success', array( 'response' => 200 ) );
 				break;
-			case 'BILLING.SUBSCRIPTION.SUSPENDED':
-				break;
+
 			case 'BILLING.SUBSCRIPTION.CANCELLED':
+				if ( ! in_array( get_post_status( $subscription->subscription_id ), [ 'cancelled' ], true ) ) {
+					Action::status( 'cancelled', $subscription->subscription_id );
+
+					$log_message = __( 'Subscription cancelled by PayPal webhook.', 'wp_subscription' );
+					wp_subscrpt_write_log( $log_message );
+					wp_subscrpt_write_debug_log( $log_message . ' ' . wp_json_encode( $webhook_data ) );
+					wp_die( esc_html( $log_message ), '200 success', array( 'response' => 200 ) );
+				}
+
+				wp_die( esc_html( __( 'Subscription webhook received. No actions taken.', 'wp_subscription' ) ), '200 success', array( 'response' => 200 ) );
 				break;
+
 			default:
 				$log_message = sprintf(
 						// translators: %s: alert name.
@@ -736,6 +807,7 @@ class Paypal extends \WC_Payment_Gateway {
 				wp_subscrpt_write_log( $log_message );
 				wp_subscrpt_write_debug_log( $log_message . ' ' . wp_json_encode( $webhook_data ) );
 				wp_die( esc_html( $log_message ), '200 success', array( 'response' => 200 ) );
+				break;
 		}
 	}
 
