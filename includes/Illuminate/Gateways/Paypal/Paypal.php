@@ -97,6 +97,10 @@ class Paypal extends \WC_Payment_Gateway {
 
 		// WooCommerce webhook.
 		add_action( 'woocommerce_api_' . $this->id, [ $this, 'process_webhook' ] );
+
+		// Cancel subscription.
+		add_action( 'subscrpt_subscription_expired', [ $this, 'handle_subscription_cancellation' ] );
+		add_action( 'subscrpt_subscription_cancelled_email_notification', [ $this, 'handle_subscription_cancellation' ] );
 	}
 
 	/**
@@ -735,6 +739,62 @@ class Paypal extends \WC_Payment_Gateway {
 		}
 	}
 
+	/**
+	 * Handle subscription cancellation.
+	 *
+	 * @param int $subscription_id Subscription ID.
+	 */
+	public function handle_subscription_cancellation( int $subscription_id ) {
+		$order_id = get_post_meta( 1073, '_subscrpt_order_id', true );
+		$order    = wc_get_order( $order_id );
+
+		// Get paypal subscription ID from order meta.
+		$paypal_subscription_id = $order->get_meta( $this->get_meta_key( 'subscription_id' ) );
+
+		if ( empty( $paypal_subscription_id ) ) {
+			wp_subscrpt_write_log( 'PayPal subscription ID not found in order meta. Attempting to get from order history.' );
+
+			global $wpdb;
+			$table_name      = $wpdb->prefix . 'subscrpt_order_relation';
+			$order_histories = $wpdb->get_results( // phpcs:ignore
+				$wpdb->prepare(
+					'SELECT * FROM %i WHERE subscription_id=%d ORDER BY order_id DESC',
+					[ $table_name, $subscription_id ]
+				)
+			);
+
+			foreach ( $order_histories as $history ) {
+				// Get order ID from history.
+				$order_id = $history->order_id ?? null;
+				$order    = wc_get_order( $order_id );
+
+				// Get PayPal subscription ID from order meta.
+				$tmp_paypal_subs_id = $order->get_meta( $this->get_meta_key( 'subscription_id' ) );
+
+				if ( ! empty( $tmp_paypal_subs_id ) ) {
+					$paypal_subscription_id = $tmp_paypal_subs_id;
+					break;
+				}
+			}
+		}
+
+		// Get PayPal Access Token.
+		$access_token = $this->get_paypal_access_token();
+		if ( ! $access_token ) {
+			wp_subscrpt_write_log( 'Access token not found. Trying to get again.' );
+
+			$access_token = $this->get_paypal_access_token();
+
+			if ( ! $access_token ) {
+				wp_subscrpt_write_log( 'Subscription cancel failed.' );
+				return;
+			}
+		}
+
+		// Cancel subscription in PayPal.
+		$this->cancel_paypal_subscription( $paypal_subscription_id, $access_token, 'Customer requested cancellation.' );
+	}
+
 	// * ------------------------------------------------------------------------ * //
 	// * -------------------- Utility Methods [start] --------------------------- * //
 
@@ -1101,6 +1161,50 @@ class Paypal extends \WC_Payment_Gateway {
 			wp_subscrpt_write_log( $log_message );
 			wp_subscrpt_write_debug_log( $log_message );
 			return null;
+		}
+	}
+
+	/**
+	 * Cancel PayPal subscription.
+	 *
+	 * @param string $subscription_id PayPal Subscription ID.
+	 * @param string $access_token    PayPal Access Token.
+	 * @param string $reason          Reason for cancellation.
+	 */
+	private function cancel_paypal_subscription( string $subscription_id, string $access_token, string $reason = 'admin cancel' ): bool {
+		// Prepare the body for the API request.
+		$body = [
+			'reason' => $reason,
+		];
+
+		try {
+			$url = $this->api_endpoint . "/v1/billing/subscriptions/$subscription_id/cancel";
+
+			$args = [
+				'method'  => 'POST',
+				'headers' => [
+					'Authorization' => 'Bearer ' . $access_token,
+					'Content-Type'  => 'application/json',
+				],
+				'body'    => wp_json_encode( $body ),
+			];
+
+			$response      = wp_remote_post( $url, $args );
+			$response_data = json_decode( wp_remote_retrieve_body( $response ) );
+
+			if ( ! empty( $response_data->message ?? null ) ) {
+				$log_message = 'Error cancelling PayPal subscription: ' . ( $response_data->message ?? 'Unknown error' );
+				wp_subscrpt_write_log( $log_message );
+				wp_subscrpt_write_debug_log( $log_message . ' ' . wp_json_encode( $response_data ) );
+				return false;
+			}
+
+			return true;
+		} catch ( Exception $e ) {
+			$log_message = 'Error cancelling PayPal subscription: ' . $e->getMessage();
+			wp_subscrpt_write_log( $log_message );
+			wp_subscrpt_write_debug_log( $log_message );
+			return false;
 		}
 	}
 
