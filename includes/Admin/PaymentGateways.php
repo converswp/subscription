@@ -58,6 +58,6 @@ class PaymentGateways {
 	 * Render the Payment Gateways admin page.
 	 */
 	public function render_payment_gateways_page() {
-		echo '<div class="wrap"> yeeeeeeeeeeeeeeeeeeeeeeeee </div>';
+		include 'views/payment-gateways.php';
 	}
 }
