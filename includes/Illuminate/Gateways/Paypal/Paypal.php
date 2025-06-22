@@ -300,15 +300,60 @@ class Paypal extends \WC_Payment_Gateway {
 		$event = $webhook_data['event_type'] ?? '';
 
 		// Supported transaction events.
-		$transaction_events = [ 'PAYMENT.SALE.COMPLETED', 'PAYMENT.SALE.REFUNDED' ];
+		$transaction_events = [
+			'PAYMENT.SALE.COMPLETED',
+			'PAYMENT.SALE.REFUNDED',
+		];
 
 		// Supported subscription events.
-		$subscription_events = [ 'PAYMENT.SALE.COMPLETED' ];
+		$subscription_events = [
+			'BILLING.SUBSCRIPTION.ACTIVATED',
+			'BILLING.SUBSCRIPTION.UPDATED',
+			'BILLING.SUBSCRIPTION.EXPIRED',
+			'BILLING.SUBSCRIPTION.SUSPENDED',
+			'BILLING.SUBSCRIPTION.CANCELLED',
+		];
+
+		// Order object.
+		$order = null;
+
+		// Get transaction ID from webhook data.
+		$transaction_id = $webhook_data['resource']['sale_id'] ?? $webhook_data['resource']['id'] ?? '';
+
+		// Get order by Transaction ID.
+		if ( ! empty( $transaction_id ) ) {
+			$orders = wc_get_orders( [ 'transaction_id' => $transaction_id ] );
+
+			if ( ! empty( $orders ) ) {
+				$order = reset( $orders );
+			}
+		}
+
+		// Get subscription ID from webhook data.
+		$subscription_id = $webhook_data['resource']['billing_agreement_id'] ?? null;
+
+		// Get order by Subscription ID.
+		if ( ! $order && ! empty( $subscription_id ) ) {
+			$orders = wc_get_orders( [ 'subscription_id' => $subscription_id ] );
+
+			if ( ! empty( $orders ) ) {
+				$order = reset( $orders );
+			}
+		}
+
+		// Get parent order if the order is a refund order action.
+		if ( $order && strpos( get_class( $order ), 'OrderRefund' ) ) {
+			$parent_id = $order->get_parent_id() ?? null;
+
+			if ( $parent_id ) {
+				$order = wc_get_order( $parent_id );
+			}
+		}
 
 		if ( in_array( $event, $transaction_events, true ) ) {
-			$this->handle_transaction_event( $webhook_data );
+			$this->handle_transaction_event( $webhook_data, $order, $transaction_id, $subscription_id );
 		} elseif ( in_array( $event, $subscription_events, true ) ) {
-			$this->handle_subscription_event( $webhook_data );
+			$this->handle_subscription_event( $webhook_data, $order, $transaction_id, $subscription_id );
 		} else {
 			$log_message = sprintf(
 				// translators: %1$s: alert name; %2$s: order id.
@@ -590,38 +635,14 @@ class Paypal extends \WC_Payment_Gateway {
 	/**
 	 * Handle transaction event from PayPal.
 	 *
-	 * @param array $webhook_data Webhook data from PayPal.
+	 * @param array       $webhook_data Webhook data from PayPal.
+	 * @param WC_Order    $order Order object.
+	 * @param string|null $transaction_id Transaction ID from webhook data.
+	 * @param string|null $subscription_id Subscription ID from webhook data.
 	 */
-	public function handle_transaction_event( array $webhook_data ) {
+	public function handle_transaction_event( array $webhook_data, WC_Order $order, ?string $transaction_id, ?string $subscription_id ) {
 		// Get event type.
 		$event = $webhook_data['event_type'] ?? 'N/A';
-
-		// Order object.
-		$order = null;
-
-		// Get transaction ID from webhook data.
-		$transaction_id = $webhook_data['resource']['sale_id'] ?? $webhook_data['resource']['id'] ?? '';
-
-		// Get order by Transaction ID.
-		if ( ! empty( $transaction_id ) ) {
-			$orders = wc_get_orders( [ 'transaction_id' => $transaction_id ] );
-
-			if ( ! empty( $orders ) ) {
-				$order = reset( $orders );
-			}
-		}
-
-		// Get subscription ID from webhook data.
-		$subscription_id = $webhook_data['resource']['billing_agreement_id'] ?? null;
-
-		// Get order by Subscription ID.
-		if ( ! $order && ! empty( $subscription_id ) ) {
-			$orders = wc_get_orders( [ 'subscription_id' => $subscription_id ] );
-
-			if ( ! empty( $orders ) ) {
-				$order = reset( $orders );
-			}
-		}
 
 		if ( ! $order ) {
 			$log_message = sprintf(
@@ -667,7 +688,7 @@ class Paypal extends \WC_Payment_Gateway {
 
 			default:
 				$log_message = sprintf(
-					// translators: %1$s: alert name; %2$s: order id.
+					// translators: %s: alert name.
 					__( 'Transaction webhook received [%s]. No actions taken.', 'wp_subscription' ),
 					$event,
 				);
@@ -680,10 +701,38 @@ class Paypal extends \WC_Payment_Gateway {
 	/**
 	 * Handle subscription event from PayPal.
 	 *
-	 * @param array $webhook_data Webhook data from PayPal.
+	 * @param array       $webhook_data Webhook data from PayPal.
+	 * @param WC_Order    $order Order object.
+	 * @param string|null $transaction_id Transaction ID from webhook data.
+	 * @param string|null $subscription_id Subscription ID from webhook data.
 	 */
-	public function handle_subscription_event( array $webhook_data ) {
-		dd( '🔽 webhook_data subscription', $webhook_data );
+	public function handle_subscription_event( array $webhook_data, WC_Order $order, ?string $transaction_id, ?string $subscription_id ) {
+		// Get event type.
+		$event = $webhook_data['event_type'] ?? 'N/A';
+
+		dd( '🔽 order', $order );
+
+		switch ( $event ) {
+			case 'BILLING.SUBSCRIPTION.ACTIVATED':
+				break;
+			case 'BILLING.SUBSCRIPTION.UPDATED':
+				break;
+			case 'BILLING.SUBSCRIPTION.EXPIRED':
+				break;
+			case 'BILLING.SUBSCRIPTION.SUSPENDED':
+				break;
+			case 'BILLING.SUBSCRIPTION.CANCELLED':
+				break;
+			default:
+				$log_message = sprintf(
+						// translators: %s: alert name.
+					__( 'Subscription webhook received [%s]. No actions taken.', 'wp_subscription' ),
+					$event,
+				);
+				wp_subscrpt_write_log( $log_message );
+				wp_subscrpt_write_debug_log( $log_message . ' ' . wp_json_encode( $webhook_data ) );
+				wp_die( esc_html( $log_message ), '200 success', array( 'response' => 200 ) );
+		}
 	}
 
 	// * ------------------------------------------------------------------------ * //
