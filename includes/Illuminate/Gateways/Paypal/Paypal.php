@@ -60,7 +60,7 @@ class Paypal extends \WC_Payment_Gateway {
 		$this->id                 = 'wp_subscription_paypal';
 		$this->has_fields         = false;
 		$this->method_title       = __( 'Paypal for WPSubscription', 'wp_subscription' );
-		$this->method_description = __( 'Accept wp subscription recurring payments through PayPal.', 'wp_subscription' );
+		$this->method_description = __( 'Accept wp subscription recurring payments through PayPal. Only WP Subscription is supported.', 'wp_subscription' );
 		$this->supports           = [ 'products', 'subscriptions', 'refunds' ];
 		$this->icon               = apply_filters( 'wp_subscription_paypal_icon', WP_SUBSCRIPTION_URL . '/assets/images/paypal.svg' );
 
@@ -110,6 +110,12 @@ class Paypal extends \WC_Payment_Gateway {
 	 * Initialize Gateway Settings Form Fields.
 	 */
 	public function init_form_fields() {
+		// Gateway settings styles.
+		wp_enqueue_style( 'smartpay-woo-gateway-settings', WP_SUBSCRIPTION_ASSETS . '/css/gateway.css', [], WP_SUBSCRIPTION_VERSION, 'all' );
+
+		// Settings JS.
+		wp_enqueue_script( 'smartpay-woo-gateway-settings-script', WP_SUBSCRIPTION_ASSETS . '/js/gateway.js', [ 'jquery' ], WP_SUBSCRIPTION_VERSION, true );
+
 		$this->form_fields = [
 			'enabled'            => [
 				'title'       => __( 'Enable/Disable', 'wp_subscription' ),
@@ -118,6 +124,7 @@ class Paypal extends \WC_Payment_Gateway {
 				'default'     => 'no',
 				'description' => __( 'Enable or Disable Paypal for WPSubscription payment gateway', 'wp_subscription' ),
 				'desc_tip'    => true,
+				'class'       => 'wpsubs-toggle',
 			],
 			'title'              => [
 				'title'       => __( 'Title', 'wp_subscription' ),
@@ -132,6 +139,7 @@ class Paypal extends \WC_Payment_Gateway {
 				'description' => __( 'This controls the description which the user sees during checkout.', 'wp_subscription' ),
 				'default'     => __( 'Pay via PayPal; you can pay with your credit card if you do not have a PayPal account.', 'wp_subscription' ),
 				'desc_tip'    => true,
+				'css'         => 'width: 400px; height: 75px;',
 			],
 
 			'paypal_creds_title' => [
@@ -151,6 +159,7 @@ class Paypal extends \WC_Payment_Gateway {
 				'default'     => 'no',
 				'description' => __( 'PayPal sandbox can be used to test payments without using real money.', 'wp_subscription' ),
 				'desc_tip'    => true,
+				'class'       => 'wpsubs-toggle',
 			],
 			'email'              => [
 				'title'       => __( 'Email', 'wp_subscription' ),
@@ -176,9 +185,8 @@ class Paypal extends \WC_Payment_Gateway {
 			'webhook_id'         => [
 				'title'       => __( 'Webhook ID', 'wp_subscription' ),
 				'type'        => 'text',
-				'description' => __( 'Enter your PayPal webhook ID copied from Paypal Apps & Credentials.', 'wp_subscription' ),
+				'description' => __( '<p>In the <strong style="color:#1d4ed8">Apps & Credentials</strong> page of PayPal developer account open the newly created application and click <strong style="color:#1d4ed8">Add Webhook</strong> button.<br> On the <strong>Webhook URL</strong> field use the link below 👇, check <strong>All Events</strong> then click <strong>Save</strong>. Then copy the <strong>Webhook ID</strong> and paste it here. </p><p><code style="background: #030712; color: #fff; padding: 6px; border-radius: 4px;">' . $this->get_webhook_url() . '</code></p>', 'wp_subscription' ),
 				'default'     => '',
-				'desc_tip'    => true,
 			],
 		];
 	}

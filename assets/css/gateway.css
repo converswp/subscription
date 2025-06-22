@@ -1,0 +1,44 @@
+.wpsubs-toggle {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  border: none !important;
+
+  height: 18px !important;
+  width: 32px !important;
+  transform: translateY(1px);
+  background: #999 !important;
+  border-radius: 999px !important;
+  position: relative !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+  transition: all 0.2s cubic-bezier(0.27, 0.2, 0.25, 1.51) !important;
+}
+
+.wpsubs-toggle::before {
+  content: "" !important;
+  position: absolute !important;
+  width: 14px !important;
+  height: 14px !important;
+  background: #fff !important;
+  border-radius: 50% !important;
+  margin: 0 !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  left: 2px !important;
+  transition: all 0.2s cubic-bezier(0.27, 0.2, 0.25, 1.51) !important;
+}
+
+.wpsubs-toggle:checked {
+  background: var(--wp-admin-theme-color, #720eec) !important;
+}
+
+.wpsubs-toggle:checked::before {
+  left: calc(100% - 16px) !important;
+}
+
+.wpsubs-toggle:focus {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
