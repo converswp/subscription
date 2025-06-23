@@ -290,7 +290,11 @@ if ( ! function_exists( 'wp_subscription_register_paypal_block' ) ) {
 		);
 	}
 
-	add_action( 'woocommerce_blocks_loaded', 'wp_subscription_register_paypal_block' );
+	// Is PayPal integration enabled?
+	$is_paypal_integration_enabled = get_option( 'wp_subs_paypal_integration_enabled', true );
+	if ( $is_paypal_integration_enabled ) {
+		add_action( 'woocommerce_blocks_loaded', 'wp_subscription_register_paypal_block' );
+	}
 }
 
 /**

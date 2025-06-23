@@ -53,8 +53,12 @@ class Illuminate {
 	 * @return void
 	 */
 	public function paypal_initialization() {
-		// Register the PayPal gateway with WooCommerce
-		add_filter( 'woocommerce_payment_gateways', array( $this, 'register_paypal_gateway' ) );
+		$is_paypal_integration_enabled = get_option( 'wp_subs_paypal_integration_enabled', true );
+
+		// Register the PayPal gateway with WooCommerce.
+		if ( $is_paypal_integration_enabled ) {
+			add_filter( 'woocommerce_payment_gateways', array( $this, 'register_paypal_gateway' ) );
+		}
 	}
 
 	/**
