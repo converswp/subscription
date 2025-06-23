@@ -111,10 +111,10 @@ class Paypal extends \WC_Payment_Gateway {
 	 */
 	public function init_form_fields() {
 		// Gateway settings styles.
-		wp_enqueue_style( 'smartpay-woo-gateway-settings', WP_SUBSCRIPTION_ASSETS . '/css/gateway.css', [], WP_SUBSCRIPTION_VERSION, 'all' );
+		wp_enqueue_style( 'wp-subscription-gateway-settings', WP_SUBSCRIPTION_ASSETS . '/css/gateway.css', [], WP_SUBSCRIPTION_VERSION, 'all' );
 
 		// Settings JS.
-		wp_enqueue_script( 'smartpay-woo-gateway-settings-script', WP_SUBSCRIPTION_ASSETS . '/js/gateway.js', [ 'jquery' ], WP_SUBSCRIPTION_VERSION, true );
+		wp_enqueue_script( 'wp-subscription-gateway-settings-script', WP_SUBSCRIPTION_ASSETS . '/js/gateway.js', [ 'jquery' ], WP_SUBSCRIPTION_VERSION, true );
 
 		$this->form_fields = [
 			'enabled'            => [
