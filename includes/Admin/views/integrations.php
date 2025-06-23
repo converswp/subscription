@@ -11,14 +11,14 @@ defined( 'ABSPATH' ) || exit;
 
 <div class="wrap">
 	<!-- The Irony -->
-	<div style="max-width: 600px; margin: 50px auto; padding: 20px; font-family: Georgia, serif; font-size: 1.2em; line-height: 1.6; color: #333; text-align: center;">
+<!-- 	<div style="max-width: 600px; margin: 50px auto; padding: 20px; font-family: Georgia, serif; font-size: 1.2em; line-height: 1.6; color: #333; text-align: center;">
 		We automate to move faster,<br>
 		optimize to do more—<br>
 		but somewhere between the clicks and code,<br>
 		we forget how to wonder.<br>
 		The machines learn,<br>
 		and we forget to ask why.
-	</div>
+	</div> -->
 
 	<div class="wp-subscription-admin-content" style="max-width:1240px;margin:32px auto 0 auto; background:wheat; padding: 20px;">
 		<h1>Incomplete. Demo Page</h1>
