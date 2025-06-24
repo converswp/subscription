@@ -34,7 +34,7 @@ class AutoRenewal {
 
 		if ( ! $product ) {
 			if ( ! is_admin() ) {
-				wc_add_notice( __( 'Subscription early renewal order creation failed due to product deletion !', 'sdevs_subscrpt' ), 'error' );
+				wc_add_notice( __( 'Subscription early renewal order creation failed due to product deletion !', 'wp_subscription' ), 'error' );
 			}
 			return false;
 		}
@@ -43,7 +43,7 @@ class AutoRenewal {
 			$product = wc_get_product( $product->get_meta( '_subscrpt_convertation_default_variation_for_renewal', true ) );
 			if ( ! $product ) {
 				if ( ! is_admin() ) {
-					wc_add_notice( __( 'Subscription early renewal order creation failed due to product deletion !', 'sdevs_subscrpt' ), 'error' );
+					wc_add_notice( __( 'Subscription early renewal order creation failed due to product deletion !', 'wp_subscription' ), 'error' );
 				}
 				return false;
 			}

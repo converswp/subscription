@@ -92,7 +92,7 @@ trait Email {
 	 * @since  3.1.0
 	 */
 	public function get_default_heading(): string {
-		return __( 'Subscription: #{subscription_id}', 'sdevs_subscrpt' );
+		return __( 'Subscription: #{subscription_id}', 'wp_subscription' );
 	}
 
 	/**

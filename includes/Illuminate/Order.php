@@ -80,7 +80,7 @@ class Order {
 	 */
 	public function register_custom_column() {
 		?>
-		<th class="item_recurring sortable" data-sort="float"><?php esc_html_e( 'Recurring', 'sdevs_subscrpt' ); ?></th>
+		<th class="item_recurring sortable" data-sort="float"><?php esc_html_e( 'Recurring', 'wp_subscription' ); ?></th>
 		<?php
 	}
 

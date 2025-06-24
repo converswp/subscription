@@ -24,13 +24,13 @@ class Helper {
 	 */
 	public static function get_typos( $number, $typo ) {
 		if ( 1 === (int) $number && 'days' === $typo ) {
-			return __( 'day', 'sdevs_subscrpt' );
+			return __( 'day', 'wp_subscription' );
 		} elseif ( 1 === (int) $number && 'weeks' === $typo ) {
-			return __( 'week', 'sdevs_subscrpt' );
+			return __( 'week', 'wp_subscription' );
 		} elseif ( 1 === (int) $number && 'months' === $typo ) {
-			return __( 'month', 'sdevs_subscrpt' );
+			return __( 'month', 'wp_subscription' );
 		} elseif ( 1 === (int) $number && 'years' === $typo ) {
-			return __( 'year', 'sdevs_subscrpt' );
+			return __( 'year', 'wp_subscription' );
 		} else {
 			return $typo;
 		}
@@ -284,14 +284,14 @@ class Helper {
 				'comment_author'  => 'Subscription for WooCommerce',
 				'comment_content' => sprintf(
 					// translators: order id.
-					__( 'The order %s has been created for the subscription', 'sdevs_subscrpt' ),
+					__( 'The order %s has been created for the subscription', 'wp_subscription' ),
 					$order_id
 				),
 				'comment_post_ID' => $subscription_id,
 				'comment_type'    => 'order_note',
 			)
 		);
-		update_comment_meta( $comment_id, '_subscrpt_activity', __( 'Renewal Order', 'sdevs_subscrpt' ) );
+		update_comment_meta( $comment_id, '_subscrpt_activity', __( 'Renewal Order', 'wp_subscription' ) );
 
 		$wpdb->insert(
 			$history_table,
@@ -334,14 +334,14 @@ class Helper {
 				'comment_author'  => 'Subscription for WooCommerce',
 				'comment_content' => sprintf(
 					// translators: Order Id.
-					__( 'Subscription successfully created.	order is %s', 'sdevs_subscrpt' ),
+					__( 'Subscription successfully created.	order is %s', 'wp_subscription' ),
 					$order_item->get_order_id()
 				),
 				'comment_post_ID' => $subscription_id,
 				'comment_type'    => 'order_note',
 			)
 		);
-		update_comment_meta( $comment_id, '_subscrpt_activity', __( 'New Subscription', 'sdevs_subscrpt' ) );
+		update_comment_meta( $comment_id, '_subscrpt_activity', __( 'New Subscription', 'wp_subscription' ) );
 
 		update_post_meta( $subscription_id, '_subscrpt_product_id', $product->get_id() );
 
@@ -562,7 +562,7 @@ class Helper {
 		$old_order = wc_get_order( $old_order_id );
 		if ( ! $old_order || 'completed' !== $old_order->get_status() ) {
 			if ( ! is_admin() && function_exists( 'wc_add_notice' ) ) {
-				return wc_add_notice( __( 'Subscription renewal isn\'t possible due to previous order not completed or deletion.', 'sdevs_subscrpt' ), 'error' );
+				return wc_add_notice( __( 'Subscription renewal isn\'t possible due to previous order not completed or deletion.', 'wp_subscription' ), 'error' );
 			}
 			return false;
 		}

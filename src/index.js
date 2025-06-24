@@ -1,11 +1,11 @@
 import {
-	registerCheckoutFilters,
-	ExperimentalOrderMeta,
-	TotalsItem,
+    ExperimentalOrderMeta,
+    registerCheckoutFilters,
+    TotalsItem,
 } from '@woocommerce/blocks-checkout';
 import { FormattedMonetaryAmount } from '@woocommerce/blocks-components';
-import { registerPlugin } from '@wordpress/plugins';
 import { __ } from '@wordpress/i18n';
+import { registerPlugin } from '@wordpress/plugins';
 
 import { getCurrencyFromPriceResponse } from '@woocommerce/price-format';
 // import { useStoreCart } from "@woocommerce/base-context/hooks";
@@ -65,7 +65,7 @@ const RecurringTotals = ( { cart, extensions } ) => {
 	return (
 		<TotalsItem
 			className="wc-block-components-totals-footer-item"
-			label={ __( 'Recurring totals', 'sdevs_subscrpt' ) }
+			label={ __( 'Recurring totals', 'wp_subscription' ) }
 			description={
 				<div style={ { display: 'grid' } }>
 					{ recurrings.map( ( recurring ) => (

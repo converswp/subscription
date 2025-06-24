@@ -28,13 +28,13 @@ function subscrpt_get_action_url( $action, $nonce, $subscription_id ) {
 
 function subscrpt_get_typos( $number, $typo ) {
 	if ( $number == 1 && $typo == 'days' ) {
-		return __( 'day', 'sdevs_subscrpt' );
+		return __( 'day', 'wp_subscription' );
 	} elseif ( $number == 1 && $typo == 'weeks' ) {
-		return __( 'week', 'sdevs_subscrpt' );
+		return __( 'week', 'wp_subscription' );
 	} elseif ( $number == 1 && $typo == 'months' ) {
-		return __( 'month', 'sdevs_subscrpt' );
+		return __( 'month', 'wp_subscription' );
 	} elseif ( $number == 1 && $typo == 'years' ) {
-		return __( 'year', 'sdevs_subscrpt' );
+		return __( 'year', 'wp_subscription' );
 	} else {
 		return $typo;
 	}
@@ -87,8 +87,8 @@ function order_relation_type_cast( string $key ) {
 	$relational_type_keys = apply_filters(
 		'subscrpt_order_relational_types',
 		array(
-			'new'   => __( 'New Subscription Order', 'sdevs_subscrpt' ),
-			'renew' => __( 'Renewal Order', 'sdevs_subscrpt' ),
+			'new'   => __( 'New Subscription Order', 'wp_subscription' ),
+			'renew' => __( 'Renewal Order', 'wp_subscription' ),
 		)
 	);
 
@@ -153,19 +153,19 @@ if ( ! function_exists( 'get_timing_types' ) ) {
 			'years'  => 'Yearly',
 		) : array(
 			array(
-				'label' => __( 'day(s)', 'sdevs_subscrpt' ),
+				'label' => __( 'day(s)', 'wp_subscription' ),
 				'value' => 'days',
 			),
 			array(
-				'label' => __( 'week(s)', 'sdevs_subscrpt' ),
+				'label' => __( 'week(s)', 'wp_subscription' ),
 				'value' => 'weeks',
 			),
 			array(
-				'label' => __( 'month(s)', 'sdevs_subscrpt' ),
+				'label' => __( 'month(s)', 'wp_subscription' ),
 				'value' => 'months',
 			),
 			array(
-				'label' => __( 'year(s)', 'sdevs_subscrpt' ),
+				'label' => __( 'year(s)', 'wp_subscription' ),
 				'value' => 'years',
 			),
 		);

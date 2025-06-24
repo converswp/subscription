@@ -53,7 +53,7 @@ class Stripe extends \WC_Stripe_Payment_Gateway {
 			// Get source from order.
 			$prepared_source = $this->prepare_order_source( $renewal_order );
 			if ( ! $prepared_source->customer ) {
-				return new \WP_Error( 'stripe_error', __( 'Customer not found', 'sdevs_subscrpt' ) );
+				return new \WP_Error( 'stripe_error', __( 'Customer not found', 'wp_subscription' ) );
 			}
 
 			\WC_Stripe_Logger::log( "Info: Begin processing subscription payment for order {$order_id} for the amount of {$amount}" );

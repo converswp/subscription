@@ -20,8 +20,8 @@ class RenewReminder extends WC_Email {
         $this->customer_email = true;
 
         $this->id          = 'subscrpt_renew_reminder';
-        $this->title       = __( 'Subscription Renewal Reminder', 'sdevs_subscrpt' );
-        $this->description = __( 'This email is sent to customer for renewing subscription before expire.', 'sdevs_subscrpt' );
+        $this->title       = __( 'Subscription Renewal Reminder', 'wp_subscription' );
+        $this->description = __( 'This email is sent to customer for renewing subscription before expire.', 'wp_subscription' );
 
         // email template path.
         $this->set_template( $this->id );
@@ -39,7 +39,7 @@ class RenewReminder extends WC_Email {
      * @return string
      */
     public function get_default_subject(): string {
-        return __( 'Reminder for the Subscription renewal #{subscription_id}', 'sdevs_subscrpt' );
+        return __( 'Reminder for the Subscription renewal #{subscription_id}', 'wp_subscription' );
     }
 
     /**
@@ -90,7 +90,7 @@ class RenewReminder extends WC_Email {
                 'num_of_days_before' => array(
                     'title'   => __(
                         'Number of days before the next subscription payment.',
-                        'sdevs_subscrpt'
+                        'wp_subscription'
                     ),
                     'type'    => 'number',
                     'default' => 7,
