@@ -24,17 +24,17 @@ class Post {
 	 */
 	public function update_post_labels( $messages ) {
 		$messages['subscrpt_order'] = array(
-			__( 'Subscription updated.', 'sdevs_subscrpt' ),
-			__( 'Subscription updated.', 'sdevs_subscrpt' ),
+			__( 'Subscription updated.', 'wp_subscription' ),
+			__( 'Subscription updated.', 'wp_subscription' ),
 			'Custom field updated.',
 			'Custom field deleted.',
-			__( 'Subscription updated.', 'sdevs_subscrpt' ),
+			__( 'Subscription updated.', 'wp_subscription' ),
 			false,
-			__( 'Subscription published.', 'sdevs_subscrpt' ),
-			__( 'Subscription saved.', 'sdevs_subscrpt' ),
-			__( 'Subscription submitted.', 'sdevs_subscrpt' ),
+			__( 'Subscription published.', 'wp_subscription' ),
+			__( 'Subscription saved.', 'wp_subscription' ),
+			__( 'Subscription submitted.', 'wp_subscription' ),
 			false,
-			__( 'Subscription draft updated.', 'sdevs_subscrpt' ),
+			__( 'Subscription draft updated.', 'wp_subscription' ),
 		);
 		return $messages;
 	}
@@ -55,27 +55,27 @@ class Post {
 	 */
 	public function register_subscription_post_type() {
 		$labels = array(
-			'name'              => __( 'Subscriptions', 'sdevs_subscrpt' ),
-			'singular_name'     => __( 'Subscription', 'sdevs_subscrpt' ),
-			'name_admin_bar'    => __( 'Subscription\'s', 'sdevs_subscrpt' ),
-			'archives'          => __( 'Item Archives', 'sdevs_subscrpt' ),
-			'attributes'        => __( 'Item Attributes', 'sdevs_subscrpt' ),
-			'parent_item_colon' => __( 'Parent :', 'sdevs_subscrpt' ),
-			'all_items'         => __( 'Subscriptions', 'sdevs_subscrpt' ),
-			'add_new_item'      => __( 'Add New Subscription', 'sdevs_subscrpt' ),
-			'add_new'           => __( 'Add Subscription', 'sdevs_subscrpt' ),
-			'new_item'          => __( 'New Subscription', 'sdevs_subscrpt' ),
-			'edit_item'         => __( 'Edit Subscription', 'sdevs_subscrpt' ),
-			'update_item'       => __( 'Update Subscription', 'sdevs_subscrpt' ),
-			'view_item'         => __( 'View Subscription', 'sdevs_subscrpt' ),
-			'view_items'        => __( 'View Subscription', 'sdevs_subscrpt' ),
-			'search_items'      => __( 'Search Subscription', 'sdevs_subscrpt' ),
-			'not_found'         => __( 'No subscriptions found.', 'sdevs_subscrpt' ),
-			'item_updated'      => __( 'Subscription updated.', 'sdevs_subscrpt' ),
+			'name'              => __( 'Subscriptions', 'wp_subscription' ),
+			'singular_name'     => __( 'Subscription', 'wp_subscription' ),
+			'name_admin_bar'    => __( 'Subscription\'s', 'wp_subscription' ),
+			'archives'          => __( 'Item Archives', 'wp_subscription' ),
+			'attributes'        => __( 'Item Attributes', 'wp_subscription' ),
+			'parent_item_colon' => __( 'Parent :', 'wp_subscription' ),
+			'all_items'         => __( 'Subscriptions', 'wp_subscription' ),
+			'add_new_item'      => __( 'Add New Subscription', 'wp_subscription' ),
+			'add_new'           => __( 'Add Subscription', 'wp_subscription' ),
+			'new_item'          => __( 'New Subscription', 'wp_subscription' ),
+			'edit_item'         => __( 'Edit Subscription', 'wp_subscription' ),
+			'update_item'       => __( 'Update Subscription', 'wp_subscription' ),
+			'view_item'         => __( 'View Subscription', 'wp_subscription' ),
+			'view_items'        => __( 'View Subscription', 'wp_subscription' ),
+			'search_items'      => __( 'Search Subscription', 'wp_subscription' ),
+			'not_found'         => __( 'No subscriptions found.', 'wp_subscription' ),
+			'item_updated'      => __( 'Subscription updated.', 'wp_subscription' ),
 		);
 
 		$args = array(
-			'label'                 => __( 'Subscriptions', 'sdevs_subscrpt' ),
+			'label'                 => __( 'Subscriptions', 'wp_subscription' ),
 			'labels'                => $labels,
 			'description'           => '',
 			'public'                => false,
@@ -113,7 +113,7 @@ class Post {
 	 */
 	public function register_subscription_item_post_type() {
 		$args = array(
-			'label'                 => __( 'Subscription Items', 'sdevs_subscrpt' ),
+			'label'                 => __( 'Subscription Items', 'wp_subscription' ),
 			// 'labels'                => ,
 			'description'           => '',
 			'public'                => false,
@@ -155,10 +155,10 @@ class Post {
 		register_post_status(
 			'pending',
 			array(
-				'label'                     => _x( 'Pending', 'post status label', 'sdevs_subscrpt' ),
+				'label'                     => _x( 'Pending', 'post status label', 'wp_subscription' ),
 				'public'                    => true,
 				// translators: pending posts count.
-				'label_count'               => _n_noop( 'Pending <span class="count">(%s)</span>', 'Pending <span class="count">(%s)</span>', 'sdevs_subscrpt' ),
+				'label_count'               => _n_noop( 'Pending <span class="count">(%s)</span>', 'Pending <span class="count">(%s)</span>', 'wp_subscription' ),
 				'post_type'                 => array( 'subscrpt_order' ),
 				'show_in_admin_all_list'    => true,
 				'show_in_admin_status_list' => true,
@@ -171,10 +171,10 @@ class Post {
 		register_post_status(
 			'active',
 			array(
-				'label'                     => _x( 'Active', 'post status label', 'sdevs_subscrpt' ),
+				'label'                     => _x( 'Active', 'post status label', 'wp_subscription' ),
 				'public'                    => true,
 				// translators: active posts count.
-				'label_count'               => _n_noop( 'Active <span class="count">(%s)</span>', 'Active <span class="count">(%s)</span>', 'sdevs_subscrpt' ),
+				'label_count'               => _n_noop( 'Active <span class="count">(%s)</span>', 'Active <span class="count">(%s)</span>', 'wp_subscription' ),
 				'post_type'                 => array( 'subscrpt_order' ),
 				'show_in_admin_all_list'    => true,
 				'show_in_admin_status_list' => true,
@@ -187,10 +187,10 @@ class Post {
 		register_post_status(
 			'on_hold',
 			array(
-				'label'                     => _x( 'On Hold', 'post status label', 'sdevs_subscrpt' ),
+				'label'                     => _x( 'On Hold', 'post status label', 'wp_subscription' ),
 				'public'                    => true,
 				// translators: on-hold posts count.
-				'label_count'               => _n_noop( 'On Hold <span class="count">(%s)</span>', 'On Hold <span class="count">(%s)</span>', 'sdevs_subscrpt' ),
+				'label_count'               => _n_noop( 'On Hold <span class="count">(%s)</span>', 'On Hold <span class="count">(%s)</span>', 'wp_subscription' ),
 				'post_type'                 => array( 'subscrpt_order' ),
 				'show_in_admin_all_list'    => true,
 				'show_in_admin_status_list' => true,
@@ -203,10 +203,10 @@ class Post {
 		register_post_status(
 			'cancelled',
 			array(
-				'label'                     => _x( 'Cancelled', 'post status label', 'sdevs_subscrpt' ),
+				'label'                     => _x( 'Cancelled', 'post status label', 'wp_subscription' ),
 				'public'                    => true,
 				// translators: cancelled posts count.
-				'label_count'               => _n_noop( 'Cancelled <span class="count">(%s)</span>', 'Cancelled <span class="count">(%s)</span>', 'sdevs_subscrpt' ),
+				'label_count'               => _n_noop( 'Cancelled <span class="count">(%s)</span>', 'Cancelled <span class="count">(%s)</span>', 'wp_subscription' ),
 				'post_type'                 => array( 'subscrpt_order' ),
 				'show_in_admin_all_list'    => true,
 				'show_in_admin_status_list' => true,
@@ -219,10 +219,10 @@ class Post {
 		register_post_status(
 			'expired',
 			array(
-				'label'                     => _x( 'Expired', 'post status label', 'sdevs_subscrpt' ),
+				'label'                     => _x( 'Expired', 'post status label', 'wp_subscription' ),
 				'public'                    => true,
 				// translators: expired posts count.
-				'label_count'               => _n_noop( 'Expired <span class="count">(%s)</span>', 'Expired <span class="count">(%s)</span>', 'sdevs_subscrpt' ),
+				'label_count'               => _n_noop( 'Expired <span class="count">(%s)</span>', 'Expired <span class="count">(%s)</span>', 'wp_subscription' ),
 				'post_type'                 => array( 'subscrpt_order' ),
 				'show_in_admin_all_list'    => true,
 				'show_in_admin_status_list' => true,
@@ -235,10 +235,10 @@ class Post {
 		register_post_status(
 			'pe_cancelled',
 			array(
-				'label'                     => _x( 'Pending Cancellation', 'post status label', 'sdevs_subscrpt' ),
+				'label'                     => _x( 'Pending Cancellation', 'post status label', 'wp_subscription' ),
 				'public'                    => true,
 				// translators: pending cancellation posts count.
-				'label_count'               => _n_noop( 'Pending Cancellation <span class="count">(%s)</span>', 'Pending Cancellation <span class="count">(%s)</span>', 'sdevs_subscrpt' ),
+				'label_count'               => _n_noop( 'Pending Cancellation <span class="count">(%s)</span>', 'Pending Cancellation <span class="count">(%s)</span>', 'wp_subscription' ),
 				'post_type'                 => array( 'subscrpt_order' ),
 				'show_in_admin_all_list'    => true,
 				'show_in_admin_status_list' => true,

@@ -14,11 +14,11 @@ use SpringDevs\Subscription\Illuminate\Helper;
 <table class="woocommerce-orders-table woocommerce-MyAccount-orders shop_table shop_table_responsive my_account_orders account-orders-table my_account_subscrpt">
 	<thead>
 		<tr>
-			<th scope="col" class="subscrpt-id"><?php esc_html_e( 'Subscription', 'sdevs_subscrpt' ); ?></th>
-			<th scope="col" class="order-status"><?php esc_html_e( 'Status', 'sdevs_subscrpt' ); ?></th>
-			<th scope="col" class="order-product"><?php esc_html_e( 'Product', 'sdevs_subscrpt' ); ?></th>
-			<th scope="col" class="subscrpt-next-date"><?php esc_html_e( 'Next Payment', 'sdevs_subscrpt' ); ?></th>
-			<th scope="col" class="subscrpt-total"><?php esc_html_e( 'Total', 'sdevs_subscrpt' ); ?></th>
+			<th scope="col" class="subscrpt-id"><?php esc_html_e( 'Subscription', 'wp_subscription' ); ?></th>
+			<th scope="col" class="order-status"><?php esc_html_e( 'Status', 'wp_subscription' ); ?></th>
+			<th scope="col" class="order-product"><?php esc_html_e( 'Product', 'wp_subscription' ); ?></th>
+			<th scope="col" class="subscrpt-next-date"><?php esc_html_e( 'Next Payment', 'wp_subscription' ); ?></th>
+			<th scope="col" class="subscrpt-total"><?php esc_html_e( 'Total', 'wp_subscription' ); ?></th>
 			<th scope="col" class="subscrpt-action"></th>
 		</tr>
 	</thead>
@@ -65,7 +65,7 @@ use SpringDevs\Subscription\Illuminate\Helper;
 			<tr>
 				<td colspan="6">
 					<p style="text-align: center;">
-						<?php echo esc_html_e( 'No subscriptions available yet.', 'sdevs_subscrpt' ); ?>
+						<?php echo esc_html_e( 'No subscriptions available yet.', 'wp_subscription' ); ?>
 					</p>
 				</td>
 			</tr>
@@ -78,11 +78,11 @@ use SpringDevs\Subscription\Illuminate\Helper;
 <?php if ( 1 < $postslist->max_num_pages ) : ?>
 	<div class="woocommerce-pagination woocommerce-pagination--without-numbers woocommerce-Pagination">
 		<?php if ( 1 !== $current_page ) : ?>
-			<a class="woocommerce-button woocommerce-button--previous woocommerce-Button woocommerce-Button--previous button<?php echo esc_attr( $wp_button_class ); ?>" href="<?php echo esc_url( wc_get_endpoint_url( 'subscriptions', $current_page - 1 ) ); ?>"><?php esc_html_e( 'Previous', 'sdevs_subscrpt' ); ?></a>
+			<a class="woocommerce-button woocommerce-button--previous woocommerce-Button woocommerce-Button--previous button<?php echo esc_attr( $wp_button_class ); ?>" href="<?php echo esc_url( wc_get_endpoint_url( 'subscriptions', $current_page - 1 ) ); ?>"><?php esc_html_e( 'Previous', 'wp_subscription' ); ?></a>
 		<?php endif; ?>
 
 		<?php if ( intval( $postslist->max_num_pages ) !== $current_page ) : ?>
-			<a class="woocommerce-button woocommerce-button--next woocommerce-Button woocommerce-Button--next button<?php echo esc_attr( $wp_button_class ); ?>" href="<?php echo esc_url( wc_get_endpoint_url( 'subscriptions', $current_page + 1 ) ); ?>"><?php esc_html_e( 'Next', 'sdevs_subscrpt' ); ?></a>
+			<a class="woocommerce-button woocommerce-button--next woocommerce-Button woocommerce-Button--next button<?php echo esc_attr( $wp_button_class ); ?>" href="<?php echo esc_url( wc_get_endpoint_url( 'subscriptions', $current_page + 1 ) ); ?>"><?php esc_html_e( 'Next', 'wp_subscription' ); ?></a>
 		<?php endif; ?>
 	</div>
 <?php endif; ?>

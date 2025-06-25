@@ -50,10 +50,10 @@ class Required {
     public function install_plugin_notice() {
         if ( $this->plugin_file ) {
             $id    = 'sdevs-activate-plugin';
-            $label = __( 'Activate Woocommerce', 'sdevs_subscrpt' );
+            $label = __( 'Activate Woocommerce', 'wp_subscription' );
         } else {
             $id    = 'sdevs-install-plugin';
-            $label = __( 'Install Woocommerce', 'sdevs_subscrpt' );
+            $label = __( 'Install Woocommerce', 'wp_subscription' );
         }
 
         include 'views/required-notice.php';

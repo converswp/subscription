@@ -43,28 +43,28 @@ do_action( 'before_single_subscrpt_content' );
 <table class="woocommerce-table woocommerce-table--order-details shop_table order_details subscription_details">
 	<tbody>
 		<tr>
-			<td><?php esc_html_e( 'Order', 'sdevs_subscrpt' ); ?></td>
+			<td><?php esc_html_e( 'Order', 'wp_subscription' ); ?></td>
 			<td><a href="<?php echo esc_html( wc_get_endpoint_url( 'view-order', $order->get_id(), wc_get_page_permalink( 'myaccount' ) ) ); ?>" target="_blank"># <?php echo esc_html( $order->get_id() ); ?></a></td>
 		</tr>
 		<tr>
-			<td><?php esc_html_e( 'Status', 'sdevs_subscrpt' ); ?></td>
+			<td><?php esc_html_e( 'Status', 'wp_subscription' ); ?></td>
 			<td><span class="subscrpt-<?php echo esc_html( $status->name ); ?>"><?php echo esc_html( $status->label ); ?></span></td>
 		</tr>
 		<?php if ( null != $trial && 'off' !== $trial ) : ?>
 		<tr>
-			<td><?php esc_html_e( 'Trial', 'sdevs_subscrpt' ); ?></td>
+			<td><?php esc_html_e( 'Trial', 'wp_subscription' ); ?></td>
 			<td><?php echo esc_html( $trial ); ?></td>
 		</tr>
 		<?php endif; ?>
 		<tr>
-			<td><?php esc_html_e( ( 'null' == $trial || 'off' === $trial_mode ? 'Start date' : ( 'extended' === $trial_mode ? 'Trial End & Subscription Start' : 'Trial End & First Billing' ) ), 'sdevs_subscrpt' ); ?></td>
+			<td><?php esc_html_e( ( 'null' == $trial || 'off' === $trial_mode ? 'Start date' : ( 'extended' === $trial_mode ? 'Trial End & Subscription Start' : 'Trial End & First Billing' ) ), 'wp_subscription' ); ?></td>
 			<td><?php echo esc_html( ! empty( $start_date ) ? gmdate( 'F d, Y', $start_date ) : '-' ); ?></td>
 		</tr>
 		<?php if ( null == $trial || in_array( $trial_mode, array( 'off', 'extended' ), true ) ) : ?>
 			<tr>
 				<td>
 				<?php
-					esc_html_e( 'Next payment date', 'sdevs_subscrpt' );
+					esc_html_e( 'Next payment date', 'wp_subscription' );
 				?>
 				</td>
 				<td>
@@ -74,7 +74,7 @@ do_action( 'before_single_subscrpt_content' );
 		<?php endif; ?>
 		<?php if ( ! empty( $order->get_payment_method_title() ) ) : ?>
 		<tr>
-			<td><?php esc_html_e( 'Payment', 'sdevs_subscrpt' ); ?></td>
+			<td><?php esc_html_e( 'Payment', 'wp_subscription' ); ?></td>
 			<td>
 				<span data-is_manual="yes" class="subscription-payment-method"><?php echo esc_html( $order->get_payment_method_title() ); ?></span>
 			</td>
@@ -82,7 +82,7 @@ do_action( 'before_single_subscrpt_content' );
 		<?php endif; ?>
 		<?php if ( 0 < count( $action_buttons ) ) : ?>
 			<tr>
-				<td><?php echo esc_html_e( 'Actions', 'sdevs_subscrpt' ); ?></td>
+				<td><?php echo esc_html_e( 'Actions', 'wp_subscription' ); ?></td>
 				<td class="subscrpt_action_buttons">
 					<?php foreach ( $action_buttons as $action_button ) : ?>
 						<a href="<?php echo esc_attr( $action_button['url'] ); ?>" class="button
@@ -100,12 +100,12 @@ do_action( 'before_single_subscrpt_content' );
 
 <?php do_action( 'subscrpt_before_subscription_totals', (int) $id ); ?>
 
-<h2><?php echo esc_html_e( 'Subscription Totals', 'sdevs_subscrpt' ); ?></h2>
+<h2><?php echo esc_html_e( 'Subscription Totals', 'wp_subscription' ); ?></h2>
 <table class="woocommerce-table woocommerce-table--order-details shop_table order_details">
 	<thead>
 		<tr>
-			<th class="product-name"><?php echo esc_html_e( 'Product', 'sdevs_subscrpt' ); ?></th>
-			<th class="product-total"><?php echo esc_html_e( 'Total', 'sdevs_subscrpt' ); ?></th>
+			<th class="product-name"><?php echo esc_html_e( 'Product', 'wp_subscription' ); ?></th>
+			<th class="product-total"><?php echo esc_html_e( 'Total', 'wp_subscription' ); ?></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -133,13 +133,13 @@ do_action( 'before_single_subscrpt_content' );
 	</tbody>
 	<tfoot>
 		<tr>
-			<th scope="row"><?php esc_html_e( 'Subtotal', 'sdevs_subscrpt' ); ?>:</th>
+			<th scope="row"><?php esc_html_e( 'Subtotal', 'wp_subscription' ); ?>:</th>
 			<td>
 				<span class="woocommerce-Price-amount amount"><?php echo wp_kses_post( wc_price( get_post_meta( $id, '_subscrpt_price', true ), array( 'currency' => $order->get_currency() ) ) ); ?></span>
 			</td>
 		</tr>
 		<tr>
-			<th scope="row"><?php esc_html_e( 'Renew', 'sdevs_subscrpt' ); ?>:</th>
+			<th scope="row"><?php esc_html_e( 'Renew', 'wp_subscription' ); ?>:</th>
 			<td>
 				<span class="woocommerce-Price-amount amount">
 					<?php echo wp_kses_post( $product_price_html ); ?>
@@ -152,7 +152,7 @@ do_action( 'before_single_subscrpt_content' );
 <?php do_action( 'subscrpt_after_subscription_totals', (int) $id ); ?>
 
 <section class="woocommerce-customer-details">
-	<h2 class="woocommerce-column__title"><?php esc_html_e( 'Billing address', 'sdevs_subscrpt' ); ?></h2>
+	<h2 class="woocommerce-column__title"><?php esc_html_e( 'Billing address', 'wp_subscription' ); ?></h2>
 	<address>
 		<?php echo wp_kses_post( $order->get_formatted_billing_address() ); ?>
 		<p class="woocommerce-customer-details--phone"><?php echo esc_html( $order->get_billing_phone() ); ?></p>

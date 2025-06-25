@@ -68,25 +68,25 @@ class MyAccount {
 			if ( in_array( $status, array( 'pending', 'active', 'on_hold' ), true ) && 'yes' === $user_cancel ) {
 				$action_buttons['cancel'] = array(
 					'url'   => subscrpt_get_action_url( 'cancelled', $subscrpt_nonce, $id ),
-					'label' => __( 'Cancel', 'sdevs_subscrpt' ),
+					'label' => __( 'Cancel', 'wp_subscription' ),
 					'class' => 'cancel',
 				);
 			} elseif ( trim( $status ) === trim( 'pe_cancelled' ) ) {
 				$action_buttons['reactive'] = array(
 					'url'   => subscrpt_get_action_url( 'reactive', $subscrpt_nonce, $id ),
-					'label' => __( 'Reactive', 'sdevs_subscrpt' ),
+					'label' => __( 'Reactive', 'wp_subscription' ),
 				);
 			} elseif ( 'expired' === $status && 'pending' !== $order->get_status() ) {
 				$action_buttons['renew'] = array(
 					'url'   => subscrpt_get_action_url( 'renew', $subscrpt_nonce, $id ),
-					'label' => __( 'Renew', 'sdevs_subscrpt' ),
+					'label' => __( 'Renew', 'wp_subscription' ),
 				);
 			}
 
 			if ( 'pending' === $order->get_status() ) {
 				$action_buttons['pay_now'] = array(
 					'url'   => $order->get_checkout_payment_url(),
-					'label' => __( 'Pay now', 'sdevs_subscrpt' ),
+					'label' => __( 'Pay now', 'wp_subscription' ),
 				);
 			}
 		}
@@ -102,12 +102,12 @@ class MyAccount {
 			if ( '0' === $is_auto_renew ) {
 				$action_buttons['auto-renew-on'] = array(
 					'url'   => subscrpt_get_action_url( 'renew-on', $subscrpt_nonce, $id ),
-					'label' => __( 'Turn on Auto Renewal', 'sdevs_subscrpt' ),
+					'label' => __( 'Turn on Auto Renewal', 'wp_subscription' ),
 				);
 			} else {
 				$action_buttons['auto-renew-off'] = array(
 					'url'   => subscrpt_get_action_url( 'renew-off', $subscrpt_nonce, $id ),
-					'label' => __( 'Turn off Auto Renewal', 'sdevs_subscrpt' ),
+					'label' => __( 'Turn off Auto Renewal', 'wp_subscription' ),
 				);
 			}
 		}
@@ -152,7 +152,7 @@ class MyAccount {
 	 */
 	public function change_single_title( string $title ): string {
 		/* translators: %s: Subscription ID */
-		return sprintf( __( 'Subscription #%s', 'sdevs_subscrpt' ), get_query_var( 'view-subscription' ) );
+		return sprintf( __( 'Subscription #%s', 'wp_subscription' ), get_query_var( 'view-subscription' ) );
 	}
 
 	/**
@@ -166,7 +166,7 @@ class MyAccount {
 		global $wp_query;
 		$is_endpoint = isset( $wp_query->query_vars['subscriptions'] );
 		if ( $is_endpoint && ! is_admin() && is_account_page() ) {
-			$title = __( 'My Subscriptions', 'sdevs_subscrpt' );
+			$title = __( 'My Subscriptions', 'wp_subscription' );
 		}
 		return $title;
 	}
@@ -180,7 +180,7 @@ class MyAccount {
 	public function custom_my_account_menu_items( array $items ): array {
 		$logout = $items['customer-logout'];
 		unset( $items['customer-logout'] );
-		$items['subscriptions']   = __( 'Subscriptions', 'sdevs_subscrpt' );
+		$items['subscriptions']   = __( 'Subscriptions', 'wp_subscription' );
 		$items['customer-logout'] = $logout;
 		return $items;
 	}

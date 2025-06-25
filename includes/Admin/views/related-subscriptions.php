@@ -6,10 +6,10 @@
 
 			use SpringDevs\Subscription\Illuminate\Helper;
 
-			esc_html_e( 'Started on', 'sdevs_subscrpt' ); ?></th>
-			<th><?php esc_html_e( 'Recurring', 'sdevs_subscrpt' ); ?></th>
-			<th><?php esc_html_e( 'Expiry date', 'sdevs_subscrpt' ); ?></th>
-			<th><?php esc_html_e( 'Status', 'sdevs_subscrpt' ); ?></th>
+			esc_html_e( 'Started on', 'wp_subscription' ); ?></th>
+			<th><?php esc_html_e( 'Recurring', 'wp_subscription' ); ?></th>
+			<th><?php esc_html_e( 'Expiry date', 'wp_subscription' ); ?></th>
+			<th><?php esc_html_e( 'Status', 'wp_subscription' ); ?></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -28,7 +28,7 @@
 						<a href="<?php echo esc_html( get_edit_post_link( $history->subscription_id ) ); ?>" target="_blank">#<?php echo esc_html( $history->subscription_id ); ?> - <?php echo esc_html( $order_item->get_name() ); ?></a>
 					</td>
 					<td>
-						<?php echo null == $trial ? ( ! empty( $start_date ) ? esc_html( gmdate( 'F d, Y', $start_date ) ) : '-' ) : '+' . esc_html( $trial ) . ' ' . __( 'free trial', 'sdevs_subscrpt' ); ?>
+						<?php echo null == $trial ? ( ! empty( $start_date ) ? esc_html( gmdate( 'F d, Y', $start_date ) ) : '-' ) : '+' . esc_html( $trial ) . ' ' . __( 'free trial', 'wp_subscription' ); ?>
 					</td>
 					<td><?php echo wp_kses_post( Helper::format_price_with_order_item( $price, $order_item->get_id() ) ); ?></td>
 					<td><?php echo esc_html( ! empty( $start_date ) && ! empty( $next_date ) ? ( $trial == null ? gmdate( 'F d, Y', $next_date ) : gmdate( 'F d, Y', $start_date ) ) : '-' ); ?></td>

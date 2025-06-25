@@ -108,10 +108,10 @@ class Subscriptions {
 	 * @return array
 	 */
 	public function add_custom_columns( $columns ) {
-		$columns['subscrpt_start_date'] = __( 'Start Date', 'sdevs_subscrpt' );
-		$columns['subscrpt_customer']   = __( 'Customer', 'sdevs_subscrpt' );
-		$columns['subscrpt_next_date']  = __( 'Next Date', 'sdevs_subscrpt' );
-		$columns['subscrpt_status']     = __( 'Status', 'sdevs_subscrpt' );
+		$columns['subscrpt_start_date'] = __( 'Start Date', 'wp_subscription' );
+		$columns['subscrpt_customer']   = __( 'Customer', 'wp_subscription' );
+		$columns['subscrpt_next_date']  = __( 'Next Date', 'wp_subscription' );
+		$columns['subscrpt_status']     = __( 'Status', 'wp_subscription' );
 		unset( $columns['date'] );
 		unset( $columns['cb'] );
 
@@ -156,7 +156,7 @@ class Subscriptions {
 				<?php
 			}
 		} else {
-			esc_html_e( 'Order not found !!', 'sdevs_subscrpt' );
+			esc_html_e( 'Order not found !!', 'wp_subscription' );
 		}
 	}
 
@@ -167,7 +167,7 @@ class Subscriptions {
 		remove_meta_box( 'submitdiv', 'subscrpt_order', 'side' );
 		add_meta_box(
 			'subscrpt_order_save_post',
-			__( 'Subscription Action', 'sdevs_subscrpt' ),
+			__( 'Subscription Action', 'wp_subscription' ),
 			array( $this, 'subscrpt_order_save_post' ),
 			'subscrpt_order',
 			'side',
@@ -176,7 +176,7 @@ class Subscriptions {
 
 		add_meta_box(
 			'subscrpt_customer_info',
-			__( 'Customer Info', 'sdevs_subscrpt' ),
+			__( 'Customer Info', 'wp_subscription' ),
 			array( $this, 'customer_info' ),
 			'subscrpt_order',
 			'side',
@@ -185,7 +185,7 @@ class Subscriptions {
 
 		add_meta_box(
 			'subscrpt_order_info',
-			__( 'Subscription Info', 'sdevs_subscrpt' ),
+			__( 'Subscription Info', 'wp_subscription' ),
 			array( $this, 'subscrpt_order_info' ),
 			'subscrpt_order',
 			'normal',
@@ -194,7 +194,7 @@ class Subscriptions {
 
 		add_meta_box(
 			'subscrpt_order_history',
-			__( 'Subscription History', 'sdevs_subscrpt' ),
+			__( 'Subscription History', 'wp_subscription' ),
 			array( $this, 'order_histories' ),
 			'subscrpt_order',
 			'normal',
@@ -203,7 +203,7 @@ class Subscriptions {
 
 		add_meta_box(
 			'subscrpt_order_activities',
-			__( 'Subscription Activities', 'sdevs_subscrpt' ),
+			__( 'Subscription Activities', 'wp_subscription' ),
 			array( $this, 'order_activities' ),
 			'subscrpt_order',
 			'normal',
@@ -271,23 +271,23 @@ class Subscriptions {
 	public function subscrpt_order_save_post() {
 		$actions_data = array(
 			'active'       => array(
-				'label' => __( 'Activate Subscription', 'sdevs_subscrpt' ),
+				'label' => __( 'Activate Subscription', 'wp_subscription' ),
 				'value' => 'active',
 			),
 			'pending'      => array(
-				'label' => __( 'Pending Subscription', 'sdevs_subscrpt' ),
+				'label' => __( 'Pending Subscription', 'wp_subscription' ),
 				'value' => 'pending',
 			),
 			'expire'       => array(
-				'label' => __( 'Expire Subscription', 'sdevs_subscrpt' ),
+				'label' => __( 'Expire Subscription', 'wp_subscription' ),
 				'value' => 'expired',
 			),
 			'pe_cancelled' => array(
-				'label' => __( 'Pending Cancel Subscription', 'sdevs_subscrpt' ),
+				'label' => __( 'Pending Cancel Subscription', 'wp_subscription' ),
 				'value' => 'pe_cancelled',
 			),
 			'cancelled'    => array(
-				'label' => __( 'Cancel Subscription', 'sdevs_subscrpt' ),
+				'label' => __( 'Cancel Subscription', 'wp_subscription' ),
 				'value' => 'cancelled',
 			),
 		);
@@ -346,51 +346,51 @@ class Subscriptions {
 		$product_link = get_the_permalink( $order_item->get_product_id() );
 		$rows         = array(
 			'product'          => array(
-				'label' => __( 'Product', 'sdevs_subscrpt' ),
+				'label' => __( 'Product', 'wp_subscription' ),
 				'value' => '<a href="' . esc_html( $product_link ) . '" target="_blank">' . esc_html( $product_name ) . '</a>',
 			),
 			'cost'             => array(
-				'label' => __( 'Cost', 'sdevs_subscrpt' ),
+				'label' => __( 'Cost', 'wp_subscription' ),
 				'value' => Helper::format_price_with_order_item( get_post_meta( get_the_ID(), '_subscrpt_price', true ), $order_item->get_id() ),
 			),
 			'quantity'         => array(
-				'label' => __( 'Qty', 'sdevs_subscrpt' ),
+				'label' => __( 'Qty', 'wp_subscription' ),
 				'value' => "x{$order_item->get_quantity()}",
 			),
 			'start_date'       => array(
-				'label' => __( 'Started date', 'sdevs_subscrpt' ),
+				'label' => __( 'Started date', 'wp_subscription' ),
 				'value' => ! empty( $start_date ) ? gmdate( 'F d, Y', $trial && $trial_start_date ? $trial_start_date : $start_date ) : '-',
 			),
 			'next_date'        => array(
-				'label' => __( 'Payment due date', 'sdevs_subscrpt' ),
+				'label' => __( 'Payment due date', 'wp_subscription' ),
 				'value' => ! empty( $next_date ) ? gmdate( 'F d, Y', $trial && $trial_end_date && 'on' === $trial_mode ? $trial_end_date : ( $next_date ?? '-' ) ) : '-',
 			),
 			'status'           => array(
-				'label' => __( 'Status', 'sdevs_subscrpt' ),
+				'label' => __( 'Status', 'wp_subscription' ),
 				'value' => '<span class="subscrpt-' . get_post_status() . '">' . get_post_status_object( get_post_status() )->label . '</span>',
 			),
 			'payment_method'   => array(
-				'label' => __( 'Payment Method', 'sdevs_subscrpt' ),
+				'label' => __( 'Payment Method', 'wp_subscription' ),
 				'value' => empty( $order->get_payment_method_title() ) ? '-' : $order->get_payment_method_title(),
 			),
 			'billing_address'  => array(
-				'label' => __( 'Billing', 'sdevs_subscrpt' ),
-				'value' => $order->get_formatted_billing_address() ? $order->get_formatted_billing_address() : __( 'No billing address set.', 'sdevs_subscrpt' ),
+				'label' => __( 'Billing', 'wp_subscription' ),
+				'value' => $order->get_formatted_billing_address() ? $order->get_formatted_billing_address() : __( 'No billing address set.', 'wp_subscription' ),
 			),
 			'shipping_address' => array(
-				'label' => __( 'Shipping', 'sdevs_subscrpt' ),
-				'value' => $order->get_formatted_shipping_address() ? $order->get_formatted_shipping_address() : __( 'No shipping address set.', 'sdevs_subscrpt' ),
+				'label' => __( 'Shipping', 'wp_subscription' ),
+				'value' => $order->get_formatted_shipping_address() ? $order->get_formatted_shipping_address() : __( 'No shipping address set.', 'wp_subscription' ),
 			),
 		);
 		if ( $trial ) {
 			$rows = array_slice( $rows, 0, 3, true ) + array(
 				'trial'        => array(
-					'label' => __( 'Trial', 'sdevs_subscrpt' ),
+					'label' => __( 'Trial', 'wp_subscription' ),
 					'value' => $trial,
 				),
 				'trial_period' => array(
-					'label' => __( 'Trial Period', 'sdevs_subscrpt' ),
-					'value' => ( $trial_start_date && $trial_end_date ? ' [ ' . gmdate( 'F d, Y', $trial_start_date ) . ' - ' . gmdate( 'F d, Y', $trial_end_date ) . ' ] ' : __( 'Trial isn\'t activated yet! ', 'sdevs_subscrpt' ) ),
+					'label' => __( 'Trial Period', 'wp_subscription' ),
+					'value' => ( $trial_start_date && $trial_end_date ? ' [ ' . gmdate( 'F d, Y', $trial_start_date ) . ' - ' . gmdate( 'F d, Y', $trial_end_date ) . ' ] ' : __( 'Trial isn\'t activated yet! ', 'wp_subscription' ) ),
 				),
 			) + array_slice( $rows, 3, count( $rows ) - 1, true );
 		}
@@ -402,7 +402,7 @@ class Subscriptions {
 				$new_rows[ $key ] = $value;
 				if ( 'payment_method' === $key ) {
 					$new_rows['stripe_auto_renewal'] = array(
-						'label' => __( 'Stripe Auto Renewal', 'sdevs_subscrpt' ),
+						'label' => __( 'Stripe Auto Renewal', 'wp_subscription' ),
 						'value' => '0' !== $is_auto_renew ? 'On' : 'Off',
 					);
 				}

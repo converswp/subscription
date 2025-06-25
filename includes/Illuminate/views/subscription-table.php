@@ -18,7 +18,7 @@ use SpringDevs\Subscription\Illuminate\Helper;
 		<tr>
 			<h2>
 			<?php
-				esc_html_e( 'Related Subscriptions', 'sdevs_subscrpt' );
+				esc_html_e( 'Related Subscriptions', 'wp_subscription' );
 			?>
 				</h2>
 			<?php
@@ -52,21 +52,21 @@ use SpringDevs\Subscription\Illuminate\Helper;
 			</tr>
 			<tr>
 				<th class="td" scope="row" colspan="2"
-					style="color: #636363; border: 1px solid #e5e5e5; vertical-align: middle; padding: 12px; text-align: left;"><?php esc_html_e( 'Status:', 'sdevs_subscrpt' ); ?> </th>
+					style="color: #636363; border: 1px solid #e5e5e5; vertical-align: middle; padding: 12px; text-align: left;"><?php esc_html_e( 'Status:', 'wp_subscription' ); ?> </th>
 				<td class="td"
 					style="color: #636363; border: 1px solid #e5e5e5; vertical-align: middle; padding: 12px; text-align: left;"><?php echo esc_html( $subscription_status_object->label ); ?></td>
 			</tr>
 			<tr>
 				<th class="td" scope="row" colspan="2"
 					style="color: #636363; border: 1px solid #e5e5e5; vertical-align: middle; padding: 12px; text-align: left;">
-					<?php esc_html_e( 'Recurring amount:', 'sdevs_subscrpt' ); ?> </th>
+					<?php esc_html_e( 'Recurring amount:', 'wp_subscription' ); ?> </th>
 				<td class="td"
 					style="color: #636363; border: 1px solid #e5e5e5; vertical-align: middle; padding: 12px; text-align: left;"><?php echo wp_kses_post( Helper::format_price_with_order_item( $cost, $item->get_id() ) ); ?></td>
 			</tr>
 			<?php if ( ! $has_trial ) { ?>
 			<tr>
 				<th class="td" scope="row" colspan="2"
-					style="color: #636363; border: 1px solid #e5e5e5; vertical-align: middle; padding: 12px; text-align: left;"><?php esc_html_e( 'Next billing on', 'sdevs_subscrpt' ); ?>
+					style="color: #636363; border: 1px solid #e5e5e5; vertical-align: middle; padding: 12px; text-align: left;"><?php esc_html_e( 'Next billing on', 'wp_subscription' ); ?>
 					:
 				</th>
 				<td class="td"
@@ -75,7 +75,7 @@ use SpringDevs\Subscription\Illuminate\Helper;
 		<?php } else { ?>
 			<tr>
 				<th class="td" scope="row" colspan="2"
-					style="color: #636363; border: 1px solid #e5e5e5; vertical-align: middle; padding: 12px; text-align: left;"><?php esc_html_e( 'Trial', 'sdevs_subscrpt' ); ?>
+					style="color: #636363; border: 1px solid #e5e5e5; vertical-align: middle; padding: 12px; text-align: left;"><?php esc_html_e( 'Trial', 'wp_subscription' ); ?>
 					:
 				</th>
 				<td class="td"
@@ -83,7 +83,7 @@ use SpringDevs\Subscription\Illuminate\Helper;
 			</tr>
 			<tr>
 				<th class="td" scope="row" colspan="2"
-					style="color: #636363; border: 1px solid #e5e5e5; vertical-align: middle; padding: 12px; text-align: left;"><?php esc_html_e( 'First billing on', 'sdevs_subscrpt' ); ?>
+					style="color: #636363; border: 1px solid #e5e5e5; vertical-align: middle; padding: 12px; text-align: left;"><?php esc_html_e( 'First billing on', 'wp_subscription' ); ?>
 					:
 				</th>
 				<td class="td"

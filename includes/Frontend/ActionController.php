@@ -31,7 +31,7 @@ class ActionController {
 		$action      = sanitize_text_field( wp_unslash( $_GET['action'] ) );
 		$wpnonce     = sanitize_text_field( wp_unslash( $_GET['wpnonce'] ) );
 		if ( ! wp_verify_nonce( $wpnonce, 'subscrpt_nonce' ) ) {
-			wp_die( esc_html( __( 'Sorry !! You cannot permit to access.', 'sdevs_subscrpt' ) ) );
+			wp_die( esc_html( __( 'Sorry !! You cannot permit to access.', 'wp_subscription' ) ) );
 		}
 		if ( 'renew' === $action && ! subscrpt_is_auto_renew_enabled() ) {
 			$this->manual_renew_product( $subscrpt_id );

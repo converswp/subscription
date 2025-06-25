@@ -49,14 +49,14 @@ class Cart {
 		foreach ( $cart_items as $key => $cart_item ) {
 			if ( isset( $cart_item['subscription'] ) ) {
 				if ( $enabled ) {
-					$error_notice = __( 'Currently You have an another Subscriptional product on cart !!', 'sdevs_subscrpt' );
+					$error_notice = __( 'Currently You have an another Subscriptional product on cart !!', 'wp_subscription' );
 				} else {
-					$error_notice = __( 'Currently You have Subscriptional product in a cart !!', 'sdevs_subscrpt' );
+					$error_notice = __( 'Currently You have Subscriptional product in a cart !!', 'wp_subscription' );
 				}
 				$failed = true;
 			} elseif ( $enabled ) {
 				$failed       = true;
-				$error_notice = __( 'Your cart isn\'t empty !!', 'sdevs_subscrpt' );
+				$error_notice = __( 'Your cart isn\'t empty !!', 'wp_subscription' );
 			}
 		}
 
@@ -119,7 +119,7 @@ class Cart {
 		if ( isset( $cart_item['subscription'] ) ) {
 			if ( $cart_item['subscription']['trial'] ) {
 				$cart_item_data[] = array(
-					'key'    => __( 'Free Trial', 'sdevs_subscrpt' ),
+					'key'    => __( 'Free Trial', 'wp_subscription' ),
 					'value'  => $cart_item['subscription']['trial'],
 					'hidden' => true,
 					'__experimental_woocommerce_blocks_hidden' => false,
@@ -153,17 +153,17 @@ class Cart {
 					if ( $product->is_type( 'simple' ) ) {
 						if ( Helper::get_typos( 1, $product->get_meta( '_subscrpt_timing_option' ) ) !== $value['subscription']['type'] || $product->get_trial() !== $value['subscription']['trial'] ) {
 							// remove the item.
-							wc_add_notice( __( 'An item which is no longer available was removed from your cart.', 'sdevs_subscrpt' ), 'error' );
+							wc_add_notice( __( 'An item which is no longer available was removed from your cart.', 'wp_subscription' ), 'error' );
 							WC()->cart->remove_cart_item( $key );
 						}
 					} else {
 						// remove the item.
-						wc_add_notice( __( 'An item which is no longer available was removed from your cart.', 'sdevs_subscrpt' ), 'error' );
+						wc_add_notice( __( 'An item which is no longer available was removed from your cart.', 'wp_subscription' ), 'error' );
 						WC()->cart->remove_cart_item( $key );
 					}
 				} elseif ( $product->get_meta( '_subscrpt_enabled' ) ) {
 					// remove the item.
-					wc_add_notice( __( 'An item which is no longer available was removed from your cart.', 'sdevs_subscrpt' ), 'error' );
+					wc_add_notice( __( 'An item which is no longer available was removed from your cart.', 'wp_subscription' ), 'error' );
 					WC()->cart->remove_cart_item( $key );
 				}
 			}
@@ -204,32 +204,32 @@ class Cart {
 	public function extend_cart_schema() {
 		return array(
 			'recurring_totals' => array(
-				'description'      => __( 'List of recurring totals in cart.', 'sdevs_subscrpt' ),
+				'description'      => __( 'List of recurring totals in cart.', 'wp_subscription' ),
 				'type'             => 'array',
 				'readonly'         => true,
 				'recurring_totals' => array(
 					'price'           => array(
-						'description' => __( 'price of the subscription.', 'sdevs_subscrpt' ),
+						'description' => __( 'price of the subscription.', 'wp_subscription' ),
 						'type'        => array( 'string' ),
 						'readonly'    => true,
 					),
 					'time'            => array(
-						'description' => __( 'time of the subscription.', 'sdevs_subscrpt' ),
+						'description' => __( 'time of the subscription.', 'wp_subscription' ),
 						'type'        => array( 'number' ),
 						'readonly'    => true,
 					),
 					'type'            => array(
-						'description' => __( 'type of the subscription.', 'sdevs_subscrpt' ),
+						'description' => __( 'type of the subscription.', 'wp_subscription' ),
 						'type'        => array( 'string' ),
 						'readonly'    => true,
 					),
 					'description'     => array(
-						'description' => __( 'price of the subscription description.', 'sdevs_subscrpt' ),
+						'description' => __( 'price of the subscription description.', 'wp_subscription' ),
 						'type'        => array( 'string' ),
 						'readonly'    => true,
 					),
 					'can_user_cancel' => array(
-						'description' => __( 'Can User Cancel?', 'sdevs_subscrpt' ),
+						'description' => __( 'Can User Cancel?', 'wp_subscription' ),
 						'type'        => array( 'string' ),
 						'readonly'    => true,
 					),
@@ -282,27 +282,27 @@ class Cart {
 	public function extend_cart_item_schema() {
 		return array(
 			'time'       => array(
-				'description' => __( 'time of the subscription type.', 'sdevs_subscrpt' ),
+				'description' => __( 'time of the subscription type.', 'wp_subscription' ),
 				'type'        => array( 'number', 'null' ),
 				'readonly'    => true,
 			),
 			'type'       => array(
-				'description' => __( 'the subscription type.', 'sdevs_subscrpt' ),
+				'description' => __( 'the subscription type.', 'wp_subscription' ),
 				'type'        => array( 'string', 'null' ),
 				'readonly'    => true,
 			),
 			'trial'      => array(
-				'description' => __( 'the subscription trial.', 'sdevs_subscrpt' ),
+				'description' => __( 'the subscription trial.', 'wp_subscription' ),
 				'type'        => array( 'string', 'null' ),
 				'readonly'    => true,
 			),
 			'signup_fee' => array(
-				'description' => __( 'Signup Fee amount.', 'sdevs_subscrpt' ),
+				'description' => __( 'Signup Fee amount.', 'wp_subscription' ),
 				'type'        => array( 'string', 'null' ),
 				'readonly'    => true,
 			),
 			'cost'       => array(
-				'description' => __( 'Recurring amount.', 'sdevs_subscrpt' ),
+				'description' => __( 'Recurring amount.', 'wp_subscription' ),
 				'type'        => array( 'string', 'null' ),
 				'readonly'    => true,
 			),
@@ -413,16 +413,16 @@ class Cart {
 		}
 		?>
 		<tr class="recurring-total">
-			<th><?php esc_html_e( 'Recurring totals', 'sdevs_subscrpt' ); ?></th>
-			<td data-title="<?php esc_attr_e( 'Recurring totals', 'sdevs_subscrpt' ); ?>">
+			<th><?php esc_html_e( 'Recurring totals', 'wp_subscription' ); ?></th>
+			<td data-title="<?php esc_attr_e( 'Recurring totals', 'wp_subscription' ); ?>">
 				<?php foreach ( $recurrs as $recurr ) : ?>
 					<p>
 						<span><?php echo wp_kses_post( $recurr['price_html'] ); ?></span><br />
-						<small><?php esc_html_e( ( $recurr['trial_status'] ? 'First billing on' : 'Next billing on' ), 'sdevs_subscrpt' ); ?>
+						<small><?php esc_html_e( ( $recurr['trial_status'] ? 'First billing on' : 'Next billing on' ), 'wp_subscription' ); ?>
 							: <?php echo esc_html( $recurr['trial_status'] ? $recurr['start_date'] : $recurr['next_date'] ); ?></small>
 						<?php if ( 'yes' === $recurr['can_user_cancel'] ) : ?>
 							<br>
-							<small><?php esc_html_e( 'You can cancel subscription at any time!', 'sdevs_subscrpt' ); ?></small>
+							<small><?php esc_html_e( 'You can cancel subscription at any time!', 'wp_subscription' ); ?></small>
 						<?php endif; ?>
 					</p>
 				<?php endforeach; ?>

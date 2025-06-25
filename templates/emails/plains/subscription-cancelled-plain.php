@@ -12,23 +12,23 @@
 echo esc_html( '= ' . $email_heading . " =\n\n" );
 
 // translators: first is older status and last is newly updated status.
-$opening_paragraph = __( 'Your subscription is %1$s Cancelled! %2$s', 'sdevs_subscrpt' );
+$opening_paragraph = __( 'Your subscription is %1$s Cancelled! %2$s', 'wp_subscription' );
 
 echo wp_kses_post( sprintf( $opening_paragraph, '<b>', '</b>' ) . "\n\n" );
 
 echo "=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n\n";
 
 // translators: Subscription id.
-echo esc_html( sprintf( __( 'Subscription Id: %s', 'sdevs_subscrpt' ), $id ) . "\n" );
+echo esc_html( sprintf( __( 'Subscription Id: %s', 'wp_subscription' ), $id ) . "\n" );
 
 // translators: Product name.
-echo esc_html( sprintf( __( 'Product: %s', 'sdevs_subscrpt' ), $product_name ) . "\n" );
+echo esc_html( sprintf( __( 'Product: %s', 'wp_subscription' ), $product_name ) . "\n" );
 
 // translators: Subscription quantity.
-echo esc_html( sprintf( __( 'Qty: %s', 'sdevs_subscrpt' ), $qty ) . "\n" );
+echo esc_html( sprintf( __( 'Qty: %s', 'wp_subscription' ), $qty ) . "\n" );
 
 // translators: Subscription amount.
-echo wp_kses_post( sprintf( __( 'Amount: %s', 'sdevs_subscrpt' ), $amount ) . "\n" );
+echo wp_kses_post( sprintf( __( 'Amount: %s', 'wp_subscription' ), $amount ) . "\n" );
 
 
 echo "\n=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n\n";
@@ -37,7 +37,7 @@ echo wp_kses_post(
 	make_clickable(
 		sprintf(
 		// translators: subscription id.
-			__( 'You can view and edit this subscription in the dashboard here: %s', 'sdevs_subscrpt' ),
+			__( 'You can view and edit this subscription in the dashboard here: %s', 'wp_subscription' ),
 			admin_url( 'post.php?post=' . $id . '&action=edit' )
 		)
 	)
