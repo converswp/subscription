@@ -185,8 +185,17 @@ class Paypal extends \WC_Payment_Gateway {
 			'webhook_id'         => [
 				'title'       => __( 'Webhook ID', 'wp_subscription' ),
 				'type'        => 'text',
-				'description' => __( '<p>In the <strong style="color:#1d4ed8">Apps & Credentials</strong> page of PayPal developer account open the newly created application and click <strong style="color:#1d4ed8">Add Webhook</strong> button.<br> On the <strong>Webhook URL</strong> field use the link below 👇, check <strong>All Events</strong> then click <strong>Save</strong>. Then copy the <strong>Webhook ID</strong> and paste it here. </p><p><code style="background: #030712; color: #fff; padding: 6px; border-radius: 4px;">' . $this->get_webhook_url() . '</code></p>', 'wp_subscription' ),
+				'description' => __( 'Enter your Webhook ID copied from Paypal Apps & Credentials for webhook validation.', 'wp_subscription' ),
 				'default'     => '',
+				'desc_tip'    => true,
+			],
+			'webhook_url'        => [
+				'title'       => __( 'Webhook URL', 'wp_subscription' ),
+				'type'        => 'text',
+				'description' => __( '<p>In the <strong style="color:#1d4ed8">Apps & Credentials</strong> page of PayPal developer account open the newly created application and click <strong style="color:#1d4ed8">Add Webhook</strong> button.<br> On the <strong>Webhook URL</strong> field use this webhook link', 'wp_subscription' ),
+				'default'     => $this->get_webhook_url(),
+				'disabled'    => true,
+				'class'       => 'wpsubs-webhook-url',
 			],
 		];
 	}
