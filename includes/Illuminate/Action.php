@@ -17,6 +17,8 @@ class Action {
 	 * @param bool   $write_comment Write comment?.
 	 */
 	public static function status( string $status, int $subscription_id, bool $write_comment = true ) {
+		$old_status = get_post_status($subscription_id);
+		
 		wp_update_post(
 			array(
 				'ID'          => $subscription_id,
@@ -29,6 +31,14 @@ class Action {
 		}
 
 		self::user( $subscription_id );
+
+		// Trigger status change action
+		do_action('subscrpt_subscription_status_changed', $subscription_id, $old_status, $status);
+
+		// Trigger resumption event if subscription is being activated from cancelled or pending cancellation
+		if ($status === 'active' && in_array($old_status, array('cancelled', 'pe_cancelled'))) {
+			do_action('subscrpt_subscription_resumed', $subscription_id, $old_status);
+		}
 	}
 
 	/**
@@ -109,6 +119,7 @@ class Action {
 			)
 		);
 		update_comment_meta( $comment_id, '_subscrpt_activity', 'Subscription Pending' );
+		do_action( 'subscrpt_subscription_pending', $subscription_id );
 	}
 
 	/**
@@ -129,6 +140,7 @@ class Action {
 
 		WC()->mailer();
 		do_action( 'subscrpt_subscription_cancelled_email_notification', $subscription_id );
+		do_action( 'subscrpt_subscription_cancelled', $subscription_id );
 	}
 
 	/**
@@ -146,6 +158,7 @@ class Action {
 			)
 		);
 		update_comment_meta( $comment_id, '_subscrpt_activity', 'Subscription Pending Cancellation' );
+		do_action( 'subscrpt_subscription_pending_cancellation', $subscription_id );
 	}
 
 	/**
