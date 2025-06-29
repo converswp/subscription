@@ -2,6 +2,7 @@
 
 namespace SpringDevs\Subscription;
 
+use SpringDevs\Subscription\Admin\Integrations;
 use SpringDevs\Subscription\Admin\Required;
 use SpringDevs\Subscription\Admin\Links;
 use SpringDevs\Subscription\Admin\Menu;
@@ -37,6 +38,7 @@ class Admin {
 		// Only load admin content if WooCommerce is active
 		if ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
 			new Menu();
+			new Integrations();
 			new Product();
 			new Subscriptions();
 			new AdminOrder();

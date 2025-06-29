@@ -105,7 +105,7 @@ class Menu {
     /**
      * Render the admin header
      */
-    private function render_admin_footer() {
+    public function render_admin_footer() {
         ?>
         <div style="text-align:center;margin:38px 0 0 0;font-size:14px;color:#888;">
             Made with <span style="color:#e25555;font-size:1.1em;">♥</span> by the WP Subscription Team
@@ -120,7 +120,7 @@ class Menu {
     /**
      * Render the admin header
      */
-    private function render_admin_header() {
+    public function render_admin_header() {
         // Get current page slug
         $current = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : 'wp-subscription';
         $menu_items = [
@@ -138,15 +138,17 @@ class Menu {
                 'slug' => 'wp-subscription-settings',
                 'label' => __('Settings', 'wp_subscription'),
                 'url'  => admin_url('admin.php?page=wp-subscription-settings'),
-            ],
+            ]
+        ];
+        // Allow pro plugin to inject menu items
+        $menu_items = apply_filters('wp_subscription_admin_header_menu_items', $menu_items, $current);
+        $menu_items = array_merge($menu_items, [
             [
                 'slug' => 'wp-subscription-support',
                 'label' => __('Support', 'wp_subscription'),
                 'url'  => admin_url('admin.php?page=wp-subscription-support'),
             ],
-        ];
-        // Allow pro plugin to inject menu items
-        $menu_items = apply_filters('wp_subscription_admin_header_menu_items', $menu_items, $current);
+        ]);
         ?>
         <div class="wp-subscription-admin-header">
             <div style="width:1240px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;">
