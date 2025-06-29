@@ -10,22 +10,6 @@ defined( 'ABSPATH' ) || exit;
 ?>
 
 <div class="wrap">
-	<!-- The Irony -->
-<!-- 	<div style="max-width: 600px; margin: 50px auto; padding: 20px; font-family: Georgia, serif; font-size: 1.2em; line-height: 1.6; color: #333; text-align: center;">
-		We automate to move faster,<br>
-		optimize to do more—<br>
-		but somewhere between the clicks and code,<br>
-		we forget how to wonder.<br>
-		The machines learn,<br>
-		and we forget to ask why.
-	</div> -->
-
-	<div class="wp-subscription-admin-content" style="max-width:1240px;margin:32px auto 0 auto; background:wheat; padding: 20px;">
-		<h1>Incomplete. Demo Page</h1>
-	</div>
-
-	<br/>
-	<br/>
 
 	<div class="wp-subscription-admin-content" style="max-width:1240px;margin:32px auto 0 auto">
 		<h2><?php esc_html_e( 'Payment Gateways', 'wp_subscription' ); ?></h2>
@@ -44,6 +28,13 @@ defined( 'ABSPATH' ) || exit;
 					'description'        => 'Process subscription payments securely with Stripe.',
 					'icon'               => '💳',
 					'is_connected'       => true,
+					'supports_recurring' => true,
+				),
+				'paddle' => array(
+					'title'              => 'Paddle',
+					'description'        => 'Process subscription payments securely with Paddle.',
+					'icon'               => '💳',
+					'is_connected'       => false,
 					'supports_recurring' => true,
 				),
 				'paypal' => array(
@@ -103,14 +94,14 @@ defined( 'ABSPATH' ) || exit;
 					<?php endif; ?>
 					
 					<div style="display:flex;gap:10px;">
-						<a href="<?php echo esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=' . $id ) ); ?>" class="button button-primary" style="flex:1;text-align:center;">
+						<a href="<?php echo esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout' ) ); ?>" class="button button-primary" style="flex:1;text-align:center;">
 							<?php esc_html_e( 'Configure', 'wp_subscription' ); ?>
 						</a>
-						<?php if ( ! $gateway['is_connected'] ) : ?>
-							<a href="<?php echo esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=' . $id ) ); ?>" class="button" style="flex:1;text-align:center;">
+						<!-- <?php if ( ! $gateway['is_connected'] ) : ?>
+							<a href="<?php echo esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout' ) ); ?>" class="button" style="flex:1;text-align:center;">
 								<?php esc_html_e( 'Connect', 'wp_subscription' ); ?>
 							</a>
-						<?php endif; ?>
+						<?php endif; ?> -->
 					</div>
 				</div>
 			<?php endforeach; ?>
@@ -152,12 +143,4 @@ defined( 'ABSPATH' ) || exit;
 		</div>
 	</div>
 
-	<div style="text-align:center;margin:38px 0 0 0;font-size:14px;color:#888;">
-		<?php esc_html_e( 'Made with', 'wp_subscription' ); ?> <span style="color:#e25555;font-size:1.1em;">♥</span> <?php esc_html_e( 'by the WP Subscription Team', 'wp_subscription' ); ?>
-		<div style="margin-top:6px;">
-			<a href="https://wpsubscription.co/contact" target="_blank" style="color:#2563eb;text-decoration:none;"><?php esc_html_e( 'Support', 'wp_subscription' ); ?></a>
-			&nbsp;/&nbsp;
-			<a href="https://docs.converslabs.com/en" target="_blank" style="color:#2563eb;text-decoration:none;"><?php esc_html_e( 'Documentation', 'wp_subscription' ); ?></a>
-		</div>
-	</div>
 </div>

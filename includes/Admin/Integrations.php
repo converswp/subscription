@@ -110,6 +110,9 @@ class Integrations {
 	public function render_integrations_page() {
 		$integrations = $this->integrations;
 
-		include 'views/integrations.php';
+		$menu = new \SpringDevs\Subscription\Admin\Menu(); 
+		$menu->render_admin_header();
+		include 'views/integrations.php';		
+		$menu->render_admin_footer();
 	}
 }
