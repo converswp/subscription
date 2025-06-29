@@ -79,6 +79,9 @@ class Paypal extends \WC_Payment_Gateway {
 		$this->client_secret = $this->get_option( 'client_secret' );
 		$this->webhook_id    = $this->get_option( 'webhook_id' );
 
+		// Set Webhook URL.
+		$this->update_option( 'webhook_url', $this->get_webhook_url() );
+
 		// Set API endpoint.
 		$this->api_endpoint = $this->sandbox_mode ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com';
 
