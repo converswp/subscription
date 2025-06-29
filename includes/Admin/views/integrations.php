@@ -21,37 +21,9 @@ defined( 'ABSPATH' ) || exit;
 		<!-- Payment Gateway Cards -->
 		<div class="wp-subscription-payment-gateways" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px;margin-bottom:32px;">
 			<?php
-			// Example payment gateways (for demonstration)
-			$subscription_gateways = array(
-				'stripe' => array(
-					'title'              => 'Stripe',
-					'description'        => 'Process subscription payments securely with Stripe.',
-					'icon'               => '💳',
-					'is_connected'       => true,
-					'supports_recurring' => true,
-				),
-				'paddle' => array(
-					'title'              => 'Paddle',
-					'description'        => 'Process subscription payments securely with Paddle.',
-					'icon'               => '💳',
-					'is_connected'       => false,
-					'supports_recurring' => true,
-				),
-				'paypal' => array(
-					'title'              => 'PayPal',
-					'description'        => 'Accept subscription payments via PayPal.',
-					'icon'               => '💰',
-					'is_connected'       => false,
-					'supports_recurring' => true,
-				),
-				'manual' => array(
-					'title'              => 'Manual Renewal',
-					'description'        => 'Subscriptions that require manual renewal by the customer.',
-					'icon'               => '🔄',
-					'is_connected'       => true,
-					'supports_recurring' => false,
-				),
-			);
+			// Get subscription gateways from the Integrations class
+			$integrations_class = new \SpringDevs\Subscription\Admin\Integrations();
+			$subscription_gateways = $integrations_class->get_subscription_gateways();
 
 			// Display each gateway as a card
 			foreach ( $subscription_gateways as $id => $gateway ) :
@@ -72,6 +44,19 @@ defined( 'ABSPATH' ) || exit;
 					<p style="font-size:14px;line-height:1.5;margin:0 0 16px 0;color:#555;">
 						<?php echo esc_html( $gateway['description'] ); ?>
 					</p>
+
+					<?php if ( isset( $gateway['status'] ) && ! $gateway['is_connected'] ) : ?>
+						<div style="background:#fff3e0;color:#e65100;padding:8px 12px;border-radius:4px;font-size:13px;margin-bottom:16px;">
+							<div style="font-weight:600;margin-bottom:4px;"><?php esc_html_e( 'Setup Status:', 'wp_subscription' ); ?></div>
+							<ul style="margin:0;padding-left:16px;list-style:disc;">
+								<li><?php echo $gateway['status']['installed'] ? esc_html__( '✓ Gateway installed', 'wp_subscription' ) : esc_html__( '✗ Gateway not installed', 'wp_subscription' ); ?></li>
+								<?php if ( $gateway['status']['installed'] ) : ?>
+									<li><?php echo $gateway['status']['enabled'] ? esc_html__( '✓ Gateway enabled', 'wp_subscription' ) : esc_html__( '✗ Gateway disabled', 'wp_subscription' ); ?></li>
+									<li><?php echo $gateway['status']['configured'] ? esc_html__( '✓ Gateway configured', 'wp_subscription' ) : esc_html__( '✗ Gateway not configured', 'wp_subscription' ); ?></li>
+								<?php endif; ?>
+							</ul>
+						</div>
+					<?php endif; ?>
 					
 					<?php if ( $gateway['supports_recurring'] ) : ?>
 						<div style="background:#e8f5e9;color:#1b5e20;padding:6px 10px;border-radius:4px;font-size:13px;margin-bottom:16px;">
@@ -94,14 +79,33 @@ defined( 'ABSPATH' ) || exit;
 					<?php endif; ?>
 					
 					<div style="display:flex;gap:10px;">
-						<a href="<?php echo esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout' ) ); ?>" class="button button-primary" style="flex:1;text-align:center;">
-							<?php esc_html_e( 'Configure', 'wp_subscription' ); ?>
-						</a>
-						<!-- <?php if ( ! $gateway['is_connected'] ) : ?>
-							<a href="<?php echo esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout' ) ); ?>" class="button" style="flex:1;text-align:center;">
-								<?php esc_html_e( 'Connect', 'wp_subscription' ); ?>
+						<?php if ( $gateway['is_connected'] ) : ?>
+							<a href="<?php echo esc_url( $gateway['config_url'] ); ?>" class="button button-primary" style="flex:1;text-align:center;">
+								<?php esc_html_e( 'Configure', 'wp_subscription' ); ?>
 							</a>
-						<?php endif; ?> -->
+						<?php else : ?>
+							<?php if ( isset( $gateway['status']['installed'] ) && $gateway['status']['installed'] ) : ?>
+								<?php if ( isset( $gateway['status']['enabled'] ) && $gateway['status']['enabled'] ) : ?>
+									<a href="<?php echo esc_url( $gateway['config_url'] ); ?>" class="button button-primary" style="flex:1;text-align:center;">
+										<?php esc_html_e( 'Complete Setup', 'wp_subscription' ); ?>
+									</a>
+								<?php else : ?>
+									<a href="<?php echo esc_url( $gateway['config_url'] ); ?>" class="button button-primary" style="flex:1;text-align:center;">
+										<?php esc_html_e( 'Enable Gateway', 'wp_subscription' ); ?>
+									</a>
+								<?php endif; ?>
+							<?php else : ?>
+								<?php if ( $gateway['install_url'] ) : ?>
+									<a href="<?php echo esc_url( $gateway['install_url'] ); ?>" class="button button-primary" style="flex:1;text-align:center;">
+										<?php esc_html_e( 'Install & Setup', 'wp_subscription' ); ?>
+									</a>
+								<?php else : ?>
+									<a href="<?php echo esc_url( $gateway['config_url'] ); ?>" class="button button-primary" style="flex:1;text-align:center;">
+										<?php esc_html_e( 'Configure', 'wp_subscription' ); ?>
+									</a>
+								<?php endif; ?>
+							<?php endif; ?>
+						<?php endif; ?>
 					</div>
 				</div>
 			<?php endforeach; ?>
