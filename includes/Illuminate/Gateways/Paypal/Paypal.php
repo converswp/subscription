@@ -11,7 +11,7 @@ use WC_Order_Item_Product;
 use WC_Product;
 
 /**
- * Class Paypal
+ * Class PayPal
  * PayPal Payment Gateway for Subscription Plugin
  *
  * @package SpringDevs\Subscription\Illuminate\Gateways
@@ -40,7 +40,7 @@ class Paypal extends \WC_Payment_Gateway {
 	protected $client_secret;
 
 	/**
-	 * Paypal Webhook ID.
+	 * PayPal Webhook ID.
 	 *
 	 * @var string
 	 */
@@ -59,7 +59,7 @@ class Paypal extends \WC_Payment_Gateway {
 	public function __construct() {
 		$this->id                 = 'wp_subscription_paypal';
 		$this->has_fields         = false;
-		$this->method_title       = __( 'Paypal for WPSubscription', 'wp_subscription' );
+		$this->method_title       = __( 'PayPal for WPSubscription', 'wp_subscription' );
 		$this->method_description = __( 'Accept wp subscription recurring payments through PayPal. Only WP Subscription is supported.', 'wp_subscription' );
 		$this->supports           = [ 'products', 'subscriptions', 'refunds' ];
 		$this->icon               = apply_filters( 'wp_subscription_paypal_icon', WP_SUBSCRIPTION_URL . '/assets/images/paypal.svg' );
@@ -73,7 +73,7 @@ class Paypal extends \WC_Payment_Gateway {
 		$this->title       = $this->get_option( 'title' );
 		$this->description = $this->get_option( 'description' );
 
-		// Paypal Credentials.
+		// PayPal Credentials.
 		$this->sandbox_mode  = 'yes' === $this->get_option( 'testmode', 'no' );
 		$this->client_id     = $this->get_option( 'client_id' );
 		$this->client_secret = $this->get_option( 'client_secret' );
@@ -122,7 +122,7 @@ class Paypal extends \WC_Payment_Gateway {
 				'type'        => 'checkbox',
 				'label'       => __( 'Enable PayPal for WPSubscription', 'wp_subscription' ),
 				'default'     => 'no',
-				'description' => __( 'Enable or Disable Paypal for WPSubscription payment gateway', 'wp_subscription' ),
+				'description' => __( 'Enable or Disable PayPal for WPSubscription payment gateway', 'wp_subscription' ),
 				'desc_tip'    => true,
 				'class'       => 'wpsubs-toggle',
 			],
@@ -171,21 +171,21 @@ class Paypal extends \WC_Payment_Gateway {
 			'client_id'          => [
 				'title'       => __( 'Client ID', 'wp_subscription' ),
 				'type'        => 'password',
-				'description' => __( 'Enter your PayPal Client ID copied from Paypal Apps & Credentials.', 'wp_subscription' ),
+				'description' => __( 'Enter your PayPal Client ID copied from PayPal Apps & Credentials.', 'wp_subscription' ),
 				'default'     => '',
 				'desc_tip'    => true,
 			],
 			'client_secret'      => [
 				'title'       => __( 'Secret', 'wp_subscription' ),
 				'type'        => 'password',
-				'description' => __( 'Enter your PayPal Secret copied from Paypal Apps & Credentials.', 'wp_subscription' ),
+				'description' => __( 'Enter your PayPal Secret copied from PayPal Apps & Credentials.', 'wp_subscription' ),
 				'default'     => '',
 				'desc_tip'    => true,
 			],
 			'webhook_id'         => [
 				'title'       => __( 'Webhook ID', 'wp_subscription' ),
-				'type'        => 'text',
-				'description' => __( 'Enter your Webhook ID copied from Paypal Apps & Credentials for webhook validation.', 'wp_subscription' ),
+				'type'        => 'password',
+				'description' => __( 'Enter your Webhook ID copied from PayPal Apps & Credentials for webhook validation.', 'wp_subscription' ),
 				'default'     => '',
 				'desc_tip'    => true,
 			],
@@ -374,7 +374,7 @@ class Paypal extends \WC_Payment_Gateway {
 		if ( empty( $order ) ) {
 			$log_message = sprintf(
 				// translators: %1$s: alert name; %2$s: order id.
-				__( 'Paypal webhook received [%s]. Order not found.', 'wp_subscription' ),
+				__( 'PayPal webhook received [%s]. Order not found.', 'wp_subscription' ),
 				$event,
 			);
 			wp_subscrpt_write_log( $log_message );
@@ -390,7 +390,7 @@ class Paypal extends \WC_Payment_Gateway {
 		} else {
 			$log_message = sprintf(
 				// translators: %1$s: alert name; %2$s: order id.
-				__( 'Paypal webhook received [%s]. No actions taken.', 'wp_subscription' ),
+				__( 'PayPal webhook received [%s]. No actions taken.', 'wp_subscription' ),
 				$event,
 			);
 			wp_subscrpt_write_log( $log_message );
@@ -483,7 +483,7 @@ class Paypal extends \WC_Payment_Gateway {
 			];
 		}
 
-		// Get Paypal Product ID.
+		// Get PayPal Product ID.
 		$paypal_product_id = $this->get_paypal_product_id( $wc_product_id, $access_token );
 
 		if ( ! $paypal_product_id ) {
@@ -494,7 +494,7 @@ class Paypal extends \WC_Payment_Gateway {
 			];
 		}
 
-		// Get Paypal Plan ID.
+		// Get PayPal Plan ID.
 		$paypal_plan_id = $this->get_paypal_plan_id( $wc_product_id, $wc_variation_id, $paypal_product_id, $access_token );
 
 		if ( ! $paypal_plan_id ) {
@@ -941,7 +941,7 @@ class Paypal extends \WC_Payment_Gateway {
 	}
 
 	/**
-	 * Generate Paypal Plan Data.
+	 * Generate PayPal Plan Data.
 	 *
 	 * @param WC_Product $wc_product WooCommerce Product.
 	 * @param string     $paypal_product_id PayPal Product ID.
@@ -1053,7 +1053,7 @@ class Paypal extends \WC_Payment_Gateway {
 	// ? Keep this section strictly for API operations. No other logic like data extraction should be added here.
 
 	/**
-	 * Get Paypal Access Token.
+	 * Get PayPal Access Token.
 	 */
 	private function get_paypal_access_token(): ?string {
 		try {
@@ -1099,7 +1099,7 @@ class Paypal extends \WC_Payment_Gateway {
 	 */
 	private function create_paypal_product( array $product_data, string $access_token ): ?object {
 		if ( empty( $product_data['name'] ?? null ) || empty( $product_data['type'] ?? null ) ) {
-			$log_message = __( 'Paypal Product Creation Error: Product data is incomplete. Name and type are required.', 'wp_subscription' );
+			$log_message = __( 'PayPal Product Creation Error: Product data is incomplete. Name and type are required.', 'wp_subscription' );
 			wp_subscrpt_write_log( $log_message );
 			wp_subscrpt_write_debug_log( $log_message );
 			return null;
