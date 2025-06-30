@@ -22,14 +22,22 @@ class Integrations {
 	 * Initialize the class
 	 */
 	public function __construct() {
-		// Set integrations.
-		$this->integrations = $this->get_integrations();
+		// Initialize.
+		add_action( 'init', [ $this, 'init' ], 10 );
 
 		// Admin menu (sidebar).
 		add_action( 'admin_menu', array( $this, 'register_admin_menu' ), 20 );
 
 		// WP Subscription navbar.
 		add_filter( 'wp_subscription_admin_header_menu_items', [ $this, 'add_integrations_menu_item' ], 10, 2 );
+	}
+
+	/**
+	 * Initialize the integrations.
+	 */
+	public function init() {
+		// Set integrations.
+		$this->integrations = $this->get_integrations();
 	}
 
 	/**
@@ -116,20 +124,20 @@ class Integrations {
 	protected function is_paddle_configured() {
 		// Check for WooCommerce Paddle gateway
 		if ( $this->is_gateway_installed( 'paddle' ) ) {
-			$paddle_settings = get_option( 'woocommerce_paddle_settings', array() );
-			$vendor_id       = isset( $paddle_settings['vendor_id'] ) ? $paddle_settings['vendor_id'] : '';
+			$paddle_settings  = get_option( 'woocommerce_paddle_settings', array() );
+			$vendor_id        = isset( $paddle_settings['vendor_id'] ) ? $paddle_settings['vendor_id'] : '';
 			$vendor_auth_code = isset( $paddle_settings['vendor_auth_code'] ) ? $paddle_settings['vendor_auth_code'] : '';
-			$enabled         = isset( $paddle_settings['enabled'] ) ? $paddle_settings['enabled'] : 'no';
+			$enabled          = isset( $paddle_settings['enabled'] ) ? $paddle_settings['enabled'] : 'no';
 
 			return 'yes' === $enabled && ! empty( $vendor_id ) && ! empty( $vendor_auth_code );
 		}
 
 		// Check for WP Smart Pay Paddle
 		if ( class_exists( 'WPSmartPay\Paddle\Paddle' ) ) {
-			$paddle_settings = get_option( 'wpsmartpay_paddle_settings', array() );
-			$vendor_id       = isset( $paddle_settings['vendor_id'] ) ? $paddle_settings['vendor_id'] : '';
+			$paddle_settings  = get_option( 'wpsmartpay_paddle_settings', array() );
+			$vendor_id        = isset( $paddle_settings['vendor_id'] ) ? $paddle_settings['vendor_id'] : '';
 			$vendor_auth_code = isset( $paddle_settings['vendor_auth_code'] ) ? $paddle_settings['vendor_auth_code'] : '';
-			$enabled         = isset( $paddle_settings['enabled'] ) ? $paddle_settings['enabled'] : 'no';
+			$enabled          = isset( $paddle_settings['enabled'] ) ? $paddle_settings['enabled'] : 'no';
 
 			return 'yes' === $enabled && ! empty( $vendor_id ) && ! empty( $vendor_auth_code );
 		}
@@ -207,14 +215,14 @@ class Integrations {
 	 */
 	protected function get_gateway_status( $gateway_id ) {
 		$status = array(
-			'installed' => false,
-			'enabled'   => false,
+			'installed'  => false,
+			'enabled'    => false,
 			'configured' => false,
 		);
 
 		// Check if gateway is installed in WooCommerce
 		$status['installed'] = $this->is_gateway_installed( $gateway_id );
-		
+
 		if ( $status['installed'] ) {
 			$status['enabled'] = $this->is_gateway_enabled( $gateway_id );
 		}
@@ -239,33 +247,104 @@ class Integrations {
 	}
 
 	/**
+	 * Check if a payment gateway is enabled.
+	 *
+	 * @param string $gateway_id Gateway ID.
+	 */
+	public function is_payment_gateway_enabled( $gateway_id ) {
+		$gateways = WC()->payment_gateways->get_available_payment_gateways();
+		return isset( $gateways[ $gateway_id ] );
+	}
+
+	/**
 	 * Get the list of integrations.
 	 *
 	 * @return array
 	 */
-	protected function get_integrations() {
+	protected function get_integrations(): array {
 		$integrations = [
 			[
-				'name'        => 'Paddle',
-				'description' => 'Paddle gateway',
-				'icon_url'    => 'https://example.com/paddle-icon.png',
-				'is_active'   => true,
-				'actions'     => [
+				'title'              => 'PayPal for WP Subscription',
+				'description'        => 'Accept subscription payments via PayPal.',
+				'icon_url'           => WP_SUBSCRIPTION_ASSETS . '/images/paypal.svg',
+				'is_installed'       => 'on' === get_option( 'wp_subs_paypal_integration_enabled', 'off' ),
+				'is_active'          => $this->is_gateway_enabled( 'wp_subscription_paypal' ),
+				'supports_recurring' => true,
+				'actions'            => [
 					[
-						'label'       => 'Install Now',
-						'type'        => 'install_plugin',
-						'plugin_slug' => 'wp-smartpay-paddle',
+						'action'   => 'install',
+						'label'    => 'Install Now',
+						'type'     => 'function',
+						'function' => 'wpSubsInstallPaypalIntegration()',
 					],
 					[
-						'label' => 'Open Website',
-						'type'  => 'external_link',
-						'url'   => 'https://wpsmartpay.com/paddle',
+						'action' => 'settings',
+						'label'  => 'Settings',
+						'type'   => 'link',
+						'url'    => admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wp_subscription_paypal' ),
 					],
 					[
+						'action'   => 'uninstall',
+						'label'    => 'Uninstall',
+						'type'     => 'function',
+						'function' => 'wpSubsUninstallPaypalIntegration()',
+						'class'    => 'button button-primary wp-subs-button-danger',
+					],
+				],
+			],
+			[
+				'title'              => 'Stripe',
+				'description'        => 'Process subscription payments securely with Stripe.',
+				'icon_url'           => 'https://ps.w.org/woocommerce-gateway-stripe/assets/icon-256x256.png',
+				'is_installed'       => class_exists( 'WC_Stripe' ),
+				'is_active'          => $this->is_gateway_enabled( 'stripe' ),
+				'supports_recurring' => true,
+				'actions'            => [
+					[
+						'action' => 'install',
+						'label'  => 'Install Now',
+						'type'   => 'link',
+						'url'    => admin_url( 'plugin-install.php?s=WooCommerce%2520Stripe%2520Payment%2520Gateway&tab=search&type=term' ),
+					],
+					[
+						'action' => 'settings',
+						'label'  => 'Settings',
+						'type'   => 'link',
+						'url'    => admin_url( 'admin.php?page=wc-settings&tab=checkout&section=stripe&panel=settings' ),
+					],
+				],
+			],
+			[
+				'title'              => 'Paddle',
+				'description'        => 'Process subscription payments securely with Paddle.',
+				'icon_url'           => WP_SUBSCRIPTION_ASSETS . '/images/paddle.svg',
+				'is_installed'       => class_exists( 'SmartPayWoo\Gateways\Paddle\SmartPay_Paddle' ),
+				'is_active'          => $this->is_gateway_enabled( 'smartpay_paddle' ),
+				'supports_recurring' => true,
+				'actions'            => [
+					[
+						'action' => 'install',
+						'label'  => 'Install Now',
+						'type'   => 'link',
+						'url'    => admin_url( 'plugin-install.php?s=WooCommerce%2520Stripe%2520Payment%2520Gateway&tab=search&type=term' ),
+					],
+					[
+						'action'     => 'enable',
 						'label'      => 'Enable Gateway',
 						'type'       => 'toggle_option',
 						'option_key' => 'woocommerce_enable_paddle_gateway',
 						'value'      => true,
+					],
+					[
+						'action' => 'settings',
+						'label'  => 'Settings',
+						'type'   => 'link',
+						'url'    => admin_url( 'admin.php?page=wc-settings&tab=checkout&section=smartpay_paddle&from=WCADMIN_PAYMENT_SETTINGS' ),
+					],
+					[
+						'label' => 'More Details',
+						'type'  => 'external_link',
+						'url'   => 'https://wpsmartpay.com/paddle-for-woocommerce/',
 					],
 				],
 			],
@@ -275,6 +354,60 @@ class Integrations {
 		add_filter( 'wp_subscription_integrations', $integrations );
 
 		return $integrations;
+	}
+
+	/**
+	 * Filter actions.
+	 *
+	 * @param array $integrations Integrations array.
+	 */
+	protected function filter_integration_actions( array $integrations ): array {
+		$cleaned_integrations = [];
+
+		foreach ( $integrations as $integration ) {
+			$is_installed = $integration['is_installed'] ?? false;
+			$is_active    = $integration['is_active'] ?? false;
+
+			$cleaned_actions = [];
+
+			foreach ( $integration['actions'] as $integration_action ) {
+				$action_tag = $integration_action['action'] ?? null;
+
+				if ( 'install' === $action_tag ) {
+					if ( ! $is_installed ) {
+						$cleaned_actions[] = $integration_action;
+					}
+					continue;
+				}
+				if ( 'uninstall' === $action_tag ) {
+					if ( $is_installed ) {
+						$cleaned_actions[] = $integration_action;
+					}
+					continue;
+				}
+				if ( 'enable' === $action_tag ) {
+					if ( $is_installed && ! $is_active ) {
+						$cleaned_actions[] = $integration_action;
+					}
+					continue;
+				}
+				if ( 'settings' === $action_tag ) {
+					if ( $is_installed ) {
+						$cleaned_actions[] = $integration_action;
+					}
+					continue;
+				}
+
+				// Default.
+				$cleaned_actions[] = $integration_action;
+			}
+
+			// Overwrite.
+			$integration['actions'] = $cleaned_actions;
+			$cleaned_integrations[] = $integration;
+		}
+
+		return $cleaned_integrations;
 	}
 
 	/**
@@ -333,12 +466,19 @@ class Integrations {
 	 * Render the Integrations admin page.
 	 */
 	public function render_integrations_page() {
-		$integrations = $this->integrations;
+		$integrations          = $this->integrations;
+		$integrations          = $this->filter_integration_actions( $integrations );
 		$subscription_gateways = $this->get_subscription_gateways();
 
-		$menu = new \SpringDevs\Subscription\Admin\Menu(); 
+		// Integrations styles.
+		// wp_enqueue_style( 'wp-subs-integration-settings', WP_SUBSCRIPTION_ASSETS . '/css/integration_settings.css', [], WP_SUBSCRIPTION_VERSION, 'all' );
+
+		// Integrations JS.
+		wp_enqueue_script( 'wp-subs-integration-settings-script', WP_SUBSCRIPTION_ASSETS . '/js/integration_settings.js', [ 'jquery' ], WP_SUBSCRIPTION_VERSION, true );
+
+		$menu = new \SpringDevs\Subscription\Admin\Menu();
 		$menu->render_admin_header();
-		include 'views/integrations.php';		
+		include 'views/integrations.php';
 		$menu->render_admin_footer();
 	}
 }
