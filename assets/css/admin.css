@@ -486,6 +486,7 @@ body.wp-subscription_page_wp-subscription-integrations #wpcontent
 .subscrpt-status-pending { background: #fef9c3 !important; color: #b45309 !important; }
 .subscrpt-status-expired { background: #e5e7eb !important; color: #6b7280 !important; }
 .subscrpt-status-pe_cancelled { background: #ffedd5 !important; color: #b45309 !important; }
+.subscrpt-status-trash { background: #fef2f2 !important; color: #dc2626 !important; }
 .subscrpt-id-title {
     font-size: 11px;
     color: #888;
@@ -508,16 +509,23 @@ body.wp-subscription_page_wp-subscription-integrations #wpcontent
 .wp-subscription-list-header {
     margin-bottom: 28px;
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 16px;
 }
-.wp-subscription-list-header form {
+.wp-subscription-filters {
     display: flex;
     align-items: center;
     gap: 10px;
     flex-wrap: wrap;
+    flex: 1;
+}
+.wp-subscription-bulk-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
 }
 .wp-subscription-pagination {
     display: flex;
@@ -613,4 +621,58 @@ body.wp-subscription_page_wp-subscription-integrations #wpcontent
     background: #e3f0fd;
     color: #1565c0;
     transform: translateY(-2px) scale(1.03);
+}
+
+/* Bulk Actions Styling */
+.tablenav {
+    margin: 8px 0 16px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.tablenav .bulkactions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tablenav select {
+    min-width: 120px;
+}
+
+.tablenav .button {
+    margin: 0;
+}
+
+/* Checkbox styling */
+.wp-subscription-modern-table input[type="checkbox"] {
+    margin: 0;
+}
+
+/* Trash row styling */
+.wp-subscription-modern-table tr[data-status="trash"] {
+    opacity: 0.7;
+}
+
+.wp-subscription-modern-table tr[data-status="trash"]:hover {
+    opacity: 1;
+}
+
+/* Empty Trash button styling */
+.button-link-delete {
+    color: #d63638 !important;
+    text-decoration: none;
+    border: 1px solid #d63638;
+    border-radius: 4px;
+    padding: 4px 12px;
+    font-size: 13px;
+    line-height: 1.4;
+    transition: all 0.2s;
+}
+
+.button-link-delete:hover {
+    background: #d63638;
+    color: #fff !important;
+    text-decoration: none;
 }
