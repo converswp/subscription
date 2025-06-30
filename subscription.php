@@ -8,7 +8,7 @@ Plugin URI: https://wpsubscription.co/
 Author: converswp
 Author URI: https://wpsubscription.co/
 
-Version: 1.4.3
+Version: 1.5.0
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: wp_subscription
@@ -39,7 +39,7 @@ final class Sdevs_Subscription {
 	 *
 	 * @var string
 	 */
-	const version = '1.4.3';
+	const version = '1.5.0';
 
 	/**
 	 * Holds various class instances

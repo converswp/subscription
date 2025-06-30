@@ -34,6 +34,6 @@ cd release
 zip -r subscription.zip subscription
 
 # Clean up
-rm -rf subscription
+# rm -rf subscription
 
 echo "Release package has been created at release/subscription.zip" 

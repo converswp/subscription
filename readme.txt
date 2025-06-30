@@ -3,7 +3,7 @@ Contributors: converswp, shamsbd71
 Tags: woocommerce-subscriptions, subscriptions, subscriptions-billing, recurring-payments, woocommerce-extensions
 Requires at least: 6.0
 Tested up to: 6.8
-Stable tag: 1.4.3
+Stable tag: 1.5.0
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -224,6 +224,13 @@ Learn more: [WPSubscription](https://wpsubscription.co/)
 
 
 == Changelog ==
+
+= 1.5.0 - Jun 03, 2025 =
+- **New**: API and Authentication.
+- **New**: Stripe auto renewal.
+- **New**: Paypal auto renewal support.
+- **New**: New actions and Hooks for subscriptions.
+- **Fix**: Language strings 
 
 = 1.4.3 - Jun 03, 2025 =
 - **Fix**: Plugin description and Documentation link update
