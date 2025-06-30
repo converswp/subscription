@@ -1077,18 +1077,24 @@ class Paypal extends \WC_Payment_Gateway {
 			$response_data = json_decode( wp_remote_retrieve_body( $response ) );
 
 			if ( isset( $response_data->error ) || ! isset( $response_data->access_token ) ) {
-				$log_message = 'Error retrieving PayPal access token: ' . $response_data->error_description ?? 'Unknown error';
+				$log_message = 'Gateway Error : PayPal access token - ' . $response_data->error_description ?? 'Unknown error';
 				wp_subscrpt_write_log( $log_message );
 				wp_subscrpt_write_debug_log( $log_message );
+
+				// Throw error.
+				throw new Exception( $log_message );
 
 				return null;
 			}
 
 			return $response_data->access_token;
 		} catch ( Exception $e ) {
-			$log_message = 'Error retrieving PayPal access token: ' . $e->getMessage();
+			$log_message = $e->getMessage();
 			wp_subscrpt_write_log( $log_message );
 			wp_subscrpt_write_debug_log( $log_message );
+
+			// Throw error.
+			throw new Exception( $log_message );
 
 			return null;
 		}
