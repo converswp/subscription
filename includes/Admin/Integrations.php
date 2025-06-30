@@ -30,6 +30,13 @@ class Integrations {
 
 		// WP Subscription navbar.
 		add_filter( 'wp_subscription_admin_header_menu_items', [ $this, 'add_integrations_menu_item' ], 10, 2 );
+
+		// Enqueue integrations scripts.
+		// add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_integrations_scripts' ] );
+
+		// Integrations AJAX handler.
+		// add_action( 'admin_ajax_integrations_handler', [ $this,'integrations_handler_callback' ] );
+		// add_action( 'admin_ajax_nopriv_integrations_handler', [ $this,'integrations_handler_callback' ] );
 	}
 
 	/**
@@ -71,6 +78,33 @@ class Integrations {
 			'url'   => admin_url( 'admin.php?page=wp-subscription-integrations' ),
 		];
 		return $menu_items;
+	}
+
+	/**
+	 * Enqueue scripts for integrations page.
+	 */
+	public function enqueue_integrations_scripts() {
+		wp_enqueue_script( 'wp-subs-integrations', WP_SUBSCRIPTION_ASSETS . '/js/integration_settings.js', [ 'jquery' ], WP_SUBSCRIPTION_VERSION, true );
+
+		wp_localize_script(
+			'wp-subs-integrations',
+			'wpSubsIntegrations',
+			array(
+				'nonce'    => wp_create_nonce( 'wp_subs_integrations_nonce' ),
+				'ajax_url' => admin_url( 'admin-ajax.php' ),
+			)
+		);
+	}
+
+	/**
+	 * Handle AJAX request for integrations.
+	 */
+	public function integrations_handler_callback() {
+		check_ajax_referer( 'wp_subs_integrations_nonce', 'nonce' );
+
+		$action_callback = ! empty( $_POST['action_callback'] ) ? sanitize_text_field( wp_unslash( $_POST['action_callback'] ) ) : '';
+
+		dd( '🔽 action_callback', $action_callback );
 	}
 
 	/**
@@ -271,25 +305,25 @@ class Integrations {
 				'is_active'          => $this->is_gateway_enabled( 'wp_subscription_paypal' ),
 				'supports_recurring' => true,
 				'actions'            => [
-					[
-						'action'   => 'install',
-						'label'    => 'Install Now',
-						'type'     => 'function',
-						'function' => 'wpSubsInstallPaypalIntegration()',
-					],
+					// [
+					// 'action'   => 'install',
+					// 'label'    => 'Install Now',
+					// 'type'     => 'function',
+					// 'function' => 'wpSubsInstallPaypalIntegration()',
+					// ],
 					[
 						'action' => 'settings',
 						'label'  => 'Settings',
 						'type'   => 'link',
 						'url'    => admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wp_subscription_paypal' ),
 					],
-					[
-						'action'   => 'uninstall',
-						'label'    => 'Uninstall',
-						'type'     => 'function',
-						'function' => 'wpSubsUninstallPaypalIntegration()',
-						'class'    => 'button button-primary wp-subs-button-danger',
-					],
+					// [
+					// 'action'   => 'uninstall',
+					// 'label'    => 'Uninstall',
+					// 'type'     => 'function',
+					// 'function' => 'wpSubsUninstallPaypalIntegration()',
+					// 'class'    => 'button button-primary wp-subs-button-danger',
+					// ],
 				],
 			],
 			[
@@ -472,9 +506,6 @@ class Integrations {
 
 		// Integrations styles.
 		// wp_enqueue_style( 'wp-subs-integration-settings', WP_SUBSCRIPTION_ASSETS . '/css/integration_settings.css', [], WP_SUBSCRIPTION_VERSION, 'all' );
-
-		// Integrations JS.
-		wp_enqueue_script( 'wp-subs-integration-settings-script', WP_SUBSCRIPTION_ASSETS . '/js/integration_settings.js', [ 'jquery' ], WP_SUBSCRIPTION_VERSION, true );
 
 		$menu = new \SpringDevs\Subscription\Admin\Menu();
 		$menu->render_admin_header();
