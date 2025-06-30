@@ -16,6 +16,10 @@ Domain Path: /languages
 */
 
 // don't call the file directly.
+
+use Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry;
+use SpringDevs\Subscription\Illuminate\Gateways\Paypal\Paypal_Blocks_Integration;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -265,6 +269,33 @@ final class Sdevs_Subscription {
 		}
 	}
 } // Sdevs_Wc_Subscription
+
+// Add Paypal Gateway Blocks.
+if ( ! function_exists( 'wp_subscription_register_paypal_block' ) ) {
+	/**
+	 * Register the PayPal block for WooCommerce Blocks.
+	 */
+	function wp_subscription_register_paypal_block() {
+		// Check if the required class exists.
+		if ( ! class_exists( 'Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType' ) ) {
+			return;
+		}
+
+		// Hook the registration function to the 'woocommerce_blocks_payment_method_type_registration' action.
+		add_action(
+			'woocommerce_blocks_payment_method_type_registration',
+			function ( PaymentMethodRegistry $payment_method_registry ) {
+				$payment_method_registry->register( new Paypal_Blocks_Integration() );
+			}
+		);
+	}
+
+	// Is PayPal integration enabled?
+	$is_paypal_integration_enabled = get_option( 'wp_subs_paypal_integration_enabled', true );
+	if ( $is_paypal_integration_enabled ) {
+		add_action( 'woocommerce_blocks_loaded', 'wp_subscription_register_paypal_block' );
+	}
+}
 
 /**
  * Initialize the main plugin

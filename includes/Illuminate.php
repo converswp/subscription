@@ -21,6 +21,7 @@ class Illuminate {
 	 */
 	public function __construct() {
 		$this->stripe_initialization();
+		$this->paypal_initialization();
 		new Order();
 		new Cron();
 		new Post();
@@ -44,5 +45,30 @@ class Illuminate {
 
 			new Stripe();
 		}
+	}
+
+	/**
+	 * PayPal Gateway Initialization.
+	 *
+	 * @return void
+	 */
+	public function paypal_initialization() {
+		$is_paypal_integration_enabled = get_option( 'wp_subs_paypal_integration_enabled', true );
+
+		// Register the PayPal gateway with WooCommerce.
+		if ( $is_paypal_integration_enabled ) {
+			add_filter( 'woocommerce_payment_gateways', array( $this, 'register_paypal_gateway' ) );
+		}
+	}
+
+	/**
+	 * Register our custom PayPal gateway with WooCommerce
+	 *
+	 * @param array $gateways Payment gateways.
+	 * @return array
+	 */
+	public function register_paypal_gateway( $gateways ) {
+		$gateways[] = 'SpringDevs\\Subscription\\Illuminate\\Gateways\\Paypal\\Paypal';
+		return $gateways;
 	}
 }
