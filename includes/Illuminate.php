@@ -53,7 +53,10 @@ class Illuminate {
 	 * @return void
 	 */
 	public function paypal_initialization() {
-		$is_paypal_integration_enabled = get_option( 'wp_subs_paypal_integration_enabled', true );
+		// Forcefully enable PayPal integration if the option is not set.
+		update_option( 'wp_subs_paypal_integration_enabled', 'on' );
+
+		$is_paypal_integration_enabled = 'on' === get_option( 'wp_subs_paypal_integration_enabled', 'off' );
 
 		// Register the PayPal gateway with WooCommerce.
 		if ( $is_paypal_integration_enabled ) {
