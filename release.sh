@@ -4,7 +4,7 @@
 mkdir -p release/subscription
 
 # Copy all files except development files
-cp -r assets builds includes src templates composer.json index.php readme.txt subscription.php release/subscription/
+cp -r assets build includes src templates composer.json index.php readme.txt subscription.php release/subscription/
 
 # Change to release directory
 cd release/subscription
@@ -25,6 +25,7 @@ rm -f phpcs.xml
 rm -f README.md
 rm -f composer.lock
 rm -f yarn.lock
+rm -rf src
 
 # Go back to root
 cd ../
