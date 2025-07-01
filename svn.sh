@@ -2,7 +2,8 @@
 
 SVN_URL="https://plugins.svn.wordpress.org/subscription/"
 SVN_DIR="svn"
-PLUGIN_DIR="$(pwd)"
+RELEASE_DIR="../release/subscription"
+
 
 # Check if svn folder exists
 if [ ! -d "$SVN_DIR" ]; then
@@ -13,6 +14,14 @@ else
 fi
 
 cd "$SVN_DIR"
+
+# Check if release directory exists
+if [ ! -d "$RELEASE_DIR" ]; then
+    echo "Release directory not found at $RELEASE_DIR"
+    echo "Please ensure the release folder exists with all plugin files"
+    exit 1
+fi
+
 
 echo "What type of change do you want to push? (assets/tag)"
 read -r CHANGE_TYPE
@@ -43,9 +52,9 @@ if [ "$CHANGE_TYPE" = "tag" ]; then
     # List of files/folders to copy
     FILES=(assets build includes templates vendor composer.json index.php readme.txt subscription.php)
     for ITEM in "${FILES[@]}"; do
-        if [ -e "../$ITEM" ]; then
-            cp -r ../$ITEM trunk/
-            cp -r ../$ITEM "$TAG_DIR/"
+        if [ -e "$RELEASE_DIR/$ITEM" ]; then
+            cp -r "$RELEASE_DIR/$ITEM" trunk/
+            cp -r "$RELEASE_DIR/$ITEM" "$TAG_DIR/"
         fi
     done
 
