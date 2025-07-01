@@ -206,22 +206,25 @@ Learn more: [WPSubscription](https://wpsubscription.co/)
 
 == Screenshots ==
 
-1. Create WooCommerce Product with Subscription Option  
-2. View Subscription Product Details on Product Page  
-3. WooCommerce Cart Page with Subscription Item  
-4. WooCommerce Cart Page – Block-Based Layout  
-5. Mini Cart View for Subscription Products [Block]  
-6. WooCommerce Checkout Page with Subscription  
-7. Checkout Page Using WooCommerce Blocks  
-8. Subscription Order Confirmation – Thank You Page  
-9. Manage WooCommerce Orders from User Account  
-10. My Account – List of Active Subscriptions  
-11. Manage Subscriptions from User Dashboard  
-12. Admin Panel – Subscription List View  
-13. Admin Dashboard – Manage User Subscriptions  
-14. Subscription Plugin Settings in WooCommerce  
-15. Manage WooCommerce Orders from Admin Panel
-
+1. Subscriptions list page
+2. Subscriptions Settings
+3. Subscriptions integrations
+4. Subscriptions API
+5. WooCommerce Cart Page with Subscription Item  
+6. WooCommerce Cart Page – Block-Based Layout  
+7. Mini Cart View for Subscription Products [Block]  
+8. WooCommerce Checkout Page with Subscription  
+9. Checkout Page Using WooCommerce Blocks  
+10. Subscription Order Confirmation – Thank You Page  
+11. Manage WooCommerce Orders from User Account  
+12. My Account – List of Active Subscriptions  
+13. Manage Subscriptions from User Dashboard  
+14. Admin Panel – Subscription List View  
+16. Admin Dashboard – Manage User Subscriptions  
+17. Subscription Plugin Settings in WooCommerce  
+17. Manage WooCommerce Orders from Admin Panel
+18. View Subscription Product Details on Product Page  
+19. Create WooCommerce Product with Subscription Option
 
 == Changelog ==
 
