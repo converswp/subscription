@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) || exit;
 
 <div class="wrap">
 
-	<div class="wp-subscription-admin-content" style="max-width:1240px;margin:32px auto 0 auto">
+	<div class="wp-subscription-admin-content">
 		<h2><?php esc_html_e( 'Payment Gateways', 'wp_subscription' ); ?></h2>
 		
 		<p style="font-size:14px;line-height:1.7;margin:0 0 24px 0;">

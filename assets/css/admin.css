@@ -297,7 +297,7 @@
     }
 }
 
-/* Remove left padding on WP Subscription admin pages only */
+/* Remove left padding on WPSubscription admin pages only */
 body.toplevel_page_wp-subscription #wpcontent,
 body.wp-subscription_page_wp-subscription-stats #wpcontent,
 body.wp-subscription_page_wp-subscription-settings #wpcontent,
@@ -500,8 +500,6 @@ body.wp-subscription_page_wp-subscription-integrations #wpcontent
 
 /* Subscriptions List Page Layout */
 .wp-subscription-admin-content.list-page {
-    max-width: 1240px;
-    margin: 32px auto 0 auto;
     background: #fff;
     padding: 32px 24px 24px 24px;
     border-radius: 12px;

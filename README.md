@@ -1,10 +1,10 @@
-# WP Subscription
+# WPSubscription
 
 The most seamless and reliable WooCommerce subscription solution for store owners looking to grow recurring revenue.
 
 ## 🎯 Product Vision
 
-WP Subscription aims to be the go-to subscription management solution for WordPress and WooCommerce, providing a seamless experience for both store owners and customers. With support for multiple payment gateways including Stripe, PayPal, and Paddle, we make it easy to set up and manage recurring revenue streams.
+WPSubscription aims to be the go-to subscription management solution for WordPress and WooCommerce, providing a seamless experience for both store owners and customers. With support for multiple payment gateways including Stripe, PayPal, and Paddle, we make it easy to set up and manage recurring revenue streams.
 
 ## 🌟 Key Features
 

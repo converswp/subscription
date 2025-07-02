@@ -1,6 +1,6 @@
 <?php
 /*
-STYLE GUIDE FOR WP SUBSCRIPTION ADMIN PAGES:
+STYLE GUIDE FOR WPSubscription ADMIN PAGES:
 - Use .wp-subscription-admin-content for main content area.
 - Use .wp-subscription-admin-box for white card/box with shadow and 6-8px border-radius.
 - Use .widefat.wp-subscription-list-table for tables, with no outer border, only row bottom borders.

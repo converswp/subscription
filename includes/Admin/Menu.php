@@ -61,7 +61,10 @@ class Menu {
         $icon_url = $is_active
             ? WP_SUBSCRIPTION_ASSETS . '/images/icons/subscription-20.png'
             : WP_SUBSCRIPTION_ASSETS . '/images/icons/subscription-20-gray.png';
+        
         // Main menu
+        // Important
+        // Dont change these name here, it will break css,js selectors. 
         add_menu_page(
             __( 'WP Subscription', 'wp_subscription' ),
             __( 'WP Subscription', 'wp_subscription' ),
@@ -85,8 +88,8 @@ class Menu {
         // Stats Overview
         add_submenu_page(
             $parent_slug,
-            __( 'Reports', 'wp_subscription' ),
-            __( 'Reports', 'wp_subscription' ),
+            __( 'Stats', 'wp_subscription' ),
+            __( 'Stats', 'wp_subscription' ),
             'manage_woocommerce',
             'wp-subscription-stats',
             array( $this, 'render_stats_page' )
@@ -112,7 +115,7 @@ class Menu {
             array( $this, 'render_support_page' )
         );
 
-        // Add WP Subscription link under WooCommerce menu
+        // Add WPSubscription link under WooCommerce menu
         add_submenu_page(
             'woocommerce',
             __( 'WP Subscription', 'wp_subscription' ),
@@ -128,7 +131,7 @@ class Menu {
     public function render_admin_footer() {
         ?>
         <div style="text-align:center;margin:38px 0 0 0;font-size:14px;color:#888;">
-            Made with <span style="color:#e25555;font-size:1.1em;">♥</span> by the WP Subscription Team
+            Made with <span style="color:#e25555;font-size:1.1em;">♥</span> by the WPSubscription Team
             <div style="margin-top:6px;">
                 <a href="https://wpsubscription.co/contact" target="_blank" style="color:#2563eb;text-decoration:none;">Support</a>
                 &nbsp;/&nbsp;
@@ -151,7 +154,7 @@ class Menu {
             ],
             [
                 'slug' => 'wp-subscription-stats',
-                'label' => __('Reports', 'wp_subscription'),
+                'label' => __('Stats', 'wp_subscription'),
                 'url'  => admin_url('admin.php?page=wp-subscription-stats'),
             ],
             [
@@ -173,7 +176,7 @@ class Menu {
         <div class="wp-subscription-admin-header">
             <div style="width:1240px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;">
                 <div class="wp-subscription-admin-header-left" style="display:flex;align-items:center;gap:14px;">
-                    <img style="height:30px;" src="<?php echo esc_url( WP_SUBSCRIPTION_ASSETS . '/images/logo-title.svg' ); ?>" alt="WP Subscription" class="wp-subscription-logo">
+                    <img style="height:30px;" src="<?php echo esc_url( WP_SUBSCRIPTION_ASSETS . '/images/logo-title.svg' ); ?>" alt="WPSubscription" class="wp-subscription-logo">
                     <nav class="wp-subscription-admin-header-menu">
                         <?php foreach ($menu_items as $item): ?>
                             <a href="<?php echo esc_url($item['url']); ?>" class="<?php echo ($current === $item['slug']) ? 'current' : ''; ?>">
@@ -358,7 +361,7 @@ class Menu {
         include dirname(__FILE__) . '/views/subscription-list.php';
         ?>
         <div style="text-align:center;margin:38px 0 0 0;font-size:14px;color:#888;">
-            Made with <span style="color:#e25555;font-size:1.1em;">♥</span> by the WP Subscription Team
+            Made with <span style="color:#e25555;font-size:1.1em;">♥</span> by the WPSubscription Team
             <div style="margin-top:6px;">
                 <a href="https://wpsubscription.co/contact" target="_blank" style="color:#2563eb;text-decoration:none;">Support</a>
                 &nbsp;/&nbsp;
@@ -375,7 +378,7 @@ class Menu {
         $this->render_admin_header();
 
         if ( ! class_exists('Sdevs_Wc_Subscription_Pro') ) { ?>
-            <div class="wp-subscription-admin-content" style="max-width:1240px;margin:32px auto 0 auto">
+            <div class="wp-subscription-admin-content"">
                 <div class="wp-subscription-hero-upgrade" style="margin-bottom:18px;">
                     <div class="wp-subscription-hero-content">
                         <span class="wp-subscription-hero-icon">✨</span>
@@ -408,13 +411,13 @@ class Menu {
     public function render_settings_page() {
         $this->render_admin_header();
         ?>
-        <div class="wp-subscription-admin-content" style="max-width:1240px;margin:32px auto 0 auto">
+        <div class="wp-subscription-admin-content">
             <div class="wp-subscription-admin-box">
                 <?php include_once dirname(__FILE__) . '/views/settings.php'; ?>
             </div>
         </div>
         <div style="text-align:center;margin:38px 0 0 0;font-size:14px;color:#888;">
-            Made with <span style="color:#e25555;font-size:1.1em;">♥</span> by the WP Subscription Team
+            Made with <span style="color:#e25555;font-size:1.1em;">♥</span> by the WPSubscription Team
             <div style="margin-top:6px;">
                 <a href="https://wpsubscription.co/contact" target="_blank" style="color:#2563eb;text-decoration:none;">Support</a>
                 &nbsp;/&nbsp;
@@ -430,7 +433,7 @@ class Menu {
     public function render_support_page() {
         $this->render_admin_header();
         ?>
-        <div class="wp-subscription-admin-content" style="max-width:1240px;margin:32px auto 0 auto">
+        <div class="wp-subscription-admin-content">
             <?php if ( ! class_exists('Sdevs_Wc_Subscription_Pro') ) : ?>
             <!-- HERO VARIANT 1: Emoji -->
             <div class="wp-subscription-hero-upgrade" style="margin-bottom:18px;">
@@ -480,7 +483,7 @@ class Menu {
             <div class="wp-subscription-admin-box wp-subscription-pro-features" style="margin-bottom:32px;">
                 <div style="font-size:1.3em;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:10px;">
                     <svg width="28" height="28" fill="none" viewBox="0 0 28 28"><circle cx="14" cy="14" r="14" fill="#2196f3"/><path d="M9 14.5l3 3 7-7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    <span>WP Subscription PRO Features</span>
+                    <span>WPSubscription PRO Features</span>
                 </div>
                 <ul class="wp-subscription-pro-feature-list" style="list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;">
                     <li style="background:#f4f7fa;border-radius:8px;padding:18px 20px;display:flex;align-items:center;gap:14px;box-shadow:0 2px 8px #e0e7ef;">
@@ -533,13 +536,13 @@ class Menu {
                 </div>
                 <div class="wp-subscription-admin-box">
                     <h3>Show Your Love</h3>
-                    <p style="font-size:14px;margin:0 0 8px 0;">Enjoying WP Subscription? <a href="https://wordpress.org/support/plugin/subscription/reviews/\" target=\"_blank\" style=\"color:#f59e42;\">Leave us a review</a> or share your experience!</p>
+                    <p style="font-size:14px;margin:0 0 8px 0;">Enjoying WPSubscription? <a href="https://wordpress.org/support/plugin/subscription/reviews/\" target=\"_blank\" style=\"color:#f59e42;\">Leave us a review</a> or share your experience!</p>
                     <a href="https://wordpress.org/support/plugin/subscription/reviews/" target="_blank" class="button button-small" style="font-size:13px;padding:5px 14px;">Leave a Review</a>
                 </div>
             </div>
         </div>
         <div style="text-align:center;margin:38px 0 0 0;font-size:14px;color:#888;">
-            Made with <span style="color:#e25555;font-size:1.1em;">♥</span> by the WP Subscription Team
+            Made with <span style="color:#e25555;font-size:1.1em;">♥</span> by the WPSubscription Team
             <div style="margin-top:6px;">
                 <a href="https://wpsubscription.co/contact" target="_blank" style="color:#2563eb;text-decoration:none;">Support</a>
                 &nbsp;/&nbsp;
