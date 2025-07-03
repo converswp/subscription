@@ -131,11 +131,11 @@ class Menu {
     public function render_admin_footer() {
         ?>
         <div style="text-align:center;margin:38px 0 0 0;font-size:14px;color:#888;">
-            Made with <span style="color:#e25555;font-size:1.1em;">♥</span> by the WPSubscription Team
+            <?php printf( __( 'Made with %s by the WPSubscription Team', 'wp_subscription' ), '<span style="color:#e25555;font-size:1.1em;">♥</span>' ); ?>
             <div style="margin-top:6px;">
-                <a href="https://wpsubscription.co/contact" target="_blank" style="color:#2563eb;text-decoration:none;">Support</a>
+                <a href="https://wpsubscription.co/contact" target="_blank" style="color:#2563eb;text-decoration:none;"><?php esc_html_e( 'Support', 'wp_subscription' ); ?></a>
                 &nbsp;/&nbsp;
-                <a href="https://docs.converslabs.com/en" target="_blank" style="color:#2563eb;text-decoration:none;">Docs</a>
+                <a href="https://docs.converslabs.com/en" target="_blank" style="color:#2563eb;text-decoration:none;"><?php esc_html_e( 'Docs', 'wp_subscription' ); ?></a>
             </div>
         </div>
         <?php
@@ -361,11 +361,11 @@ class Menu {
         include dirname(__FILE__) . '/views/subscription-list.php';
         ?>
         <div style="text-align:center;margin:38px 0 0 0;font-size:14px;color:#888;">
-            Made with <span style="color:#e25555;font-size:1.1em;">♥</span> by the WPSubscription Team
+            <?php printf( __( 'Made with %s by the WPSubscription Team', 'wp_subscription' ), '<span style="color:#e25555;font-size:1.1em;">♥</span>' ); ?>
             <div style="margin-top:6px;">
-                <a href="https://wpsubscription.co/contact" target="_blank" style="color:#2563eb;text-decoration:none;">Support</a>
+                <a href="https://wpsubscription.co/contact" target="_blank" style="color:#2563eb;text-decoration:none;"><?php esc_html_e( 'Support', 'wp_subscription' ); ?></a>
                 &nbsp;/&nbsp;
-                <a href="https://docs.converslabs.com/en" target="_blank" style="color:#2563eb;text-decoration:none;">Docs</a>
+                <a href="https://docs.converslabs.com/en" target="_blank" style="color:#2563eb;text-decoration:none;"><?php esc_html_e( 'Docs', 'wp_subscription' ); ?></a>
             </div>
         </div>
         <?php
@@ -390,7 +390,7 @@ class Menu {
                     <a href="https://wpsubscription.co/?utm_source=plugin&utm_medium=admin&utm_campaign=upgrade_pro"
                     target="_blank"
                     class="wp-subscription-hero-btn">
-                        UPGRADE TO PRO
+                        <?php esc_html_e( 'UPGRADE TO PRO', 'wp_subscription' ); ?>
                     </a>
                 </div>
             </div>
@@ -417,11 +417,11 @@ class Menu {
             </div>
         </div>
         <div style="text-align:center;margin:38px 0 0 0;font-size:14px;color:#888;">
-            Made with <span style="color:#e25555;font-size:1.1em;">♥</span> by the WPSubscription Team
+            <?php printf( __( 'Made with %s by the WPSubscription Team', 'wp_subscription' ), '<span style="color:#e25555;font-size:1.1em;">♥</span>' ); ?>
             <div style="margin-top:6px;">
-                <a href="https://wpsubscription.co/contact" target="_blank" style="color:#2563eb;text-decoration:none;">Support</a>
+                <a href="https://wpsubscription.co/contact" target="_blank" style="color:#2563eb;text-decoration:none;"><?php esc_html_e( 'Support', 'wp_subscription' ); ?></a>
                 &nbsp;/&nbsp;
-                <a href="https://docs.converslabs.com/en" target="_blank" style="color:#2563eb;text-decoration:none;">Docs</a>
+                <a href="https://docs.converslabs.com/en" target="_blank" style="color:#2563eb;text-decoration:none;"><?php esc_html_e( 'Docs', 'wp_subscription' ); ?></a>
             </div>
         </div>
         <?php
@@ -447,7 +447,7 @@ class Menu {
                 <a href="https://wpsubscription.co/?utm_source=plugin&utm_medium=admin&utm_campaign=upgrade_pro"
                    target="_blank"
                    class="wp-subscription-hero-btn">
-                    UPGRADE TO PRO
+                    <?php esc_html_e( 'UPGRADE TO PRO', 'wp_subscription' ); ?>
                 </a>
             </div>
             <?php endif; ?>
@@ -542,11 +542,11 @@ class Menu {
             </div>
         </div>
         <div style="text-align:center;margin:38px 0 0 0;font-size:14px;color:#888;">
-            Made with <span style="color:#e25555;font-size:1.1em;">♥</span> by the WPSubscription Team
+            <?php printf( __( 'Made with %s by the WPSubscription Team', 'wp_subscription' ), '<span style="color:#e25555;font-size:1.1em;">♥</span>' ); ?>
             <div style="margin-top:6px;">
-                <a href="https://wpsubscription.co/contact" target="_blank" style="color:#2563eb;text-decoration:none;">Support</a>
+                <a href="https://wpsubscription.co/contact" target="_blank" style="color:#2563eb;text-decoration:none;"><?php esc_html_e( 'Support', 'wp_subscription' ); ?></a>
                 &nbsp;/&nbsp;
-                <a href="https://docs.converslabs.com/en" target="_blank" style="color:#2563eb;text-decoration:none;">Docs</a>
+                <a href="https://docs.converslabs.com/en" target="_blank" style="color:#2563eb;text-decoration:none;"><?php esc_html_e( 'Docs', 'wp_subscription' ); ?></a>
             </div>
         </div>
         <?php

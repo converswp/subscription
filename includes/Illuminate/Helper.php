@@ -281,7 +281,7 @@ class Helper {
 
 		$comment_id = wp_insert_comment(
 			array(
-				'comment_author'  => 'Subscription for WooCommerce',
+				'comment_author'  => __( 'Subscription for WooCommerce', 'wp_subscription' ),
 				'comment_content' => sprintf(
 					// translators: order id.
 					__( 'The order %s has been created for the subscription', 'wp_subscription' ),
@@ -331,7 +331,7 @@ class Helper {
 		);
 		$comment_id = wp_insert_comment(
 			array(
-				'comment_author'  => 'Subscription for WooCommerce',
+				'comment_author'  => __( 'Subscription for WooCommerce', 'wp_subscription' ),
 				'comment_content' => sprintf(
 					// translators: Order Id.
 					__( 'Subscription successfully created.	order is %s', 'wp_subscription' ),
@@ -429,9 +429,9 @@ class Helper {
 		$new_order->calculate_totals();
 		$new_order->save();
 		if ( ! is_admin() && function_exists( 'wc_add_notice' ) ) {
-			$message = 'Renewal Order(#' . $new_order->get_id() . ') Created.';
+			$message = sprintf( __( 'Renewal Order(#%s) Created.', 'wp_subscription' ), $new_order->get_id() );
 			if ( $new_order->has_status( 'pending' ) ) {
-				$message .= 'Please <a href="' . $new_order->get_checkout_payment_url() . '">Pay now</a>';
+				$message .= sprintf( __( 'Please <a href="%s">Pay now</a>', 'wp_subscription' ), $new_order->get_checkout_payment_url() );
 			}
 			wc_add_notice( $message, 'success' );
 		}
@@ -494,13 +494,13 @@ class Helper {
 
 		$comment_id = wp_insert_comment(
 			array(
-				'comment_author'  => 'Subscription for WooCommerce',
-				'comment_content' => sprintf( 'Subscription Renewal order successfully created.	order is %s', $new_order_id ),
+				'comment_author'  => __( 'Subscription for WooCommerce', 'wp_subscription' ),
+				'comment_content' => sprintf( __( 'Subscription Renewal order successfully created. Order is %s', 'wp_subscription' ), $new_order_id ),
 				'comment_post_ID' => $subscription_id,
 				'comment_type'    => 'order_note',
 			)
 		);
-		update_comment_meta( $comment_id, '_subscrpt_activity', 'Renewal Order' );
+		update_comment_meta( $comment_id, '_subscrpt_activity', __( 'Renewal Order', 'wp_subscription' ) );
 	}
 
 	/**

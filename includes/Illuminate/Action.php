@@ -75,13 +75,13 @@ class Action {
 	private static function expired( int $subscription_id ) {
 		$comment_id = wp_insert_comment(
 			array(
-				'comment_author'  => 'Subscription for WooCommerce',
-				'comment_content' => 'Subscription is Expired',
+				'comment_author'  => __( 'Subscription for WooCommerce', 'wp_subscription' ),
+				'comment_content' => __( 'Subscription is Expired', 'wp_subscription' ),
 				'comment_post_ID' => $subscription_id,
 				'comment_type'    => 'order_note',
 			)
 		);
-		update_comment_meta( $comment_id, '_subscrpt_activity', 'Subscription Expired' );
+		update_comment_meta( $comment_id, '_subscrpt_activity', __( 'Subscription Expired', 'wp_subscription' ) );
 
 		do_action( 'subscrpt_subscription_expired', $subscription_id );
 	}
@@ -94,13 +94,13 @@ class Action {
 	private static function active( int $subscription_id ) {
 		$comment_id = wp_insert_comment(
 			array(
-				'comment_author'  => 'Subscription for WooCommerce',
-				'comment_content' => 'Subscription activated.Next payment due date set.',
+				'comment_author'  => __( 'Subscription for WooCommerce', 'wp_subscription' ),
+				'comment_content' => __( 'Subscription activated. Next payment due date set.', 'wp_subscription' ),
 				'comment_post_ID' => $subscription_id,
 				'comment_type'    => 'order_note',
 			)
 		);
-		update_comment_meta( $comment_id, '_subscrpt_activity', 'Subscription Activated' );
+		update_comment_meta( $comment_id, '_subscrpt_activity', __( 'Subscription Activated', 'wp_subscription' ) );
 		do_action( 'subscrpt_subscription_activated', $subscription_id );
 	}
 
@@ -112,13 +112,13 @@ class Action {
 	private static function pending( int $subscription_id ) {
 		$comment_id = wp_insert_comment(
 			array(
-				'comment_author'  => 'Subscription for WooCommerce',
-				'comment_content' => 'Subscription is pending.',
+				'comment_author'  => __( 'Subscription for WooCommerce', 'wp_subscription' ),
+				'comment_content' => __( 'Subscription is pending.', 'wp_subscription' ),
 				'comment_post_ID' => $subscription_id,
 				'comment_type'    => 'order_note',
 			)
 		);
-		update_comment_meta( $comment_id, '_subscrpt_activity', 'Subscription Pending' );
+		update_comment_meta( $comment_id, '_subscrpt_activity', __( 'Subscription Pending', 'wp_subscription' ) );
 		do_action( 'subscrpt_subscription_pending', $subscription_id );
 	}
 
@@ -130,13 +130,13 @@ class Action {
 	private static function cancelled( int $subscription_id ) {
 		$comment_id = wp_insert_comment(
 			array(
-				'comment_author'  => 'Subscription for WooCommerce',
-				'comment_content' => 'Subscription is Cancelled.',
+				'comment_author'  => __( 'Subscription for WooCommerce', 'wp_subscription' ),
+				'comment_content' => __( 'Subscription is Cancelled.', 'wp_subscription' ),
 				'comment_post_ID' => $subscription_id,
 				'comment_type'    => 'order_note',
 			)
 		);
-		update_comment_meta( $comment_id, '_subscrpt_activity', 'Subscription Cancelled' );
+		update_comment_meta( $comment_id, '_subscrpt_activity', __( 'Subscription Cancelled', 'wp_subscription' ) );
 
 		WC()->mailer();
 		do_action( 'subscrpt_subscription_cancelled_email_notification', $subscription_id );
@@ -151,13 +151,13 @@ class Action {
 	private static function pe_cancelled( int $subscription_id ) {
 		$comment_id = wp_insert_comment(
 			array(
-				'comment_author'  => 'Subscription for WooCommerce',
-				'comment_content' => 'Subscription is Pending Cancellation.',
+				'comment_author'  => __( 'Subscription for WooCommerce', 'wp_subscription' ),
+				'comment_content' => __( 'Subscription is Pending Cancellation.', 'wp_subscription' ),
 				'comment_post_ID' => $subscription_id,
 				'comment_type'    => 'order_note',
 			)
 		);
-		update_comment_meta( $comment_id, '_subscrpt_activity', 'Subscription Pending Cancellation' );
+		update_comment_meta( $comment_id, '_subscrpt_activity', __( 'Subscription Pending Cancellation', 'wp_subscription' ) );
 		do_action( 'subscrpt_subscription_pending_cancellation', $subscription_id );
 	}
 
