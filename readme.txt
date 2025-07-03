@@ -228,7 +228,7 @@ Learn more: [WPSubscription](https://wpsubscription.co/)
 
 == Changelog ==
 
-= 1.5.0 - Jun 03, 2025 =
+= 1.5.0 - Jun 0l, 2025 =
 - **New**: API and Authentication.
 - **New**: Stripe auto renewal.
 - **New**: Paypal auto renewal support.
