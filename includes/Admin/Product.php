@@ -45,9 +45,13 @@ class Product {
 			$type            = Helper::get_typos( 1, $product->get_meta( '_subscrpt_timing_option' ) );
 			$meta_trial_time = $product->get_meta( '_subscrpt_trial_timing_per' );
 			$trial           = null;
-			if ( ! empty( $meta_trial_time ) && $meta_trial_time > 0 ) {
-				$trial = '<br/> + Get ' . $meta_trial_time . ' ' . Helper::get_typos( $meta_trial_time, $product->get_meta( '_subscrpt_trial_timing_option' ) ) . ' free trial!';
-			}
+					if ( ! empty( $meta_trial_time ) && $meta_trial_time > 0 ) {
+			$trial = '<br/> + ' . sprintf( 
+				__( 'Get %1$s %2$s free trial!', 'wp_subscription' ),
+				$meta_trial_time,
+				Helper::get_typos( $meta_trial_time, $product->get_meta( '_subscrpt_trial_timing_option' ) )
+			);
+		}
 
 			$price_html = $price . ' / ' . $type . $trial;
 			return $price_html;
