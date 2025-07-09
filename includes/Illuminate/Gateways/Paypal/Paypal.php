@@ -308,6 +308,8 @@ class Paypal extends \WC_Payment_Gateway {
 
 		if ( empty( $webhook_data ) || ! count( $webhook_data ) ) {
 			$post_data    = file_get_contents( 'php://input' );
+			// Sanitize the raw input before decoding
+			$post_data    = sanitize_text_field( $post_data );
 			$webhook_data = json_decode( $post_data, true );
 
 			if ( ! $webhook_data ) {
