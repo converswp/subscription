@@ -35,7 +35,7 @@ jQuery( document ).ready( function ( $ ) {
 			url: sdevs_installer_helper_obj.ajax_url,
 			data: {
 				activate_plugin: 'woocommerce',
-				action: 'activate_woocommerce_plugin',
+				action: 'wps_subscription_activate_woocommerce_plugin',
 			},
 			beforeSend: function () {
 				$( '.sdevs-loading-icon' ).show();
