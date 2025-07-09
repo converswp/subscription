@@ -1,4 +1,4 @@
-=== Subscription & Recurring Payment Plugin for WooCommerce - Stripe, Paddle, Paypal and More ===
+=== WPSubscription - WooCommerce Subscription & Recurring Payment Plugin ===
 Contributors: converswp, shamsbd71
 Tags: woocommerce-subscriptions, subscriptions, subscriptions-billing, recurring-payments, woocommerce-extensions
 Requires at least: 6.0
@@ -8,7 +8,7 @@ Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-**WPSubscription ** is best plugin to enable recurring payments, subscriptions, and auto-renewals** for digital and physical products. Supports Stripe, PayPal, Paddle, and more.
+**WPSubscription** enables recurring payments, subscriptions, and auto-renewals for digital and physical products. Supports Stripe, PayPal, Paddle, and more.
 
 == Description ==
 

@@ -9,6 +9,8 @@ Author: converswp
 Author URI: https://wpsubscription.co/
 
 Version: 1.5.1
+Requires at least: 6.0
+Requires PHP: 7.0
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: wp_subscription
