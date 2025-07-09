@@ -1,4 +1,4 @@
-=== WPSubscription - WooCommerce Subscription & Recurring Payment Plugin ===
+=== WPSubscription - Subscription & Recurring Payment Plugin for WooCommerce ===
 Contributors: converswp, shamsbd71
 Tags: woocommerce-subscriptions, subscriptions, subscriptions-billing, recurring-payments, woocommerce-extensions
 Requires at least: 6.0
