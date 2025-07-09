@@ -33,7 +33,7 @@ STYLE GUIDE FOR WP SUBSCRIPTION ADMIN PAGES:
 			?>
 			<tr>
 				<td><a href="<?php echo wp_kses_post( $order->get_edit_order_url() ); ?>" target="_blank"><?php echo wp_kses_post( $order_history->order_id ); ?></a></td>
-				<td><?php echo wp_kses_post( order_relation_type_cast( $order_history->type ) ); ?></td>
+									<td><?php echo wp_kses_post( wps_subscription_order_relation_type_cast( $order_history->type ) ); ?></td>
 				<td>
 					<?php
 					if ( $order ) {

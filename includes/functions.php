@@ -83,7 +83,7 @@ function subscrpt_is_auto_renew_enabled() {
  *
  * @return string
  */
-function order_relation_type_cast( string $key ) {
+function wps_subscription_order_relation_type_cast( string $key ) {
 	$relational_type_keys = apply_filters(
 		'subscrpt_order_relational_types',
 		array(
@@ -95,11 +95,11 @@ function order_relation_type_cast( string $key ) {
 	return isset( $relational_type_keys[ $key ] ) ? $relational_type_keys[ $key ] : '-';
 }
 
-if ( ! function_exists( 'is_wc_order_hpos_enabled' ) ) {
+if ( ! function_exists( 'wps_subscription_is_wc_order_hpos_enabled' ) ) {
 	/**
 	 * Check if HPOS enabled.
 	 */
-	function is_wc_order_hpos_enabled() {
+	function wps_subscription_is_wc_order_hpos_enabled() {
 		return function_exists( 'wc_get_container' ) ?
 			wc_get_container()
 				->get( CustomOrdersTableController::class )
@@ -137,7 +137,7 @@ if ( ! function_exists( 'sdevs_order_status_label' ) ) {
 	}
 }
 
-if ( ! function_exists( 'get_timing_types' ) ) {
+if ( ! function_exists( 'wps_subscription_get_timing_types' ) ) {
 	/**
 	 * Get labels.
 	 *
@@ -145,7 +145,7 @@ if ( ! function_exists( 'get_timing_types' ) ) {
 	 *
 	 * @return array
 	 */
-	function get_timing_types( $key_value = false ): array {
+	function wps_subscription_get_timing_types( $key_value = false ): array {
 		return $key_value ? array(
 			'days'   => 'Daily',
 			'weeks'  => 'Weekly',

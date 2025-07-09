@@ -1,14 +1,14 @@
-=== WooCommerce Subscription & Recurring Payment Plugin - Stripe, Paddle, Paypal and More ===
+=== WPSubscription - WooCommerce Subscription & Recurring Payment Plugin ===
 Contributors: converswp, shamsbd71
 Tags: woocommerce-subscriptions, subscriptions, subscriptions-billing, recurring-payments, woocommerce-extensions
 Requires at least: 6.0
 Tested up to: 6.8
-Stable tag: 1.5.0
+Stable tag: 1.5.2
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-**WPSubscription ** is best plugin to enable recurring payments, subscriptions, and auto-renewals** for digital and physical products. Supports Stripe, PayPal, Paddle, and more.
+**WPSubscription** enables recurring payments, subscriptions, and auto-renewals for digital and physical products. Supports Stripe, PayPal, Paddle, and more.
 
 == Description ==
 
@@ -227,6 +227,24 @@ Learn more: [WPSubscription](https://wpsubscription.co/)
 19. Create WooCommerce Product with Subscription Option
 
 == Changelog ==
+
+= 1.5.2 - Jul 09, 2025 =
+- **Fix**: Security vulnerabilities - Added proper sanitization to all register_setting() calls
+- **Fix**: Nonce verification sanitization - Added wp_unslash() and sanitize_text_field() 
+- **Fix**: JSON decode sanitization - Sanitized data before json_decode() in PayPal webhook
+- **Fix**: Direct file access prevention - Added ABSPATH checks to all template files
+- **Fix**: Internationalization issues - Fixed variable usage in translation functions
+- **Fix**: Unescaped translation functions - Replaced _e() with esc_html_e() and esc_attr_e()
+- **Fix**: Removed discouraged load_plugin_textdomain() function
+- **Fix**: Unordered placeholders in translatable strings - Used ordered placeholders
+- **Fix**: Plugin headers - Added missing "Requires at least" and "Requires PHP" headers
+- **Fix**: Plugin readme - Shortened description to under 150 characters
+- **Fix**: Naming conventions - Updated generic function names to use wps_subscription_ prefix
+- **Update**: WordPress.org compliance - All Plugin Check issues resolved
+- **Update**: Improved code quality and security standards
+
+= 1.5.1 - Jul 08, 2025 =
+- **Fix**: Naming conversions fixed
 
 = 1.5.0 - Jun 03, 2025 =
 - **New**: API and Authentication.

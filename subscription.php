@@ -1,19 +1,20 @@
 <?php
-/*
-Plugin Name: WPSubscription - WooCommerce Subscription & Recurring Payment Plugin
-Plugin URI: https://wordpress.org/plugins/subscription
-Description: Enable WooCommerce Subscriptions and Start Recurring Revenue in Minutes.
-Plugin URI: https://wpsubscription.co/
-
-Author: converswp
-Author URI: https://wpsubscription.co/
-
-Version: 1.5.0
-License: GPLv2
-License URI: https://www.gnu.org/licenses/gpl-2.0.html
-Text Domain: wp_subscription
-Domain Path: /languages
-*/
+/**
+ * Plugin Name: WPSubscription - WooCommerce Subscription & Recurring Payment Plugin
+ * Plugin URI: https://wpsubscription.co/
+ * Description: WPSubscription allow WooCommerce to enables recurring payments, subscriptions, and auto-renewals for digital and physical products. Supports Stripe, PayPal, Paddle, and more.
+ * Version: 1.5.2
+ * Author: ConversWP
+ * Author URI: https://wpsubscription.co/
+ * Text Domain: wp_subscription
+ * Domain Path: /languages
+ * Requires at least: 6.0
+ * Requires PHP: 7.0
+ * WC requires at least: 6.0
+ * WC tested up to: 9.9
+ *
+ * @package Subscription
+ */
 
 // don't call the file directly.
 
@@ -39,7 +40,7 @@ final class Sdevs_Subscription {
 	 *
 	 * @var string
 	 */
-	const version = '1.5.0';
+	const version = '1.5.2';
 
 	/**
 	 * Holds various class instances
@@ -237,10 +238,12 @@ final class Sdevs_Subscription {
 	/**
 	 * Initialize plugin for localization
 	 *
-	 * @uses load_plugin_textdomain()
+	 * Note: WordPress automatically loads translations for plugins hosted on WordPress.org
+	 * since version 4.6, so manual loading is not required.
 	 */
 	public function localization_setup() {
-		load_plugin_textdomain( 'wp_subscription', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+		// WordPress automatically loads translations for plugins hosted on WordPress.org
+		// No manual loading required since WordPress 4.6
 	}
 
 	/**

@@ -123,7 +123,7 @@ class Product {
 					'months' => __( 'Monthly', 'wp_subscription' ),
 					'years'  => __( 'Yearly', 'wp_subscription' ),
 				);
-				$trial_timing_types    = get_timing_types();
+				$trial_timing_types    = wps_subscription_get_timing_types();
 				$subscrpt_timing       = null;
 				$subscrpt_trial_time   = null;
 				$subscrpt_trial_timing = null;

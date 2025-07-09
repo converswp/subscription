@@ -41,12 +41,54 @@ class Settings {
 	 * Register settings options.
 	 **/
 	public function register_settings() {
-		register_setting( 'wp_subscription_settings', 'wp_subscription_renewal_process' );
-		register_setting( 'wp_subscription_settings', 'wp_subscription_manual_renew_cart_notice' );
-		register_setting( 'wp_subscription_settings', 'wp_subscription_active_role' );
-		register_setting( 'wp_subscription_settings', 'wp_subscription_unactive_role' );
-		register_setting( 'wp_subscription_settings', 'wp_subscription_stripe_auto_renew' );
-		register_setting( 'wp_subscription_settings', 'wp_subscription_auto_renewal_toggle' );
+		register_setting( 
+			'wp_subscription_settings', 
+			'wp_subscription_renewal_process',
+			array(
+				'type' => 'string',
+				'sanitize_callback' => 'sanitize_text_field',
+			)
+		);
+		register_setting( 
+			'wp_subscription_settings', 
+			'wp_subscription_manual_renew_cart_notice',
+			array(
+				'type' => 'string',
+				'sanitize_callback' => 'sanitize_textarea_field',
+			)
+		);
+		register_setting( 
+			'wp_subscription_settings', 
+			'wp_subscription_active_role',
+			array(
+				'type' => 'string',
+				'sanitize_callback' => 'sanitize_text_field',
+			)
+		);
+		register_setting( 
+			'wp_subscription_settings', 
+			'wp_subscription_unactive_role',
+			array(
+				'type' => 'string',
+				'sanitize_callback' => 'sanitize_text_field',
+			)
+		);
+		register_setting( 
+			'wp_subscription_settings', 
+			'wp_subscription_stripe_auto_renew',
+			array(
+				'type' => 'string',
+				'sanitize_callback' => 'sanitize_text_field',
+			)
+		);
+		register_setting( 
+			'wp_subscription_settings', 
+			'wp_subscription_auto_renewal_toggle',
+			array(
+				'type' => 'string',
+				'sanitize_callback' => 'sanitize_text_field',
+			)
+		);
 
 		do_action( 'subscrpt_register_settings', 'subscrpt_settings' );
 	}

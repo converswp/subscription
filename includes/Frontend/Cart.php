@@ -418,7 +418,10 @@ class Cart {
 				<?php foreach ( $recurrs as $recurr ) : ?>
 					<p>
 						<span><?php echo wp_kses_post( $recurr['price_html'] ); ?></span><br />
-						<small><?php esc_html_e( ( $recurr['trial_status'] ? 'First billing on' : 'Next billing on' ), 'wp_subscription' ); ?>
+						<small><?php 
+						$billing_text = $recurr['trial_status'] ? 'First billing on' : 'Next billing on';
+						esc_html_e( $billing_text, 'wp_subscription' ); 
+						?>
 							: <?php echo esc_html( $recurr['trial_status'] ? $recurr['start_date'] : $recurr['next_date'] ); ?></small>
 						<?php if ( 'yes' === $recurr['can_user_cancel'] ) : ?>
 							<br>

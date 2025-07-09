@@ -184,7 +184,7 @@ class Menu {
                 </div>
                 <div class="wp-subscription-admin-header-right">
                     <?php if ( ! class_exists('Sdevs_Wc_Subscription_Pro') ) : ?>
-                    <a target="_blank" href="https://wpsubscription.co/?utm_source=plugin&utm_medium=admin&utm_campaign=upgrade_pro" class="wp-subscription-upgrade-btn"><?php _e( 'Upgrade to Pro', 'wp_subscription' ); ?></a>
+                    <a target="_blank" href="https://wpsubscription.co/?utm_source=plugin&utm_medium=admin&utm_campaign=upgrade_pro" class="wp-subscription-upgrade-btn"><?php esc_html_e( 'Upgrade to Pro', 'wp_subscription' ); ?></a>
                     <?php endif; ?>
                 </div>
             </div>
@@ -561,7 +561,7 @@ class Menu {
      */
     public function handle_bulk_action_ajax() {
         // Verify nonce
-        if ( ! wp_verify_nonce( $_POST['nonce'], 'wp_subscription_bulk_action_nonce' ) ) {
+        if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'wp_subscription_bulk_action_nonce' ) ) {
             wp_send_json_error( array( 'message' => __( 'Security check failed.', 'wp_subscription' ) ) );
         }
         
@@ -620,7 +620,7 @@ class Menu {
                         break;
                 }
             } catch ( Exception $e ) {
-                $errors[] = sprintf( __( 'Error processing subscription #%d: %s', 'wp_subscription' ), $subscription_id, $e->getMessage() );
+                $errors[] = sprintf( __( 'Error processing subscription #%1$d: %2$s', 'wp_subscription' ), $subscription_id, $e->getMessage() );
             }
         }
         

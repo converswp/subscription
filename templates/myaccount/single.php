@@ -57,7 +57,10 @@ do_action( 'before_single_subscrpt_content' );
 		</tr>
 		<?php endif; ?>
 		<tr>
-			<td><?php esc_html_e( ( 'null' == $trial || 'off' === $trial_mode ? 'Start date' : ( 'extended' === $trial_mode ? 'Trial End & Subscription Start' : 'Trial End & First Billing' ) ), 'wp_subscription' ); ?></td>
+			<td><?php 
+			$date_label = 'null' == $trial || 'off' === $trial_mode ? 'Start date' : ( 'extended' === $trial_mode ? 'Trial End & Subscription Start' : 'Trial End & First Billing' );
+			esc_html_e( $date_label, 'wp_subscription' ); 
+			?></td>
 			<td><?php echo esc_html( ! empty( $start_date ) ? gmdate( 'F d, Y', $start_date ) : '-' ); ?></td>
 		</tr>
 		<?php if ( null == $trial || in_array( $trial_mode, array( 'off', 'extended' ), true ) ) : ?>
