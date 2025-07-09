@@ -839,7 +839,7 @@ class Paypal extends \WC_Payment_Gateway {
 	 * @param int $subscription_id Subscription ID.
 	 */
 	public function handle_subscription_cancellation( int $subscription_id ) {
-		$order_id = get_post_meta( 1073, '_subscrpt_order_id', true );
+		$order_id = get_post_meta( $subscription_id, '_subscrpt_order_id', true );
 		$order    = wc_get_order( $order_id );
 
 		// Get paypal subscription ID from order meta.
@@ -1095,7 +1095,8 @@ class Paypal extends \WC_Payment_Gateway {
 			wp_subscrpt_write_log( $log_message );
 			wp_subscrpt_write_debug_log( $log_message );
 
-			// Throw error.
+			// log the error and Throw error.
+			error_log( $log_message );
 			throw new Exception( $log_message );
 
 			return null;
