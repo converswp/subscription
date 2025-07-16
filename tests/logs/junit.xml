@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="" tests="8" assertions="21" errors="0" warnings="0" failures="0" skipped="1" time="0.701009">
+    <testsuite name="Unit Tests" tests="8" assertions="21" errors="0" warnings="0" failures="0" skipped="1" time="0.701009">
+      <testsuite name="WPS_PluginTest" file="/Users/abu/Sites/wps/wp-content/plugins/subscription/tests/Unit/PluginTest.php" tests="8" assertions="21" errors="0" warnings="0" failures="0" skipped="1" time="0.701009">
+        <testcase name="test_plugin_activation" class="WPS_PluginTest" classname="WPS_PluginTest" file="/Users/abu/Sites/wps/wp-content/plugins/subscription/tests/Unit/PluginTest.php" line="26" assertions="2" time="0.016391"/>
+        <testcase name="test_admin_menu_registration" class="WPS_PluginTest" classname="WPS_PluginTest" file="/Users/abu/Sites/wps/wp-content/plugins/subscription/tests/Unit/PluginTest.php" line="38" assertions="0" time="0.001605">
+          <skipped/>
+        </testcase>
+        <testcase name="test_custom_post_type_registration" class="WPS_PluginTest" classname="WPS_PluginTest" file="/Users/abu/Sites/wps/wp-content/plugins/subscription/tests/Unit/PluginTest.php" line="68" assertions="1" time="0.000693"/>
+        <testcase name="test_product_meta_fields" class="WPS_PluginTest" classname="WPS_PluginTest" file="/Users/abu/Sites/wps/wp-content/plugins/subscription/tests/Unit/PluginTest.php" line="77" assertions="3" time="0.124367"/>
+        <testcase name="test_subscription_creation" class="WPS_PluginTest" classname="WPS_PluginTest" file="/Users/abu/Sites/wps/wp-content/plugins/subscription/tests/Unit/PluginTest.php" line="93" assertions="3" time="0.348621"/>
+        <testcase name="test_subscription_status_management" class="WPS_PluginTest" classname="WPS_PluginTest" file="/Users/abu/Sites/wps/wp-content/plugins/subscription/tests/Unit/PluginTest.php" line="115" assertions="2" time="0.011075"/>
+        <testcase name="test_billing_interval_validation" class="WPS_PluginTest" classname="WPS_PluginTest" file="/Users/abu/Sites/wps/wp-content/plugins/subscription/tests/Unit/PluginTest.php" line="132" assertions="8" time="0.157251"/>
+        <testcase name="test_trial_period_functionality" class="WPS_PluginTest" classname="WPS_PluginTest" file="/Users/abu/Sites/wps/wp-content/plugins/subscription/tests/Unit/PluginTest.php" line="150" assertions="2" time="0.041006"/>
+      </testsuite>
+    </testsuite>
+  </testsuite>
+</testsuites>

@@ -1,40 +1,38 @@
 {
-	"name": "converswp/subscription",
-	"description": "WooCommerce Subscription Management Plugin",
-	"type": "wordpress-plugin",
-	"license": "GPL-2.0-or-later",
-	"authors": [
-		{
-			"name": "Convers Labs",
-			"email": "contact@converslabs.com",
-			"homepage": "https://wpsubscription.co"
-		}
-	],
-	"minimum-stability": "dev",
-	"require-dev": {
-		"wp-coding-standards/wpcs": "dev-develop",
-		"dealerdirect/phpcodesniffer-composer-installer": "^1.0",
-		"phpcompatibility/phpcompatibility-wp": "dev-master",
-		"phpstan/phpstan": "1.12.x-dev",
-		"szepeviktor/phpstan-wordpress": "dev-master",
-		"php-stubs/woocommerce-stubs": "dev-master",
-		"symfony/var-dumper": "7.2.x-dev"
-	},
-	"scripts": {
-		"phpcs": "phpcs -p . --standard=PHPCompatibilityWP --ignore=vendor/*",
-		"phpstan": "phpstan analyse --debug --memory-limit=2048M"
-	},
-	"autoload": {
-		"psr-4": {
-			"SpringDevs\\Subscription\\": "includes/"
-		},
-		"files": [
-			"includes/functions.php"
-		]
-	},
-	"config": {
-		"allow-plugins": {
-			"dealerdirect/phpcodesniffer-composer-installer": true
-		}
-	}
+    "name": "wpsubscription/plugin",
+    "description": "WPSubscription - Subscription & Recurring Payment Plugin for WooCommerce",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "php": ">=7.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5",
+        "yoast/phpunit-polyfills": "^1.0",
+        "squizlabs/php_codesniffer": "^3.6",
+        "wp-coding-standards/wpcs": "^2.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "SpringDevs\\Subscription\\": "includes/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "WPS\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "test:unit": "phpunit --testsuite=\"Unit Tests\"",
+        "test:integration": "phpunit --testsuite=\"Integration Tests\"",
+        "test:coverage": "phpunit --coverage-html tests/logs/coverage",
+        "phpcs": "phpcs --standard=WordPress includes/",
+        "phpcbf": "phpcbf --standard=WordPress includes/"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    }
 }

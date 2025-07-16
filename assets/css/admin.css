@@ -309,6 +309,65 @@ body.wp-subscription_page_wp-subscription-integrations #wpcontent
     padding-left: 0 !important;
 }
 
+/* Fix for WordPress Editor and Product Description Areas */
+/* Ensure proper text color in WordPress editor areas - more targeted approach */
+.post-type-product #post-body-content .wp-editor-container textarea,
+.post-type-product #post-body-content .wp-editor-area,
+.post-type-product #post-body-content .wp-editor-container .mce-content-body,
+.post-type-product #post-body-content .wp-editor-container .mce-edit-area iframe body,
+.post-type-product #post-body-content .wp-editor-container .mce-edit-area iframe body *,
+.post-type-product #woocommerce-product-data .woocommerce_options_panel .wp-editor-container textarea,
+.post-type-product #woocommerce-product-data .woocommerce_options_panel .wp-editor-area,
+.post-type-product #woocommerce-product-data .woocommerce_options_panel .wp-editor-container .mce-content-body,
+.post-type-product #woocommerce-product-data .woocommerce_options_panel .wp-editor-container .mce-edit-area iframe body,
+.post-type-product #woocommerce-product-data .woocommerce_options_panel .wp-editor-container .mce-edit-area iframe body * {
+    color: #2c3338 !important;
+}
+
+/* Ensure proper text color in TinyMCE editor content */
+.mce-content-body,
+.mce-content-body p,
+.mce-content-body div,
+.mce-content-body span,
+.mce-content-body h1,
+.mce-content-body h2,
+.mce-content-body h3,
+.mce-content-body h4,
+.mce-content-body h5,
+.mce-content-body h6,
+.mce-content-body li,
+.mce-content-body ul,
+.mce-content-body ol,
+.mce-content-body blockquote,
+.mce-content-body pre,
+.mce-content-body code,
+.mce-content-body strong,
+.mce-content-body b,
+.mce-content-body em,
+.mce-content-body i,
+.mce-content-body a {
+    color: #2c3338 !important;
+}
+
+/* Additional fix for WordPress editor areas */
+.wp-editor-container textarea,
+.wp-editor-area,
+.wp-editor-container .mce-content-body,
+.wp-editor-container .mce-edit-area iframe body,
+.wp-editor-container .mce-edit-area iframe body * {
+    color: #2c3338 !important;
+}
+
+/* Fix for WooCommerce product data panels */
+#woocommerce-product-data .woocommerce_options_panel textarea,
+#woocommerce-product-data .woocommerce_options_panel .wp-editor-container textarea,
+#woocommerce-product-data .woocommerce_options_panel .wp-editor-area,
+#woocommerce-product-data .woocommerce_options_panel .wp-editor-container .mce-content-body,
+#woocommerce-product-data .woocommerce_options_panel .wp-editor-container .mce-edit-area iframe body,
+#woocommerce-product-data .woocommerce_options_panel .wp-editor-container .mce-edit-area iframe body * {
+    color: #2c3338 !important;
+}
+
 /* Table & List Styles */
 .wp-subscription-list-table {
     border: none !important;
