@@ -231,6 +231,7 @@ Learn more: [WPSubscription](https://wpsubscription.co/)
 = 1.5.3 - Jul 16, 2025 =
 - **Improved**: PayPal Integration Improvements.
 - **Fix**: Subscription Initialization & Compatibility.
+- **Fix**: Fetal error - legacy method names support.
 
 = 1.5.2 - Jul 09, 2025 =
 - **Fix**: Security vulnerabilities - Added proper sanitization to all register_setting() calls
