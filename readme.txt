@@ -3,12 +3,12 @@ Contributors: converswp, shamsbd71
 Tags: woocommerce-subscriptions, subscriptions, subscriptions-billing, recurring-payments, woocommerce-extensions
 Requires at least: 6.0
 Tested up to: 6.8
-Stable tag: 1.5.2
+Stable tag: 1.5.3
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-**WPSubscription** enables recurring payments, subscriptions, and auto-renewals for digital and physical products. Supports Stripe, PayPal, Paddle, and more.
+WPSubscription enables recurring payments, subscriptions and auto-renewals for digital and physical products. Supports Stripe, PayPal, Paddle and more
 
 == Description ==
 
@@ -227,6 +227,11 @@ Learn more: [WPSubscription](https://wpsubscription.co/)
 19. Create WooCommerce Product with Subscription Option
 
 == Changelog ==
+
+= 1.5.3 - Jul 16, 2025 =
+- **Improved**: PayPal Integration Improvements.
+- **Fix**: Subscription Initialization & Compatibility.
+- **Fix**: Fetal error - legacy method names support.
 
 = 1.5.2 - Jul 09, 2025 =
 - **Fix**: Security vulnerabilities - Added proper sanitization to all register_setting() calls

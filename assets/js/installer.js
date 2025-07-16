@@ -6,7 +6,7 @@ jQuery( document ).ready( function ( $ ) {
 	} );
 
 	$( '.sdevs-activate-plugin' ).click( () => {
-		activate_woocommerce_plugin();
+		wps_subscription_activate_woocommerce_plugin();
 	} );
 
 	function install_woocommerce_plugin() {
@@ -21,7 +21,7 @@ jQuery( document ).ready( function ( $ ) {
 				$( '.sdevs-loading-icon' ).show();
 			},
 			success: function ( data ) {
-				activate_woocommerce_plugin();
+				wps_subscription_activate_woocommerce_plugin();
 			},
 			complete: function () {
 				console.log( 'Plugin installed' );
@@ -29,7 +29,7 @@ jQuery( document ).ready( function ( $ ) {
 		} );
 	}
 
-	function activate_woocommerce_plugin() {
+	function wps_subscription_activate_woocommerce_plugin() {
 		$.ajax( {
 			type: 'POST',
 			url: sdevs_installer_helper_obj.ajax_url,

@@ -13,7 +13,9 @@ class Ajax {
 	 */
 	public function __construct() {
 		add_action( 'wp_ajax_install_woocommerce_plugin', array( $this, 'install_woocommerce_plugin' ) );
-		add_action( 'wp_ajax_wps_subscription_activate_woocommerce_plugin', array( $this, 'activate_woocommerce_plugin' ) );
+		add_action( 'wp_ajax_wps_subscription_activate_woocommerce_plugin', array( $this, 'wps_subscription_activate_woocommerce_plugin' ) );
+		
+		add_action( 'wp_ajax_activate_woocommerce_plugin', array( $this, 'activate_woocommerce_plugin' ) );
 	}
 
 	/**
@@ -76,6 +78,12 @@ class Ajax {
 	 * Active WooComerce Plugin.
 	 */
 	public function activate_woocommerce_plugin() {
+		// add Deprecated notice
+		_deprecated_function( 'Ajax::activate_woocommerce_plugin', '1.5.3', 'Ajax::wps_subscription_activate_woocommerce_plugin' );
+		return $this->wps_subscription_activate_woocommerce_plugin();
+	}
+
+	public function wps_subscription_activate_woocommerce_plugin() {
 		activate_plugin( 'woocommerce/woocommerce.php' );
 		wp_send_json(
 			array(

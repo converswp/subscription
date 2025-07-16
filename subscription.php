@@ -3,7 +3,7 @@
  * Plugin Name: WPSubscription - Subscription & Recurring Payment Plugin for WooCommerce
  * Plugin URI: https://wpsubscription.co/
  * Description: WPSubscription allow WooCommerce to enables recurring payments, subscriptions, and auto-renewals for digital and physical products. Supports Stripe, PayPal, Paddle, and more.
- * Version: 1.5.2
+ * Version: 1.5.3
  * Author: ConversWP
  * Author URI: https://wpsubscription.co/
  * Text Domain: wp_subscription
@@ -40,7 +40,7 @@ final class Sdevs_Subscription {
 	 *
 	 * @var string
 	 */
-	const version = '1.5.2';
+	const version = '1.5.3';
 
 	/**
 	 * Holds various class instances
@@ -156,6 +156,9 @@ final class Sdevs_Subscription {
 	 * @return void
 	 */
 	public function includes() {
+		// Include functions file first to ensure global functions are available
+		require_once WP_SUBSCRIPTION_INCLUDES . '/functions.php';
+
 		if ( $this->is_request( 'admin' ) ) {
 			$this->container['admin'] = new SpringDevs\Subscription\Admin();
 		}
@@ -293,10 +296,13 @@ if ( ! function_exists( 'wp_subscription_register_paypal_block' ) ) {
 		);
 	}
 
-	// Is PayPal integration enabled?
-	$is_paypal_integration_enabled = 'on' === get_option( 'wp_subs_paypal_integration_enabled', 'off' );
-	if ( $is_paypal_integration_enabled ) {
-		add_action( 'woocommerce_blocks_loaded', 'wp_subscription_register_paypal_block' );
+	// Register PayPal integration only if WordPress functions are available
+	if ( function_exists( 'get_option' ) ) {
+		// Is PayPal integration enabled?
+		$is_paypal_integration_enabled = 'on' === get_option( 'wp_subs_paypal_integration_enabled', 'off' );
+		if ( $is_paypal_integration_enabled ) {
+			add_action( 'woocommerce_blocks_loaded', 'wp_subscription_register_paypal_block' );
+		}
 	}
 }
 

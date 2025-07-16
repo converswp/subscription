@@ -842,6 +842,12 @@ class Paypal extends \WC_Payment_Gateway {
 		$order_id = get_post_meta( $subscription_id, '_subscrpt_order_id', true );
 		$order    = wc_get_order( $order_id );
 
+		// get order payment method
+		$payment_method = $order->get_payment_method();
+		if ( 'paypal' !== $payment_method ) {
+			return;
+		}
+
 		// Get paypal subscription ID from order meta.
 		$paypal_subscription_id = $order->get_meta( $this->get_meta_key( 'subscription_id' ) );
 
