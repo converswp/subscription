@@ -76,29 +76,41 @@ function subscrpt_is_auto_renew_enabled() {
 	return 'auto' === get_option( 'subscrpt_renewal_process', 'auto' );
 }
 
-/**
- * Return Label against key.
- *
- * @param string $key Key to return cast Value.
- *
- * @return string
- */
-function wps_subscription_order_relation_type_cast( string $key ) {
-	$relational_type_keys = apply_filters(
-		'subscrpt_order_relational_types',
-		array(
-			'new'   => __( 'New Subscription Order', 'wp_subscription' ),
-			'renew' => __( 'Renewal Order', 'wp_subscription' ),
-		)
-	);
+if ( ! function_exists( 'wps_subscription_order_relation_type_cast' ) ) {
+	/**
+	 * Return Label against key.
+	 *
+	 * @param string $key Key to return cast Value.
+	 *
+	 * @return string
+	 */
+	function order_relation_type_cast( string $key ) {
+		// add Deprecated notice
+		_deprecated_function( 'order_relation_type_cast', '1.5.3', 'wps_subscription_order_relation_type_cast' );
+		return wps_subscription_order_relation_type_cast( $key );
+	}
+	function wps_subscription_order_relation_type_cast( string $key ) {
+		$relational_type_keys = apply_filters(
+			'subscrpt_order_relational_types',
+			array(
+				'new'   => __( 'New Subscription Order', 'wp_subscription' ),
+				'renew' => __( 'Renewal Order', 'wp_subscription' ),
+			)
+		);
 
-	return isset( $relational_type_keys[ $key ] ) ? $relational_type_keys[ $key ] : '-';
+		return isset( $relational_type_keys[ $key ] ) ? $relational_type_keys[ $key ] : '-';
+	}
 }
 
 if ( ! function_exists( 'wps_subscription_is_wc_order_hpos_enabled' ) ) {
 	/**
 	 * Check if HPOS enabled.
 	 */
+	function is_wc_order_hpos_enabled() {
+		// add Deprecated notice
+		_deprecated_function( 'is_wc_order_hpos_enabled', '1.5.3', 'wps_subscription_is_wc_order_hpos_enabled' );
+		return wps_subscription_is_wc_order_hpos_enabled();
+	}
 	function wps_subscription_is_wc_order_hpos_enabled() {
 		return function_exists( 'wc_get_container' ) ?
 			wc_get_container()
@@ -145,6 +157,11 @@ if ( ! function_exists( 'wps_subscription_get_timing_types' ) ) {
 	 *
 	 * @return array
 	 */
+	function get_timing_types( $key_value = false ): array {
+		// add Deprecated notice
+		_deprecated_function( 'get_timing_types', '1.5.3', 'wps_subscription_get_timing_types' );
+		return wps_subscription_get_timing_types( $key_value );
+	}
 	function wps_subscription_get_timing_types( $key_value = false ): array {
 		return $key_value ? array(
 			'days'   => 'Daily',
