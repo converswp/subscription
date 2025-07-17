@@ -228,7 +228,7 @@ Learn more: [WPSubscription](https://wpsubscription.co/)
 
 == Changelog ==
 
-= 1.5.4 - Jul 16, 2025 =
+= 1.5.4 - Jul 17, 2025 =
 - **Improved**: Enhanced settings page with better user interface and organization
 - **Improved**: Fixed user role conflicts between subscription customers and administrators
 - **Fix**: User roles now properly change based on subscription status (active/inactive)
