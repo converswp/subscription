@@ -183,9 +183,36 @@ class Action {
 
 		$current_status = get_post_status( (int) $subscription_id );
 		
-		// Get role settings from options
-		$active_role = get_option( 'wp_subscription_active_role', 'subscriber' );
-		$inactive_role = get_option( 'wp_subscription_unactive_role', 'customer' );
+		// Get role settings from options with legacy support
+		$active_role = get_option( 'wp_subscription_active_role' );
+		if ( false === $active_role ) {
+			// Legacy fallback
+			$active_role = get_option( 'subscrpt_active_role', 'subscriber' );
+			if ( false !== $active_role ) {
+				_doing_it_wrong( 
+					'Action::user()', 
+					'The option "subscrpt_active_role" is deprecated. Use "wp_subscription_active_role" instead.', 
+					'1.5.3' 
+				);
+			} else {
+				$active_role = 'subscriber';
+			}
+		}
+
+		$inactive_role = get_option( 'wp_subscription_unactive_role' );
+		if ( false === $inactive_role ) {
+			// Legacy fallback
+			$inactive_role = get_option( 'subscrpt_unactive_role', 'customer' );
+			if ( false !== $inactive_role ) {
+				_doing_it_wrong( 
+					'Action::user()', 
+					'The option "subscrpt_unactive_role" is deprecated. Use "wp_subscription_unactive_role" instead.', 
+					'1.5.3' 
+				);
+			} else {
+				$inactive_role = 'customer';
+			}
+		}
 
 		// Assign role based on subscription status
 		if ( 'active' === $current_status ) {
