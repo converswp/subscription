@@ -167,15 +167,31 @@ class Action {
 	 * @param Int $subscription_id Subscription ID.
 	 */
 	private static function user( $subscription_id ) {
-		$user = new \WP_User( get_current_user_id() );
+		// Get the subscription owner's user ID
+		$user_id = get_post_field( 'post_author', (int) $subscription_id );
+		
+		if ( ! $user_id ) {
+			return;
+		}
+
+		$user = new \WP_User( $user_id );
+		
+		// Don't change roles for administrators
 		if ( ! empty( $user->roles ) && is_array( $user->roles ) && in_array( 'administrator', $user->roles, true ) ) {
 			return;
 		}
 
-		if ( Helper::subscription_exists( $subscription_id, 'active' ) ) {
-			$user->set_role( get_option( 'subscrpt_active_role', 'subscriber' ) );
-		} elseif ( Helper::subscription_exists( $subscription_id, array( 'cancelled', 'expired' ) ) ) {
-			$user->set_role( get_option( 'subscrpt_unactive_role', 'customer' ) );
+		$current_status = get_post_status( (int) $subscription_id );
+		
+		// Get role settings from options
+		$active_role = get_option( 'wp_subscription_active_role', 'subscriber' );
+		$inactive_role = get_option( 'wp_subscription_unactive_role', 'customer' );
+
+		// Assign role based on subscription status
+		if ( 'active' === $current_status ) {
+			$user->set_role( $active_role );
+		} elseif ( in_array( $current_status, array( 'cancelled', 'expired', 'pe_cancelled' ), true ) ) {
+			$user->set_role( $inactive_role );
 		}
 	}
 }
