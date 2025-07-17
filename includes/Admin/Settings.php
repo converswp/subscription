@@ -24,14 +24,12 @@ class Settings {
 	 * @return void
 	 */
 	public function admin_menu() {
-		$post_type_link = 'edit.php?post_type=subscrpt_order';
-
 		add_submenu_page( 
-			$post_type_link, 
+			'edit.php?post_type=subscrpt_order', 
 			__( 'WP Subscription Settings', 'wp_subscription' ),
 			__( 'Settings', 'wp_subscription' ), 
 			'manage_options', 
-			'edit.php?post_type=wp_subscription_settings',
+			'wp_subscription_settings',
 			array( $this, 'settings_content' ),
 			40
 		);
