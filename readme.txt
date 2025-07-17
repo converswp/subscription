@@ -3,7 +3,7 @@ Contributors: converswp, shamsbd71
 Tags: woocommerce-subscriptions, subscriptions, subscriptions-billing, recurring-payments, woocommerce-extensions
 Requires at least: 6.0
 Tested up to: 6.8
-Stable tag: 1.5.3
+Stable tag: 1.5.4
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -227,6 +227,12 @@ Learn more: [WPSubscription](https://wpsubscription.co/)
 19. Create WooCommerce Product with Subscription Option
 
 == Changelog ==
+
+= 1.5.4 - Jul 16, 2025 =
+- **Improved**: Enhanced settings page with better user interface and organization
+- **Improved**: Fixed user role conflicts between subscription customers and administrators
+- **Fix**: User roles now properly change based on subscription status (active/inactive)
+- **Fix**: Corrected role assignment system to work with subscription status changes
 
 = 1.5.3 - Jul 16, 2025 =
 - **Improved**: PayPal Integration Improvements.
