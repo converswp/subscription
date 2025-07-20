@@ -64,7 +64,7 @@ $shipping_address = $order ? $order->get_formatted_shipping_address() : '-';
                     </tr>
                     <tr>
                         <th style="padding:8px 10px;">Status</th>
-                        <td style="padding:8px 10px;"><span class="subscrpt-status-badge subscrpt-status-<?php echo esc_attr($status_obj->name); ?>"><?php echo esc_html($status_obj->label); ?></span></td>
+                        <td style="padding:8px 10px;"><span class="subscrpt-<?php echo esc_attr($status_obj->name); ?>"><?php echo esc_html($status_obj->label); ?></span></td>
                     </tr>
                     <tr>
                         <th style="padding:8px 10px;">Payment Method</th>
@@ -91,26 +91,6 @@ $shipping_address = $order ? $order->get_formatted_shipping_address() : '-';
     </div>
 </div>
 <style>
-.subscrpt-status-badge {
-    display: inline-block;
-    min-width: 48px;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 500;
-    color: #222;
-    text-align: center;
-    letter-spacing: 0.01em;
-    background: #e9ecef;
-    box-shadow: none;
-    text-transform: capitalize;
-}
-.subscrpt-status-active { background: #27c775 !important; color: #ffffff !important; }
-.subscrpt-status-cancelled { background: #fee2e2 !important; color: #b91c1c !important; }
-.subscrpt-status-draft { background: #e0e7ef !important; color: #374151 !important; }
-.subscrpt-status-pending { background: #fef9c3 !important; color: #b45309 !important; }
-.subscrpt-status-expired { background: #e5e7eb !important; color: #6b7280 !important; }
-.subscrpt-status-pe_cancelled { background: #ffedd5 !important; color: #b45309 !important; }
 @media (max-width: 900px) {
   .wp-subscription-info-left, .wp-subscription-info-right {
     flex-basis: 100% !important;

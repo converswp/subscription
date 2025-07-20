@@ -1,15 +1,19 @@
+.my_account_subscrpt .order-status {
+    min-width: 100px;
+}
+
 span[class*="subscrpt-"] {
   background: #bfdbfe;
   color: #1e40af;
   font-weight: 600;
-  font-size: smaller;
+  font-size: 12px;
   text-transform: capitalize;
   padding: 8px 10px;
   border-radius: 5px;
 }
 
 span.subscrpt-pending {
-  background: #bfdbfe;
+  background: #dbeafe;
   color: #1e40af;
 }
 
@@ -25,10 +29,15 @@ span.subscrpt-expired {
 
 span.subscrpt-cancelled {
   background: #e2e8f0;
-  color: #1e293b;
+  color: #475569;
 }
 
 span.subscrpt-pe_cancelled {
-  background: #fde68a;
-  color: #854d0e;
+  background: #ffedd5;
+  color: #b45309;
+}
+
+span.subscrpt-draft {
+  background: #f3f3f3;
+  color: #888;
 }

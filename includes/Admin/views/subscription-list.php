@@ -73,13 +73,13 @@ for ( $i = 0; $i < 12; $i++ ) {
 		<table class="wp-list-table widefat fixed striped wp-subscription-modern-table">
 			<thead>
 				<tr>
-					<th style="width:30px;"><input type="checkbox" id="cb-select-all-1"></th>
+					<th style="width:20px;"><input type="checkbox" id="cb-select-all-1"></th>
 					<th style="width:180px;">ID</th>
 					<th style="min-width:320px;">Title</th>
 					<th style="width:180px;">Customer</th>
 					<th style="width:100px;">Start Date</th>
 					<th style="width:100px;">Renewal Date</th>
-					<th style="width:80px;">Status</th>
+					<th style="width:100px;">Status</th>
 					<th style="width:80px;">Actions</th>
 				</tr>
 			</thead>
@@ -136,8 +136,8 @@ for ( $i = 0; $i < 12; $i++ ) {
 					<td><?php echo $start_date ? esc_html( gmdate( 'F d, Y', $start_date ) ) : '-'; ?></td>
 					<td><?php echo $renewal_date ? esc_html( gmdate( 'F d, Y', $renewal_date ) ) : '-'; ?></td>
 					<td>
-						<span class="subscrpt-status-badge subscrpt-status-<?php echo esc_attr( $status_obj->name ); ?>">
-							<?php echo esc_html( $status_obj->label ); ?>
+						<span class="subscrpt-<?php echo esc_attr( $status_obj->name ); ?>">
+							<?php echo esc_html( strlen( $status_obj->label ) > 9 ? substr( $status_obj->label, 0, 9 ) . '...' : $status_obj->label ); ?>
 						</span>
 					</td>
 					<td>

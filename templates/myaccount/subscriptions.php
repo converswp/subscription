@@ -51,7 +51,7 @@ use SpringDevs\Subscription\Illuminate\Helper;
 
 					<td data-title="Status">
 						<span class="subscrpt-<?php echo esc_attr( $post_status_object->name ); ?>">
-							<?php echo esc_html( strlen( $post_status_object->label ) > 9 ? substr( $post_status_object->label, 0, 6 ) . '...' : $post_status_object->label ); ?>
+							<?php echo esc_html( strlen( $post_status_object->label ) > 9 ? substr( $post_status_object->label, 0, 9 ) . '...' : $post_status_object->label ); ?>
 						</span>
 					</td>
 					
