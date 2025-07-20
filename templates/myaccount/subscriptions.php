@@ -45,7 +45,7 @@ use SpringDevs\Subscription\Illuminate\Helper;
 				$product_link       = get_the_permalink( $product_id );
 				$product_price_html = Helper::format_price_with_order_item( get_post_meta( get_the_ID(), '_subscrpt_price', true ), $order_item->get_id() );
 				?>
-				
+
 				<tr>
 					<td data-title="Subscription"><?php the_ID(); ?></td>
 

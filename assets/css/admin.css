@@ -27,8 +27,8 @@
 }
 
 .subscrpt-order-label {
-  background: #e1edf7;
-  color: #2683aa;
+  background: #dbeafe;
+  color: #1e40af;
   display: inline-block;
   padding: 5px 10px;
   font-weight: 500;
@@ -36,6 +36,7 @@
   margin-top: 10px;
   clear: both;
   margin-bottom: 5px;
+  border-radius: 5px;
 }
 
 @media (min-width: 1024px) {
