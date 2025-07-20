@@ -16,9 +16,8 @@ STYLE GUIDE FOR WP SUBSCRIPTION ADMIN PAGES:
 <table class="wp-list-table widefat fixed striped wp-subscription-modern-table" style="border-radius:6px;overflow:hidden;box-shadow:0 2px 8px #e0e7ef;">
 	<thead>
 		<tr>
-			<th style="width: 100px;"><?php
-			esc_html_e( 'ID', 'wp_subscription' ); ?></th>
-			<th></th>
+			<th style="width: 80px;"><?php esc_html_e( 'ID', 'wp_subscription' ); ?></th>
+			<th><?php esc_html_e( 'Order Type', 'wp_subscription' ); ?></th>
 			<th><?php esc_html_e( 'Date', 'wp_subscription' ); ?></th>
 			<th><?php esc_html_e( 'Status', 'wp_subscription' ); ?></th>
 			<th><?php esc_html_e( 'Amount', 'wp_subscription' ); ?></th>
@@ -28,35 +27,37 @@ STYLE GUIDE FOR WP SUBSCRIPTION ADMIN PAGES:
 	<tbody>
 		<?php foreach ( $order_histories as $order_history ) : ?>
 			<?php
-			$order      = wc_get_order( $order_history->order_id );
-			$order_item = $order->get_item( $order_history->order_item_id );
+				$order      = wc_get_order( $order_history->order_id );
+				$order_item = $order->get_item( $order_history->order_item_id );
 			?>
 			<tr>
-				<td><a href="<?php echo wp_kses_post( $order->get_edit_order_url() ); ?>" target="_blank"><?php echo wp_kses_post( $order_history->order_id ); ?></a></td>
-									<td><?php echo wp_kses_post( wps_subscription_order_relation_type_cast( $order_history->type ) ); ?></td>
+				<td>
+					<a href="<?php echo wp_kses_post( $order->get_edit_order_url() ); ?>" target="_blank">
+						<?php echo wp_kses_post( $order_history->order_id ); ?>
+					</a>
+				</td>
+				<td>
+					<?php echo wp_kses_post( wps_subscription_order_relation_type_cast( $order_history->type ) ); ?>
+				</td>
 				<td>
 					<?php
 					if ( $order ) {
-						echo wp_kses_post( gmdate( 'F d, Y', strtotime( $order->get_date_created() ) ) );}
+						echo wp_kses_post( gmdate( 'F d, Y', strtotime( $order->get_date_created() ) ) );
+					}
 					?>
 				</td>
 				<td>
-				<?php
-				if ( $order ) {
-					echo esc_html( sdevs_order_status_label( $order->get_status() ) );
-				}
-				?>
+					<?php
+					if ( $order ) {
+						echo esc_html( sdevs_order_status_label( $order->get_status() ) );
+					}
+					?>
 				</td>
 				<td>
-				<?php
-				echo wc_price(
-					$order_item->get_total(),
-					array(
-						'currency' => $order->get_currency(),
-					)
-				);
-				?>
-			</td>
+					<?php
+					echo wc_price( $order_item->get_total(), array( 'currency' => $order->get_currency() ) );
+					?>
+				</td>
 			</tr>
 		<?php endforeach; ?>
 	</tbody>
