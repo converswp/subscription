@@ -55,8 +55,10 @@ use SpringDevs\Subscription\Illuminate\Helper;
 						<td data-title="Next Payment"><small>First Billing : </small><?php echo esc_html( gmdate( 'F d, Y', $start_date ) ); ?></td>
 					<?php endif; ?>
 					<td data-title="Total"><?php echo wp_kses_post( $product_price_html ); ?></td>
-					<td data-title="Actions">
-						<a href="<?php echo esc_html( wc_get_endpoint_url( 'view-subscription', get_the_ID(), wc_get_page_permalink( 'myaccount' ) ) ); ?>" class="woocommerce-button <?php echo esc_attr( $wp_button_class ); ?> button view"><span class="dashicons dashicons-visibility"></span></a>
+					<td data-title="Actions">						
+						<a href="<?php echo esc_html( wc_get_endpoint_url( 'view-subscription', get_the_ID(), wc_get_page_permalink( 'myaccount' ) ) ); ?>" class="woocommerce-button <?php echo esc_attr( $wp_button_class ); ?> button view">
+							<?php echo esc_html_e( 'View', 'wp_subscription' ); ?>
+						</a>
 					</td>
 				</tr>
 				<?php
