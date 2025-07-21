@@ -55,6 +55,13 @@ class Menu {
      * Create Subscriptions Menu.
      */
     public function create_admin_menu() {
+        // Prevent duplicate menu creation
+        static $menu_created = false;
+        if ( $menu_created ) {
+            return;
+        }
+        $menu_created = true;
+
         $parent_slug = 'wp-subscription';
         // Determine if the menu is active
         $is_active = isset($_GET['page']) && strpos($_GET['page'], 'wp-subscription') === 0;

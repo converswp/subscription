@@ -20,7 +20,14 @@ class MyAccount {
 	 */
 	public function __construct() {
 		add_action( 'init', array( $this, 'flush_rewrite_rules' ) );
-		add_filter( 'woocommerce_account_menu_items', array( $this, 'custom_my_account_menu_items' ) );
+		
+		// Prevent duplicate menu creation
+		static $menu_added = false;
+		if ( ! $menu_added ) {
+			add_filter( 'woocommerce_account_menu_items', array( $this, 'custom_my_account_menu_items' ) );
+			$menu_added = true;
+		}
+		
 		add_filter( 'woocommerce_endpoint_view-subscription_title', array( $this, 'change_single_title' ) );
 		add_filter( 'the_title', array( $this, 'change_lists_title' ), 10 );
 		add_filter( 'woocommerce_get_query_vars', array( $this, 'custom_query_vars' ) );
@@ -178,10 +185,13 @@ class MyAccount {
 	 * @return array
 	 */
 	public function custom_my_account_menu_items( array $items ): array {
-		$logout = $items['customer-logout'];
-		unset( $items['customer-logout'] );
-		$items['subscriptions']   = __( 'Subscriptions', 'wp_subscription' );
-		$items['customer-logout'] = $logout;
+		// Check if subscriptions menu item already exists to prevent duplicates
+		if ( ! isset( $items['subscriptions'] ) ) {
+			$logout = $items['customer-logout'];
+			unset( $items['customer-logout'] );
+			$items['subscriptions']   = __( 'Subscriptions', 'wp_subscription' );
+			$items['customer-logout'] = $logout;
+		}
 		return $items;
 	}
 
