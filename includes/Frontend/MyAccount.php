@@ -29,7 +29,7 @@ class MyAccount {
 		}
 		
 		add_filter( 'woocommerce_endpoint_view-subscription_title', array( $this, 'change_single_title' ) );
-		add_filter( 'the_title', array( $this, 'change_lists_title' ), 10 );
+		add_filter( 'document_title_parts', array( $this, 'maybe_change_document_title' ), 20 );
 		add_filter( 'woocommerce_get_query_vars', array( $this, 'custom_query_vars' ) );
 		add_action( 'woocommerce_account_view-subscription_endpoint', array( $this, 'view_subscrpt_content' ) );
 		add_action( 'woocommerce_account_subscriptions_endpoint', array( $this, 'subscrpt_endpoint_content' ) );
@@ -163,7 +163,20 @@ class MyAccount {
 	}
 
 	/**
-	 * Change Subscription Lists Title
+	 * Change the browser/page title for the subscriptions endpoint only.
+	 */
+	public function maybe_change_document_title( $title_parts ) {
+		if ( function_exists( 'is_account_page' ) && is_account_page() ) {
+			global $wp_query;
+			if ( isset( $wp_query->query_vars['subscriptions'] ) ) {
+				$title_parts['title'] = __( 'My Subscriptions', 'wp_subscription' );
+			}
+		}
+		return $title_parts;
+	}
+
+	/**
+	 * Change Subscription Lists Title (main content only, not menus)
 	 *
 	 * @param string $title Title.
 	 *
@@ -171,9 +184,10 @@ class MyAccount {
 	 */
 	public function change_lists_title( string $title ): string {
 		global $wp_query;
-		$is_endpoint = isset( $wp_query->query_vars['subscriptions'] );
-		if ( $is_endpoint && ! is_admin() && is_account_page() ) {
-			$title = __( 'My Subscriptions', 'wp_subscription' );
+		if ( is_main_query() && in_the_loop() && ! is_admin() ) {
+			if ( function_exists( 'is_account_page' ) && is_account_page() && isset( $wp_query->query_vars['subscriptions'] ) ) {
+				return __( 'My Subscriptions', 'wp_subscription' );
+			}
 		}
 		return $title;
 	}
