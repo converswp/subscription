@@ -426,6 +426,15 @@ class Helper {
 		self::clone_order_metadata( $new_order, $old_order );
 		self::clone_stripe_metadata_for_renewal( $subscription_id, $old_order, $new_order );
 
+		// Store Stripe subscription ID if available
+		if ( $old_order->get_payment_method() === 'stripe' ) {
+			$stripe_subscription_id = $old_order->get_meta('_stripe_subscription_id');
+			if ( $stripe_subscription_id ) {
+				$new_order->update_meta_data('_stripe_subscription_id', $stripe_subscription_id);
+				$new_order->save();
+			}
+		}
+
 		$new_order->calculate_totals();
 		$new_order->save();
 		if ( ! is_admin() && function_exists( 'wc_add_notice' ) ) {
