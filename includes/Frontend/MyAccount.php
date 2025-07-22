@@ -22,11 +22,8 @@ class MyAccount {
 		add_action( 'init', array( $this, 'flush_rewrite_rules' ) );
 		
 		// Prevent duplicate menu creation
-		static $menu_added = false;
-		if ( ! $menu_added ) {
-			add_filter( 'woocommerce_account_menu_items', array( $this, 'custom_my_account_menu_items' ) );
-			$menu_added = true;
-		}
+
+		add_filter( 'woocommerce_account_menu_items', array( $this, 'custom_my_account_menu_items' ) );
 		
 		add_filter( 'woocommerce_endpoint_view-subscription_title', array( $this, 'change_single_title' ) );
 		add_filter( 'document_title_parts', array( $this, 'maybe_change_document_title' ), 20 );
@@ -173,23 +170,6 @@ class MyAccount {
 			}
 		}
 		return $title_parts;
-	}
-
-	/**
-	 * Change Subscription Lists Title (main content only, not menus)
-	 *
-	 * @param string $title Title.
-	 *
-	 * @return string
-	 */
-	public function change_lists_title( string $title ): string {
-		global $wp_query;
-		if ( is_main_query() && in_the_loop() && ! is_admin() ) {
-			if ( function_exists( 'is_account_page' ) && is_account_page() && isset( $wp_query->query_vars['subscriptions'] ) ) {
-				return __( 'My Subscriptions', 'wp_subscription' );
-			}
-		}
-		return $title;
 	}
 
 	/**
