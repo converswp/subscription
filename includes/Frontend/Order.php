@@ -73,6 +73,10 @@ class Order {
 								<?php echo wp_kses_post( Helper::format_price_with_order_item( $cost, $history->order_item_id ) ); ?>
 							</td>
 						</tr>
+						<tr>
+							<th scope="row"><?php esc_html_e( 'Maximum Renewals', 'wp_subscription' ); ?>:</th>
+							<td><?php echo esc_html( get_post_meta( $history->subscription_id, '_subscrpt_renewal_limit', true ) ); ?></td>
+						</tr>
 						<?php
 						if ( null == $trial_status ) {
 							?>

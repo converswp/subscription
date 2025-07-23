@@ -93,6 +93,14 @@ const RecurringTotals = ( { cart, extensions } ) => {
 									</small>
 								</>
 							) }
+							{ recurring.renewal_limit > 0 && (
+								<>
+									<br />
+									<small>
+										This subscription will be built for { recurring.renewal_limit } times.
+									</small>
+								</>
+							) }
 						</div>
 					) ) }
 				</div>

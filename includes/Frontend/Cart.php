@@ -229,8 +229,13 @@ class Cart {
 						'readonly'    => true,
 					),
 					'can_user_cancel' => array(
-						'description' => __( 'Can User Cancel?', 'wp_subscription' ),
+						'description' => __( 'Allow User Cancellation?', 'wp_subscription' ),
 						'type'        => array( 'string' ),
+						'readonly'    => true,
+					),
+					'renewal_limit'   => array(
+						'description' => __( 'Maximum Renewals', 'wp_subscription' ),
+						'type'        => array( 'number' ),
 						'readonly'    => true,
 					),
 				),
@@ -264,6 +269,7 @@ class Cart {
 							'type'            => $cart_subscription['type'],
 							'description'     => empty( $cart_subscription['trial'] ) ? 'Next billing on: ' . $next_date : 'First billing on: ' . $start_date,
 							'can_user_cancel' => $cart_item['data']->get_meta( '_subscrpt_user_cancel' ),
+							'renewal_limit'   => $cart_item['data']->get_meta( '_subscrpt_renewal_limit' ),
 						),
 						$cart_item
 					);
@@ -304,6 +310,11 @@ class Cart {
 			'cost'       => array(
 				'description' => __( 'Recurring amount.', 'wp_subscription' ),
 				'type'        => array( 'string', 'null' ),
+				'readonly'    => true,
+			),
+			'renewal_limit'   => array(
+				'description' => __( 'Maximum Renewals', 'wp_subscription' ),
+				'type'        => array( 'number' ),
 				'readonly'    => true,
 			),
 		);
@@ -426,6 +437,12 @@ class Cart {
 						<?php if ( 'yes' === $recurr['can_user_cancel'] ) : ?>
 							<br>
 							<small><?php esc_html_e( 'You can cancel subscription at any time!', 'wp_subscription' ); ?></small>
+						<?php endif; ?>
+
+						<!-- add how many times will be build if _subscrpt_renewal_limit is not 0 -->
+						<?php if ( $recurr['renewal_limit'] > 0 ) : ?>
+							<br>
+							<small><?php esc_html_e( 'This subscription will be built for', 'wp_subscription' ); ?> <?php echo esc_html( $recurr['renewal_limit'] ); ?> <?php esc_html_e( 'times.', 'wp_subscription' ); ?></small>
 						<?php endif; ?>
 					</p>
 				<?php endforeach; ?>
