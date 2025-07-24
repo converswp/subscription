@@ -396,6 +396,18 @@ class Helper {
 	 * @throws \Exception Exception.
 	 */
 	public static function create_renewal_order( $subscription_id ) {
+		// Check if renewal limit has been reached
+		if ( subscrpt_is_renewal_limit_reached( $subscription_id ) ) {
+			// Mark subscription as expired due to limit reached
+			wp_update_post( array(
+				'ID'          => $subscription_id,
+				'post_status' => 'expired'
+			) );
+			
+			error_log( "WPS: Renewal limit reached for subscription #{$subscription_id}. No renewal order created." );
+			return false;
+		}
+		
 		$order_item_id = get_post_meta( $subscription_id, '_subscrpt_order_item_id', true );
 		$order_id      = wc_get_order_id_by_order_item_id( $order_item_id );
 		$old_order     = self::check_order_for_renewal( $order_id );

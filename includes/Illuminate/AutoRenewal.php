@@ -94,6 +94,12 @@ class AutoRenewal {
 	 * @param int $subscription_id Subscription ID.
 	 */
 	public function after_subscription_expired( $subscription_id ) {
+		// Check if renewal limit has been reached
+		if ( subscrpt_is_renewal_limit_reached( $subscription_id ) ) {
+			error_log( "WPS: Renewal limit reached for subscription #{$subscription_id}. Auto-renewal cancelled." );
+			return;
+		}
+		
 		if ( subscrpt_is_auto_renew_enabled() ) {
 			Helper::create_renewal_order( $subscription_id );
 		}

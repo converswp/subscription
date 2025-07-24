@@ -33,6 +33,15 @@ class ActionController {
 		if ( ! wp_verify_nonce( $wpnonce, 'subscrpt_nonce' ) ) {
 			wp_die( esc_html( __( 'Sorry !! You cannot permit to access.', 'wp_subscription' ) ) );
 		}
+		
+		// Check renewal limit for renewal-related actions
+		if ( in_array( $action, array( 'renew', 'renew-on' ), true ) && subscrpt_is_renewal_limit_reached( $subscrpt_id ) ) {
+			wc_add_notice( __( 'This subscription has reached its renewal limit and cannot be renewed further.', 'wp_subscription' ), 'error' );
+			// phpcs:ignore
+			echo ( "<script>location.href = '" . wc_get_endpoint_url( 'view-subscription', $subscrpt_id, wc_get_page_permalink( 'myaccount' ) ) . "';</script>" );
+			return;
+		}
+		
 		if ( 'renew' === $action && ! subscrpt_is_auto_renew_enabled() ) {
 			$this->manual_renew_product( $subscrpt_id );
 		} elseif ( 'cancelled' === $action ) {

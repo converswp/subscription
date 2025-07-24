@@ -15,11 +15,6 @@ const modifyCartItemPrice = ( defaultValue, extensions, args, validation ) => {
 	const { cartItem } = args;
 	const { totals } = cartItem;
 	
-	// Debug: Log what we receive
-	console.log('modifyCartItemPrice extensions:', extensions);
-	console.log('modifyCartItemPrice sdevs_subscription:', sdevs_subscription);
-	console.log('modifyCartItemPrice renewal_limit:', sdevs_subscription?.renewal_limit);
-	
 	if ( totals === undefined ) {
 		return defaultValue;
 	}

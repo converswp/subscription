@@ -78,13 +78,20 @@ do_action( 'before_single_subscrpt_content' );
 
 		<!-- get the renewal_limit using Helper -->
 		<?php $remaining_renewals = \SpringDevs\SubscriptionPro\Illuminate\LimitChecker::get_remaining_renewals($id); ?>
-		<?php $get_subscrpt_renewals = \SpringDevs\SubscriptionPro\Illuminate\LimitChecker::get_subscrpt_renewals($id); ?>
+		
+		<?php $remaining_renewals = subscrpt_get_remaining_renewals($id); ?>
+		<?php $payments_made = subscrpt_count_payments_made($id); ?>
+		<?php 
+		// Get renewal limit from product
+		$product_id = get_post_meta( $id, '_subscrpt_product_id', true );
+		$renewal_limit = $product_id ? get_post_meta( $product_id, '_subscrpt_renewal_limit', true ) : 0;
+		?>
 
-		<!-- now check if $remaining_renewals is not unlimited and less than or equal to 1 then show how many left -->
-		<?php if ( $remaining_renewals !== 'unlimited' ) : ?>
+		<!-- now check if $remaining_renewals is not unlimited and show payment progress -->
+		<?php if ( $remaining_renewals !== 'unlimited' && $renewal_limit > 0 ) : ?>
 			<tr>
 				<td><?php esc_html_e( 'Number of Payments', 'wp_subscription' ); ?></td>
-				<td><?php echo esc_html( $get_subscrpt_renewals-$remaining_renewals ) . ' / ' . $get_subscrpt_renewals; ?></td>
+				<td><?php echo esc_html( $payments_made ) . ' / ' . esc_html( $renewal_limit ); ?></td>
 			</tr>
 		<?php endif; ?>
 		

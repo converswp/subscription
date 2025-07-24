@@ -469,6 +469,12 @@ class Cart {
 	public function set_renew_status( $cart_item_data, $product_id ) {
 		$expired = Helper::subscription_exists( $product_id, 'expired' );
 		if ( $expired ) {
+			// Check if renewal limit has been reached
+			if ( subscrpt_is_renewal_limit_reached( $expired ) ) {
+				wc_add_notice( __( 'This subscription has reached its renewal limit and cannot be renewed further.', 'wp_subscription' ), 'error' );
+				return $cart_item_data; // Don't add renew status
+			}
+			
 			$cart_item_data['renew_subscrpt'] = true;
 		}
 
