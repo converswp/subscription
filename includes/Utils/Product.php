@@ -114,6 +114,10 @@ abstract class Product {
 		return $this->product->get_meta( '_subscrpt_limit' );
 	}
 
+	public function get_renewal_limit() {
+		return $this->product->get_meta( '_subscrpt_renewal_limit' );
+	}
+
 	public function is_enabled(): bool {
 		return $this->product->get_meta( '_subscrpt_enabled' );
 	}

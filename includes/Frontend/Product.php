@@ -277,6 +277,11 @@ class Product {
 				$trial           = '<br/><small> + Get ' . $meta_trial_time . ' ' . Helper::get_typos( $meta_trial_time, $product->get_trial_timing_option() ) . ' free trial!</small>';
 			}
 
+			$renewal_limit = $product->get_renewal_limit();
+			if ( $renewal_limit > 0 ) {
+				$trial .= '<small> x ' . $renewal_limit . '</small>';
+			}
+
 			return apply_filters( 'subscrpt_simple_price_html', ( $price . ' / ' . $type . $trial ), $product, $price, $trial );
 		else :
 			return $price;

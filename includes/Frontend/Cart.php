@@ -234,7 +234,7 @@ class Cart {
 						'readonly'    => true,
 					),
 					'renewal_limit'   => array(
-						'description' => __( 'Maximum Renewals', 'wp_subscription' ),
+						'description' => __( 'Number of Payments', 'wp_subscription' ),
 						'type'        => array( 'number' ),
 						'readonly'    => true,
 					),
@@ -313,7 +313,7 @@ class Cart {
 				'readonly'    => true,
 			),
 			'renewal_limit'   => array(
-				'description' => __( 'Maximum Renewals', 'wp_subscription' ),
+				'description' => __( 'Number of Payments', 'wp_subscription' ),
 				'type'        => array( 'number' ),
 				'readonly'    => true,
 			),
@@ -334,7 +334,9 @@ class Cart {
 			'trial'      => null,
 			'signup_fee' => null,
 			'cost'       => null,
+			'renewal_limit'   => null,
 		);
+		
 		if ( isset( $cart_item['subscription'] ) ) {
 			$item_data = $cart_item['subscription'];
 			unset( $item_data['per_cost'] );
@@ -372,6 +374,7 @@ class Cart {
 			$subscription_data['signup_fee'] = null;
 			$subscription_data['per_cost']   = $product->get_price();
 			$cart_item_data['subscription']  = apply_filters( 'subscrpt_block_simple_cart_item_data', $subscription_data, $product, $cart_item_data );
+			$cart_item_data['subscription']['renewal_limit'] = $product->get_meta( '_subscrpt_renewal_limit' );
 		endif;
 
 		return $cart_item_data;
@@ -428,7 +431,11 @@ class Cart {
 			<td data-title="<?php esc_attr_e( 'Recurring totals', 'wp_subscription' ); ?>">
 				<?php foreach ( $recurrs as $recurr ) : ?>
 					<p>
-						<span><?php echo wp_kses_post( $recurr['price_html'] ); ?></span><br />
+						<span><?php echo wp_kses_post( $recurr['price_html'] ); ?></span>
+						<?php if ( $recurr['renewal_limit'] > 0 ) : ?>
+							<span>x <?php echo esc_html( $recurr['renewal_limit'] ); ?></span>
+						<?php endif; ?>
+						<br />
 						<small><?php 
 						$billing_text = $recurr['trial_status'] ? 'First billing on' : 'Next billing on';
 						esc_html_e( $billing_text, 'wp_subscription' ); 

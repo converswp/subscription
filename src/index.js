@@ -14,18 +14,29 @@ const modifyCartItemPrice = ( defaultValue, extensions, args, validation ) => {
 	const { sdevs_subscription } = extensions;
 	const { cartItem } = args;
 	const { totals } = cartItem;
+	
+	// Debug: Log what we receive
+	console.log('modifyCartItemPrice extensions:', extensions);
+	console.log('modifyCartItemPrice sdevs_subscription:', sdevs_subscription);
+	console.log('modifyCartItemPrice renewal_limit:', sdevs_subscription?.renewal_limit);
+	
 	if ( totals === undefined ) {
 		return defaultValue;
 	}
 	if ( totals.line_total === '0' ) {
 		return `<price/> Due Today`;
 	}
-	if ( sdevs_subscription.type ) {
+	if ( sdevs_subscription && sdevs_subscription.type ) {
+		// Check renewal_limit - handle string, number, null, undefined
+		const renewalLimit = parseInt(sdevs_subscription.renewal_limit, 10);
+		const renewalInfo = !isNaN(renewalLimit) && renewalLimit > 0 
+			? ` x ${renewalLimit}` 
+			: '';
 		return `<price/> / ${
 			sdevs_subscription.time && sdevs_subscription.time > 1
 				? ' ' + sdevs_subscription.time + '-'
 				: ''
-		}${ sdevs_subscription.type }`;
+		}${ sdevs_subscription.type }${renewalInfo}`;
 	}
 	return defaultValue;
 };
@@ -37,13 +48,20 @@ const modifySubtotalPriceFormat = (
 	validation
 ) => {
 	const { sdevs_subscription } = extensions;
+	const { sdevs_subscription: recurrings } = extensions;
+	
 	if ( sdevs_subscription && sdevs_subscription.type ) {
-		return `<price/> every ${
+		// Check renewal_limit - handle string, number, null, undefined
+		const renewalLimit = parseInt(sdevs_subscription.renewal_limit, 10);
+		const renewalInfo = !isNaN(renewalLimit) && renewalLimit > 0 
+			? ` x ${renewalLimit}` 
+			: '';
+		return `<price/> ${ __('Every', 'wp_subscription') } ${
 			sdevs_subscription.time && sdevs_subscription.time > 1
 				? ' ' + sdevs_subscription.time + '-'
-				: ''
-		}${ sdevs_subscription.type }`;
+				: ''}${ sdevs_subscription.type }${renewalInfo}`;
 	}
+	
 	return defaultValue;
 };
 

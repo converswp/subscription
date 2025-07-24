@@ -83,7 +83,7 @@ do_action( 'before_single_subscrpt_content' );
 		<!-- now check if $remaining_renewals is not unlimited and less than or equal to 1 then show how many left -->
 		<?php if ( $remaining_renewals !== 'unlimited' ) : ?>
 			<tr>
-				<td><?php esc_html_e( 'Total Renewals Count', 'wp_subscription' ); ?></td>
+				<td><?php esc_html_e( 'Number of Payments', 'wp_subscription' ); ?></td>
 				<td><?php echo esc_html( $get_subscrpt_renewals-$remaining_renewals ) . ' / ' . $get_subscrpt_renewals; ?></td>
 			</tr>
 		<?php endif; ?>

@@ -170,19 +170,19 @@ if ( ! function_exists( 'wps_subscription_get_timing_types' ) ) {
 			'years'  => 'Yearly',
 		) : array(
 			array(
-				'label' => __( 'day(s)', 'wp_subscription' ),
+				'label' => __( 'Day', 'wp_subscription' ),
 				'value' => 'days',
 			),
 			array(
-				'label' => __( 'week(s)', 'wp_subscription' ),
+				'label' => __( 'Week', 'wp_subscription' ),
 				'value' => 'weeks',
 			),
 			array(
-				'label' => __( 'month(s)', 'wp_subscription' ),
+				'label' => __( 'Month', 'wp_subscription' ),
 				'value' => 'months',
 			),
 			array(
-				'label' => __( 'year(s)', 'wp_subscription' ),
+				'label' => __( 'Year', 'wp_subscription' ),
 				'value' => 'years',
 			),
 		);
