@@ -36,6 +36,7 @@ class Subscriptions {
 		add_filter( 'bulk_actions-edit-subscrpt_order', array( $this, 'remove_bulk_actions' ) );
 		add_action( 'restrict_manage_posts', array( $this, 'add_subscription_filter_select' ) );
 		add_action( 'admin_menu', array( $this, 'add_overview_submenu' ), 40 );
+		add_action( 'edit_form_after_title', array( $this, 'display_subscription_details_section' ) );
 	}
 
 	/**
@@ -176,25 +177,18 @@ class Subscriptions {
 
 		add_meta_box(
 			'subscrpt_customer_info',
-			__( 'Customer Info', 'wp_subscription' ),
+			__( 'Customer Details', 'wp_subscription' ),
 			array( $this, 'customer_info' ),
 			'subscrpt_order',
 			'side',
 			'default'
 		);
 
-		add_meta_box(
-			'subscrpt_order_info',
-			__( 'Subscription Info', 'wp_subscription' ),
-			array( $this, 'subscrpt_order_info' ),
-			'subscrpt_order',
-			'normal',
-			'default'
-		);
+		// Removed the redundant subscription info meta box as it's now shown prominently above
 
 		add_meta_box(
 			'subscrpt_order_history',
-			__( 'Subscription History', 'wp_subscription' ),
+			__( 'Related Orders', 'wp_subscription' ),
 			array( $this, 'order_histories' ),
 			'subscrpt_order',
 			'normal',
@@ -434,6 +428,124 @@ class Subscriptions {
 	}
 
 	/**
+	 * Display a prominent subscription details section.
+	 *
+	 * @param \WP_Post $post The post object.
+	 *
+	 * @return void
+	 */
+	public function display_subscription_details_section( $post ) {
+		// Only display for subscription post type
+		if ( 'subscrpt_order' !== $post->post_type ) {
+			return;
+		}
+		
+		$order_id = get_post_meta( $post->ID, '_subscrpt_order_id', true );
+		$order    = wc_get_order( $order_id );
+
+		if ( ! $order ) {
+			return;
+		}
+		
+		$order_item_id = get_post_meta( $post->ID, '_subscrpt_order_item_id', true );
+		$order_item = $order->get_item( $order_item_id );
+		
+		if ( ! $order_item ) {
+			return;
+		}
+		
+		// Get payment information
+		$product_id = get_post_meta( $post->ID, '_subscrpt_product_id', true );
+		$max_payments = $product_id ? get_post_meta( $product_id, '_subscrpt_max_no_payment', true ) : 0;
+		$payments_made = subscrpt_count_payments_made( $post->ID );
+		
+		// Get subscription details
+		$product = $order_item->get_product();
+		$subscrpt_type = $product ? get_post_meta( $product->get_id(), '_subscrpt_type', true ) : '';
+		$subscrpt_time = $product ? get_post_meta( $product->get_id(), '_subscrpt_time', true ) : '';
+		$trial_days = $product ? get_post_meta( $product->get_id(), '_subscrpt_trial_days', true ) : '';
+		$signup_fee = $product ? get_post_meta( $product->get_id(), '_subscrpt_sign_up_fee', true ) : '';
+		$cost = $product ? get_post_meta( $product->get_id(), '_subscrpt_cost', true ) : '';
+		
+		$subscrpt_status = get_post_status( $post->ID );
+		$started_date = get_the_date( 'F j, Y g:i A', $post->ID );
+		$next_payment = get_post_meta( $post->ID, '_subscrpt_next_date', true );
+		$next_payment_formatted = $next_payment ? date( 'F j, Y g:i A', strtotime( $next_payment ) ) : __( 'N/A', 'wp_subscription' );
+		
+		?>
+		<div class="wp-subscription-details-section">
+			<h2 style="margin: 0 0 20px 0; padding: 0; border-bottom: 1px solid #ddd; padding-bottom: 12px;">
+				<?php printf( esc_html__( 'Subscription #%d details', 'wp_subscription' ), $post->ID ); ?>
+			</h2>
+			
+			<div class="subscription-details-grid">
+				<!-- Primary Information -->
+				<div class="details-group primary">
+					<h3><?php esc_html_e( 'General', 'wp_subscription' ); ?></h3>
+					<table>
+						<tr>
+							<th><?php esc_html_e( 'Status', 'wp_subscription' ); ?></th>
+							<td><span class="status-badge status-<?php echo esc_attr( $subscrpt_status ); ?>"><?php echo esc_html( ucfirst( str_replace( 'subscrpt_', '', $subscrpt_status ) ) ); ?></span></td>
+						</tr>
+						<tr>
+							<th><?php esc_html_e( 'Product', 'wp_subscription' ); ?></th>
+							<td><a href="<?php echo esc_url( get_the_permalink( $order_item->get_product_id() ) ); ?>" target="_blank"><?php echo esc_html( $order_item->get_name() ); ?></a></td>
+						</tr>
+					</table>
+				</div>
+				
+				<!-- Subscription Terms -->
+				<div class="details-group">
+					<h3><?php esc_html_e( 'Subscription Terms', 'wp_subscription' ); ?></h3>
+					<table>
+						<tr>
+							<th><?php esc_html_e( 'Billing', 'wp_subscription' ); ?></th>
+							<td>
+								<?php echo wp_kses_post( wc_price( $cost ) ); ?> / 
+								<?php echo esc_html( $subscrpt_time > 1 ? $subscrpt_time . '-' : '' ); ?><?php echo esc_html( $subscrpt_type ); ?>
+							</td>
+						</tr>
+						<?php if ( $signup_fee ) : ?>
+						<tr>
+							<th><?php esc_html_e( 'Signup Fee', 'wp_subscription' ); ?></th>
+							<td><?php echo wp_kses_post( wc_price( $signup_fee ) ); ?></td>
+						</tr>
+						<?php endif; ?>
+						<?php if ( $trial_days ) : ?>
+						<tr>
+							<th><?php esc_html_e( 'Free Trial', 'wp_subscription' ); ?></th>
+							<td><?php echo esc_html( $trial_days . ' days' ); ?></td>
+						</tr>
+						<?php endif; ?>
+						<?php if ( !empty( $max_payments ) && $max_payments > 0 ) : ?>
+						<tr>
+							<th><?php esc_html_e( 'Total Payments', 'wp_subscription' ); ?></th>
+							<td><strong><?php echo esc_html( $payments_made . ' / ' . $max_payments ); ?></strong></td>
+						</tr>
+						<?php endif; ?>
+					</table>
+				</div>
+				
+				<!-- Important Dates -->
+				<div class="details-group">
+					<h3><?php esc_html_e( 'Important Dates', 'wp_subscription' ); ?></h3>
+					<table>
+						<tr>
+							<th><?php esc_html_e( 'Started', 'wp_subscription' ); ?></th>
+							<td><?php echo esc_html( $started_date ); ?></td>
+						</tr>
+						<tr>
+							<th><?php esc_html_e( 'Next Payment', 'wp_subscription' ); ?></th>
+							<td><?php echo esc_html( $next_payment_formatted ); ?></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
 	 * Include some styles.
 	 *
 	 * @return void
@@ -451,6 +563,112 @@ class Subscriptions {
 				.subscrpt_sub_box {
 					display: grid;
 					line-height: 2;
+				}
+				
+				/* Hide WordPress title area margin */
+				#poststuff #post-body.columns-2 {
+					margin-right: 300px;
+				}
+				
+				/* Clean, minimal details section */
+				.wp-subscription-details-section {
+					margin: 20px 0 30px 0;
+					padding: 20px;
+					border: 1px solid #ddd;
+					background: #fff;
+				}
+				
+				/* Grid layout for organized sections */
+				.subscription-details-grid {
+					display: grid;
+					grid-template-columns: 1fr 1fr;
+					gap: 30px;
+					margin-top: 20px;
+				}
+				
+				@media (max-width: 782px) {
+					.subscription-details-grid {
+						grid-template-columns: 1fr;
+					}
+				}
+				
+				/* Details group styling */
+				.details-group h3 {
+					margin: 0 0 12px 0;
+					padding: 0 0 8px 0;
+					border-bottom: 1px solid #eee;
+					font-size: 14px;
+					font-weight: 600;
+					color: #555;
+					text-transform: uppercase;
+					letter-spacing: 0.5px;
+				}
+				
+				.details-group.primary h3 {
+					color: #333;
+				}
+				
+				.details-group table {
+					width: 100%;
+					border-collapse: collapse;
+				}
+				
+				.details-group table th {
+					text-align: left;
+					padding: 8px 12px 8px 0;
+					font-weight: 500;
+					color: #666;
+					width: 40%;
+					vertical-align: top;
+					font-size: 13px;
+				}
+				
+				.details-group table td {
+					padding: 8px 0;
+					color: #333;
+					font-size: 13px;
+					line-height: 1.4;
+				}
+				
+				.details-group table tr {
+					border-bottom: 1px solid #f5f5f5;
+				}
+				
+				.details-group table tr:last-child {
+					border-bottom: none;
+				}
+				
+				/* Simple status badge */
+				.status-badge {
+					display: inline-block;
+					padding: 2px 8px;
+					border-radius: 3px;
+					font-size: 12px;
+					font-weight: 500;
+					text-transform: capitalize;
+					background: #f5f5f5;
+					color: #666;
+					border: 1px solid #ddd;
+				}
+				
+				/* Clean links */
+				.details-group a {
+					color: #0073aa;
+					text-decoration: none;
+				}
+				
+				.details-group a:hover {
+					text-decoration: underline;
+				}
+				
+				/* Meta box styling improvements */
+				.postbox {
+					border: 1px solid #ddd;
+				}
+				
+				.postbox .hndle {
+					border-bottom: 1px solid #eee;
+					background: #fafafa;
 				}
 			</style>
 			<?php
