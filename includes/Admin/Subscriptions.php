@@ -465,7 +465,15 @@ class Subscriptions {
 		$subscrpt_time = $product ? get_post_meta( $product->get_id(), '_subscrpt_time', true ) : '';
 		$trial_days = $product ? get_post_meta( $product->get_id(), '_subscrpt_trial_days', true ) : '';
 		$signup_fee = $product ? get_post_meta( $product->get_id(), '_subscrpt_sign_up_fee', true ) : '';
-		$cost = $product ? get_post_meta( $product->get_id(), '_subscrpt_cost', true ) : '';
+		
+		// Get subscription cost - try multiple sources
+		$cost = get_post_meta( $post->ID, '_subscrpt_price', true );
+		if ( empty( $cost ) || $cost == 0 ) {
+			$cost = $product ? get_post_meta( $product->get_id(), '_subscrpt_cost', true ) : '';
+		}
+		if ( empty( $cost ) || $cost == 0 ) {
+			$cost = $order_item->get_total();
+		}
 		
 		$subscrpt_status = get_post_status( $post->ID );
 		$started_date = get_the_date( 'F j, Y g:i A', $post->ID );
