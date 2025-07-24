@@ -54,6 +54,20 @@ $shipping_address = $order ? $order->get_formatted_shipping_address() : '-';
                         <th style="padding:8px 10px;">Qty</th>
                         <td style="padding:8px 10px;"><?php echo esc_html($qty); ?></td>
                     </tr>
+                    
+                    <?php 
+                    // Display payment information if max_payments is set
+                    $product_id = get_post_meta($post->ID, '_subscrpt_product_id', true);
+                    $max_payments = $product_id ? get_post_meta($product_id, '_subscrpt_max_no_payment', true) : 0;
+                    if (!empty($max_payments) && $max_payments > 0) :
+                        $payments_made = subscrpt_count_payments_made($post->ID);
+                    ?>
+                    <tr>
+                        <th style="padding:8px 10px;"><?php esc_html_e('Total Payments', 'wp_subscription'); ?></th>
+                        <td style="padding:8px 10px;"><?php echo esc_html($payments_made) . ' / ' . esc_html($max_payments); ?></td>
+                    </tr>
+                    <?php endif; ?>
+                    
                     <tr>
                         <th style="padding:8px 10px;">Started date</th>
                         <td style="padding:8px 10px;"><?php echo $start_date ? esc_html(gmdate('F d, Y', $start_date)) : '-'; ?></td>

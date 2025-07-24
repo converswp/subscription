@@ -344,6 +344,12 @@ class Subscriptions {
 
 		$product_name = $order_item->get_name();
 		$product_link = get_the_permalink( $order_item->get_product_id() );
+		
+		// Get payment information
+		$product_id = get_post_meta( get_the_ID(), '_subscrpt_product_id', true );
+		$max_payments = $product_id ? get_post_meta( $product_id, '_subscrpt_max_no_payment', true ) : 0;
+		$payments_made = subscrpt_count_payments_made( get_the_ID() );
+		
 		$rows         = array(
 			'product'          => array(
 				'label' => __( 'Product', 'wp_subscription' ),
@@ -357,6 +363,17 @@ class Subscriptions {
 				'label' => __( 'Qty', 'wp_subscription' ),
 				'value' => "x{$order_item->get_quantity()}",
 			),
+		);
+		
+		// Add payment information if max_payments is set and not unlimited
+		if ( ! empty( $max_payments ) && $max_payments > 0 ) {
+			$rows['total_payments'] = array(
+				'label' => __( 'Total Payments', 'wp_subscription' ),
+				'value' => esc_html( $payments_made ) . ' / ' . esc_html( $max_payments ),
+			);
+		}
+		
+		$rows += array(
 			'start_date'       => array(
 				'label' => __( 'Started date', 'wp_subscription' ),
 				'value' => ! empty( $start_date ) ? gmdate( 'F d, Y', $trial && $trial_start_date ? $trial_start_date : $start_date ) : '-',
