@@ -87,7 +87,7 @@ function subscrpt_count_payments_made( $subscription_id ) {
 	
 	$table_name = $wpdb->prefix . 'subscrpt_order_relation';
 	
-	// Debug: Get all relations for this subscription
+	// Get all relations for this subscription
 	$relations = $wpdb->get_results( $wpdb->prepare(
 		"SELECT sr.*, p.post_status, p.post_date 
 		FROM {$table_name} sr 
@@ -97,45 +97,24 @@ function subscrpt_count_payments_made( $subscription_id ) {
 		$subscription_id
 	) );
 	
-	error_log( "WPS DEBUG: Found " . count($relations) . " relations for subscription #{$subscription_id}" );
-	
 	// Define all payment-related order types (allow filtering for extensibility)
 	$payment_types = apply_filters( 'subscrpt_payment_order_types', array( 'new', 'renew', 'early-renew' ) );
 	
-	error_log( "WPS DEBUG: Payment types to count: " . implode( ', ', $payment_types ) );
-	
-	// Count successful payments manually with better logic
+	// Count successful payments
 	$successful_count = 0;
 	foreach ( $relations as $relation ) {
-		error_log( "WPS DEBUG: Processing relation - Order #{$relation->order_id}, Type: {$relation->type}, DB Status: {$relation->post_status}" );
-		
 		// Count all payment-related types
 		if ( in_array( $relation->type, $payment_types ) ) {
 			// Get the actual WooCommerce order
 			$order = wc_get_order( $relation->order_id );
 			if ( $order ) {
-				$order_status = $order->get_status();
-				$is_paid = $order->is_paid();
-				$order_total = $order->get_total();
-				
-				error_log( "WPS DEBUG: Order #{$relation->order_id} - WC Status: {$order_status}, Is Paid: " . ($is_paid ? 'YES' : 'NO') . ", Total: {$order_total}" );
-				
 				// Check if order was paid/successful
 				if ( $order->is_paid() || in_array( $order->get_status(), array( 'completed', 'processing', 'on-hold' ) ) ) {
 					$successful_count++;
-					error_log( "WPS DEBUG: ✓ COUNTING - Order #{$relation->order_id} ({$relation->type}) as successful payment #{$successful_count}" );
-				} else {
-					error_log( "WPS DEBUG: ✗ SKIPPING - Order #{$relation->order_id} ({$relation->type}) with status '{$order->get_status()}' as unsuccessful" );
 				}
-			} else {
-				error_log( "WPS DEBUG: ✗ ERROR - Could not load WooCommerce order #{$relation->order_id}" );
 			}
-		} else {
-			error_log( "WPS DEBUG: ✗ SKIPPING - Relation type '{$relation->type}' not counted (payment types: " . implode( ', ', $payment_types ) . ")" );
 		}
 	}
-	
-	error_log( "WPS DEBUG: ===== FINAL RESULT: {$successful_count} successful payments for subscription #{$subscription_id} =====" );
 	
 	return $successful_count;
 }

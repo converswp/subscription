@@ -34,8 +34,9 @@ class ActionController {
 			wp_die( esc_html( __( 'Sorry !! You cannot permit to access.', 'wp_subscription' ) ) );
 		}
 		
-		// Check maximum payment limit for renewal-related actions
-		if ( in_array( $action, array( 'renew', 'renew-on' ), true ) && subscrpt_is_max_payments_reached( $subscrpt_id ) ) {
+		// Check maximum payment limit for renewal-related actions (including early renewal)
+		$renewal_actions = apply_filters( 'subscrpt_renewal_actions', array( 'renew', 'renew-on', 'early-renew' ) );
+		if ( in_array( $action, $renewal_actions, true ) && subscrpt_is_max_payments_reached( $subscrpt_id ) ) {
 			wc_add_notice( __( 'This subscription has reached its maximum payment limit and cannot be renewed further.', 'wp_subscription' ), 'error' );
 			// phpcs:ignore
 			echo ( "<script>location.href = '" . wc_get_endpoint_url( 'view-subscription', $subscrpt_id, wc_get_page_permalink( 'myaccount' ) ) . "';</script>" );
@@ -63,6 +64,15 @@ class ActionController {
 		} elseif ( 'renew' === $action && subscrpt_is_auto_renew_enabled() ) {
 			Helper::create_renewal_order( $subscrpt_id );
 		} else {
+			// Safety check: If this is any kind of renewal action and limit is reached, block it
+			if ( subscrpt_is_max_payments_reached( $subscrpt_id ) && 
+				 ( strpos( $action, 'renew' ) !== false || strpos( $action, 'renewal' ) !== false ) ) {
+				wc_add_notice( __( 'This subscription has reached its maximum payment limit and cannot be renewed further.', 'wp_subscription' ), 'error' );
+				// phpcs:ignore
+				echo ( "<script>location.href = '" . wc_get_endpoint_url( 'view-subscription', $subscrpt_id, wc_get_page_permalink( 'myaccount' ) ) . "';</script>" );
+				return;
+			}
+			
 			do_action( 'subscrpt_execute_actions', $subscrpt_id, $action );
 		}
 		// phpcs:ignore

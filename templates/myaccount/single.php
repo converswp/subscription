@@ -83,9 +83,6 @@ do_action( 'before_single_subscrpt_content' );
 		// Get maximum payments from product
 		$product_id = get_post_meta( $id, '_subscrpt_product_id', true );
 		$max_payments = $product_id ? get_post_meta( $product_id, '_subscrpt_max_no_payment', true ) : 0;
-		
-		// Debug the values
-		error_log( "WPS TEMPLATE DEBUG: Subscription #{$id} - Product ID: {$product_id}, Max Payments: {$max_payments}, Payments Made: {$payments_made}, Remaining: {$remaining_payments}" );
 		?>
 
 		<!-- show payment progress if max_payments is set and not unlimited -->
