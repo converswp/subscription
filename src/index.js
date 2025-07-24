@@ -22,16 +22,16 @@ const modifyCartItemPrice = ( defaultValue, extensions, args, validation ) => {
 		return `<price/> Due Today`;
 	}
 	if ( sdevs_subscription && sdevs_subscription.type ) {
-		// Check renewal_limit - handle string, number, null, undefined
-		const renewalLimit = parseInt(sdevs_subscription.renewal_limit, 10);
-		const renewalInfo = !isNaN(renewalLimit) && renewalLimit > 0 
-			? ` x ${renewalLimit}` 
+		// Check max_no_payment - handle string, number, null, undefined
+		const maxPayments = parseInt(sdevs_subscription.max_no_payment, 10);
+		const paymentInfo = !isNaN(maxPayments) && maxPayments > 0 
+			? ` x ${maxPayments}` 
 			: '';
 		return `<price/> / ${
 			sdevs_subscription.time && sdevs_subscription.time > 1
 				? ' ' + sdevs_subscription.time + '-'
 				: ''
-		}${ sdevs_subscription.type }${renewalInfo}`;
+		}${ sdevs_subscription.type }${paymentInfo}`;
 	}
 	return defaultValue;
 };
@@ -46,15 +46,15 @@ const modifySubtotalPriceFormat = (
 	const { sdevs_subscription: recurrings } = extensions;
 	
 	if ( sdevs_subscription && sdevs_subscription.type ) {
-		// Check renewal_limit - handle string, number, null, undefined
-		const renewalLimit = parseInt(sdevs_subscription.renewal_limit, 10);
-		const renewalInfo = !isNaN(renewalLimit) && renewalLimit > 0 
-			? ` x ${renewalLimit}` 
+		// Check max_no_payment - handle string, number, null, undefined
+		const maxPayments = parseInt(sdevs_subscription.max_no_payment, 10);
+		const paymentInfo = !isNaN(maxPayments) && maxPayments > 0 
+			? ` x ${maxPayments}` 
 			: '';
 		return `<price/> ${ __('Every', 'wp_subscription') } ${
 			sdevs_subscription.time && sdevs_subscription.time > 1
 				? ' ' + sdevs_subscription.time + '-'
-				: ''}${ sdevs_subscription.type }${renewalInfo}`;
+				: ''}${ sdevs_subscription.type }${paymentInfo}`;
 	}
 	
 	return defaultValue;
@@ -106,11 +106,11 @@ const RecurringTotals = ( { cart, extensions } ) => {
 									</small>
 								</>
 							) }
-							{ recurring.renewal_limit > 0 && (
+							{ recurring.max_no_payment > 0 && (
 								<>
 									<br />
 									<small>
-										This subscription will be built for { recurring.renewal_limit } times.
+										This subscription will be built for { recurring.max_no_payment } times.
 									</small>
 								</>
 							) }

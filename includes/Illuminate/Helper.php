@@ -380,7 +380,7 @@ class Helper {
 					'start_date'      => self::start_date( $cart_subscription['trial'] ),
 					'next_date'       => self::next_date( ( $cart_subscription['time'] ?? 1 ) . ' ' . $cart_subscription['type'], $cart_subscription['trial'] ),
 					'can_user_cancel' => $cart_item['data']->get_meta( '_subscrpt_user_cancel' ),
-					'renewal_limit'   => $cart_item['data']->get_meta( '_subscrpt_renewal_limit' ),
+					'max_no_payment'  => $cart_item['data']->get_meta( '_subscrpt_max_no_payment' ),
 				);
 			}
 		}
@@ -396,15 +396,15 @@ class Helper {
 	 * @throws \Exception Exception.
 	 */
 	public static function create_renewal_order( $subscription_id ) {
-		// Check if renewal limit has been reached
-		if ( subscrpt_is_renewal_limit_reached( $subscription_id ) ) {
+		// Check if maximum payment limit has been reached
+		if ( subscrpt_is_max_payments_reached( $subscription_id ) ) {
 			// Mark subscription as expired due to limit reached
 			wp_update_post( array(
 				'ID'          => $subscription_id,
 				'post_status' => 'expired'
 			) );
 			
-			error_log( "WPS: Renewal limit reached for subscription #{$subscription_id}. No renewal order created." );
+			error_log( "WPS: Maximum payment limit reached for subscription #{$subscription_id}. No renewal order created." );
 			return false;
 		}
 		

@@ -233,8 +233,8 @@ class Cart {
 						'type'        => array( 'string' ),
 						'readonly'    => true,
 					),
-					'renewal_limit'   => array(
-						'description' => __( 'Number of Payments', 'wp_subscription' ),
+					'max_no_payment'   => array(
+						'description' => __( 'Maximum Total Payments', 'wp_subscription' ),
 						'type'        => array( 'number' ),
 						'readonly'    => true,
 					),
@@ -269,7 +269,7 @@ class Cart {
 							'type'            => $cart_subscription['type'],
 							'description'     => empty( $cart_subscription['trial'] ) ? 'Next billing on: ' . $next_date : 'First billing on: ' . $start_date,
 							'can_user_cancel' => $cart_item['data']->get_meta( '_subscrpt_user_cancel' ),
-							'renewal_limit'   => $cart_item['data']->get_meta( '_subscrpt_renewal_limit' ),
+							'max_no_payment'  => $cart_item['data']->get_meta( '_subscrpt_max_no_payment' ),
 						),
 						$cart_item
 					);
@@ -312,8 +312,8 @@ class Cart {
 				'type'        => array( 'string', 'null' ),
 				'readonly'    => true,
 			),
-			'renewal_limit'   => array(
-				'description' => __( 'Number of Payments', 'wp_subscription' ),
+			'max_no_payment'   => array(
+				'description' => __( 'Maximum Total Payments', 'wp_subscription' ),
 				'type'        => array( 'number' ),
 				'readonly'    => true,
 			),
@@ -334,7 +334,7 @@ class Cart {
 			'trial'      => null,
 			'signup_fee' => null,
 			'cost'       => null,
-			'renewal_limit'   => null,
+			'max_no_payment'   => null,
 		);
 		
 		if ( isset( $cart_item['subscription'] ) ) {
@@ -374,7 +374,7 @@ class Cart {
 			$subscription_data['signup_fee'] = null;
 			$subscription_data['per_cost']   = $product->get_price();
 			$cart_item_data['subscription']  = apply_filters( 'subscrpt_block_simple_cart_item_data', $subscription_data, $product, $cart_item_data );
-			$cart_item_data['subscription']['renewal_limit'] = $product->get_meta( '_subscrpt_renewal_limit' );
+			$cart_item_data['subscription']['max_no_payment'] = $product->get_meta( '_subscrpt_max_no_payment' );
 		endif;
 
 		return $cart_item_data;
@@ -432,8 +432,8 @@ class Cart {
 				<?php foreach ( $recurrs as $recurr ) : ?>
 					<p>
 						<span><?php echo wp_kses_post( $recurr['price_html'] ); ?></span>
-						<?php if ( $recurr['renewal_limit'] > 0 ) : ?>
-							<span>x <?php echo esc_html( $recurr['renewal_limit'] ); ?></span>
+						<?php if ( $recurr['max_no_payment'] > 0 ) : ?>
+							<span>x <?php echo esc_html( $recurr['max_no_payment'] ); ?></span>
 						<?php endif; ?>
 						<br />
 						<small><?php 
@@ -447,9 +447,9 @@ class Cart {
 						<?php endif; ?>
 
 						<!-- add how many times will be build if _subscrpt_renewal_limit is not 0 -->
-						<?php if ( $recurr['renewal_limit'] > 0 ) : ?>
+						<?php if ( $recurr['max_no_payment'] > 0 ) : ?>
 							<br>
-							<small><?php esc_html_e( 'This subscription will be built for', 'wp_subscription' ); ?> <?php echo esc_html( $recurr['renewal_limit'] ); ?> <?php esc_html_e( 'times.', 'wp_subscription' ); ?></small>
+							<small><?php esc_html_e( 'This subscription will be built for', 'wp_subscription' ); ?> <?php echo esc_html( $recurr['max_no_payment'] ); ?> <?php esc_html_e( 'times.', 'wp_subscription' ); ?></small>
 						<?php endif; ?>
 					</p>
 				<?php endforeach; ?>
@@ -469,9 +469,9 @@ class Cart {
 	public function set_renew_status( $cart_item_data, $product_id ) {
 		$expired = Helper::subscription_exists( $product_id, 'expired' );
 		if ( $expired ) {
-			// Check if renewal limit has been reached
-			if ( subscrpt_is_renewal_limit_reached( $expired ) ) {
-				wc_add_notice( __( 'This subscription has reached its renewal limit and cannot be renewed further.', 'wp_subscription' ), 'error' );
+			// Check if maximum payment limit has been reached
+			if ( subscrpt_is_max_payments_reached( $expired ) ) {
+				wc_add_notice( __( 'This subscription has reached its maximum payment limit and cannot be renewed further.', 'wp_subscription' ), 'error' );
 				return $cart_item_data; // Don't add renew status
 			}
 			

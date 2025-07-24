@@ -34,9 +34,9 @@ class ActionController {
 			wp_die( esc_html( __( 'Sorry !! You cannot permit to access.', 'wp_subscription' ) ) );
 		}
 		
-		// Check renewal limit for renewal-related actions
-		if ( in_array( $action, array( 'renew', 'renew-on' ), true ) && subscrpt_is_renewal_limit_reached( $subscrpt_id ) ) {
-			wc_add_notice( __( 'This subscription has reached its renewal limit and cannot be renewed further.', 'wp_subscription' ), 'error' );
+		// Check maximum payment limit for renewal-related actions
+		if ( in_array( $action, array( 'renew', 'renew-on' ), true ) && subscrpt_is_max_payments_reached( $subscrpt_id ) ) {
+			wc_add_notice( __( 'This subscription has reached its maximum payment limit and cannot be renewed further.', 'wp_subscription' ), 'error' );
 			// phpcs:ignore
 			echo ( "<script>location.href = '" . wc_get_endpoint_url( 'view-subscription', $subscrpt_id, wc_get_page_permalink( 'myaccount' ) ) . "';</script>" );
 			return;

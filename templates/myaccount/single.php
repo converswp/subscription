@@ -76,22 +76,23 @@ do_action( 'before_single_subscrpt_content' );
 			</tr>
 		<?php endif; ?>
 
-		<!-- get the renewal_limit using Helper -->
-		<?php $remaining_renewals = \SpringDevs\SubscriptionPro\Illuminate\LimitChecker::get_remaining_renewals($id); ?>
-		
-		<?php $remaining_renewals = subscrpt_get_remaining_renewals($id); ?>
+		<!-- get the max_no_payment info using Helper -->
+		<?php $remaining_payments = subscrpt_get_remaining_payments($id); ?>
 		<?php $payments_made = subscrpt_count_payments_made($id); ?>
 		<?php 
-		// Get renewal limit from product
+		// Get maximum payments from product
 		$product_id = get_post_meta( $id, '_subscrpt_product_id', true );
-		$renewal_limit = $product_id ? get_post_meta( $product_id, '_subscrpt_renewal_limit', true ) : 0;
+		$max_payments = $product_id ? get_post_meta( $product_id, '_subscrpt_max_no_payment', true ) : 0;
+		
+		// Debug the values
+		error_log( "WPS TEMPLATE DEBUG: Subscription #{$id} - Product ID: {$product_id}, Max Payments: {$max_payments}, Payments Made: {$payments_made}, Remaining: {$remaining_payments}" );
 		?>
 
-		<!-- now check if $remaining_renewals is not unlimited and show payment progress -->
-		<?php if ( $remaining_renewals !== 'unlimited' && $renewal_limit > 0 ) : ?>
+		<!-- show payment progress if max_payments is set and not unlimited -->
+		<?php if ( $remaining_payments !== 'unlimited' && $max_payments > 0 ) : ?>
 			<tr>
-				<td><?php esc_html_e( 'Number of Payments', 'wp_subscription' ); ?></td>
-				<td><?php echo esc_html( $payments_made ) . ' / ' . esc_html( $renewal_limit ); ?></td>
+				<td><?php esc_html_e( 'Total Payments', 'wp_subscription' ); ?></td>
+				<td><?php echo esc_html( $payments_made ) . ' / ' . esc_html( $max_payments ); ?></td>
 			</tr>
 		<?php endif; ?>
 		

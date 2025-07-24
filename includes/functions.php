@@ -83,70 +83,81 @@ function subscrpt_is_auto_renew_enabled() {
  * @return int Number of payments made.
  */
 function subscrpt_count_payments_made( $subscription_id ) {
-	// If pro version is available, use its method
-	if ( class_exists( '\\SpringDevs\\SubscriptionPro\\Illuminate\\LimitChecker' ) ) {
-		$pro_renewals = \SpringDevs\SubscriptionPro\Illuminate\LimitChecker::get_subscrpt_renewals( $subscription_id );
-		$remaining = \SpringDevs\SubscriptionPro\Illuminate\LimitChecker::get_remaining_renewals( $subscription_id );
-		
-		if ( is_numeric( $pro_renewals ) && is_numeric( $remaining ) ) {
-			$payments_made = $pro_renewals - $remaining;
-			error_log( "WPS DEBUG: Using pro version - Subscription #{$subscription_id} payments: {$payments_made} (total: {$pro_renewals}, remaining: {$remaining})" );
-			return max( 0, $payments_made );
-		}
-	}
-	
 	global $wpdb;
 	
 	$table_name = $wpdb->prefix . 'subscrpt_order_relation';
 	
-	// Get all relation records for debugging
+	// Debug: Get all relations for this subscription
 	$relations = $wpdb->get_results( $wpdb->prepare(
-		"SELECT sr.*, p.post_status as order_status 
+		"SELECT sr.*, p.post_status, p.post_date 
 		FROM {$table_name} sr 
 		INNER JOIN {$wpdb->posts} p ON sr.order_id = p.ID 
-		WHERE sr.subscription_id = %d",
+		WHERE sr.subscription_id = %d
+		ORDER BY p.post_date ASC",
 		$subscription_id
 	) );
 	
-	// Debug: log what we find
-	error_log( "WPS DEBUG: Subscription #{$subscription_id} relations: " . json_encode( $relations ) );
+	error_log( "WPS DEBUG: Found " . count($relations) . " relations for subscription #{$subscription_id}" );
 	
-	// Count successful payment records
-	$count = 0;
+	// Define all payment-related order types (allow filtering for extensibility)
+	$payment_types = apply_filters( 'subscrpt_payment_order_types', array( 'new', 'renew', 'early-renew' ) );
+	
+	error_log( "WPS DEBUG: Payment types to count: " . implode( ', ', $payment_types ) );
+	
+	// Count successful payments manually with better logic
+	$successful_count = 0;
 	foreach ( $relations as $relation ) {
-		// Count 'new' and 'renew' type records where order is successful
-		if ( in_array( $relation->type, array( 'new', 'renew' ) ) ) {
-			// Check if order status indicates successful payment
-			if ( in_array( $relation->order_status, array( 'wc-completed', 'wc-processing' ) ) ) {
-				$count++;
+		error_log( "WPS DEBUG: Processing relation - Order #{$relation->order_id}, Type: {$relation->type}, DB Status: {$relation->post_status}" );
+		
+		// Count all payment-related types
+		if ( in_array( $relation->type, $payment_types ) ) {
+			// Get the actual WooCommerce order
+			$order = wc_get_order( $relation->order_id );
+			if ( $order ) {
+				$order_status = $order->get_status();
+				$is_paid = $order->is_paid();
+				$order_total = $order->get_total();
+				
+				error_log( "WPS DEBUG: Order #{$relation->order_id} - WC Status: {$order_status}, Is Paid: " . ($is_paid ? 'YES' : 'NO') . ", Total: {$order_total}" );
+				
+				// Check if order was paid/successful
+				if ( $order->is_paid() || in_array( $order->get_status(), array( 'completed', 'processing', 'on-hold' ) ) ) {
+					$successful_count++;
+					error_log( "WPS DEBUG: ✓ COUNTING - Order #{$relation->order_id} ({$relation->type}) as successful payment #{$successful_count}" );
+				} else {
+					error_log( "WPS DEBUG: ✗ SKIPPING - Order #{$relation->order_id} ({$relation->type}) with status '{$order->get_status()}' as unsuccessful" );
+				}
+			} else {
+				error_log( "WPS DEBUG: ✗ ERROR - Could not load WooCommerce order #{$relation->order_id}" );
 			}
+		} else {
+			error_log( "WPS DEBUG: ✗ SKIPPING - Relation type '{$relation->type}' not counted (payment types: " . implode( ', ', $payment_types ) . ")" );
 		}
 	}
 	
-	error_log( "WPS DEBUG: Subscription #{$subscription_id} payment count: {$count}" );
+	error_log( "WPS DEBUG: ===== FINAL RESULT: {$successful_count} successful payments for subscription #{$subscription_id} =====" );
 	
-	return $count;
+	return $successful_count;
 }
-//return (int) get_post_meta( $subscription_id, '_subscrpt_renewal_count', true );
 
 /**
- * Check if subscription has reached its renewal limit.
+ * Check if subscription has reached its maximum payment limit.
  *
  * @param int $subscription_id Subscription ID.
  * @return bool True if limit reached, false otherwise.
  */
-function subscrpt_is_renewal_limit_reached( $subscription_id ) {
+function subscrpt_is_max_payments_reached( $subscription_id ) {
 	// Get the product ID from subscription
 	$product_id = get_post_meta( $subscription_id, '_subscrpt_product_id', true );
 	if ( ! $product_id ) {
 		return false;
 	}
 	
-	// Get renewal limit from product
-	$renewal_limit = get_post_meta( $product_id, '_subscrpt_renewal_limit', true );
+	// Get maximum payments from product
+	$max_payments = get_post_meta( $product_id, '_subscrpt_max_no_payment', true );
 	
-	// If no limit set or unlimited, renewal is allowed
-	if ( empty( $renewal_limit ) || $renewal_limit <= 0 ) {
+	// If no limit set or unlimited, more payments are allowed
+	if ( empty( $max_payments ) || $max_payments <= 0 ) {
 		return false;
 	}
 	
@@ -154,27 +165,27 @@ function subscrpt_is_renewal_limit_reached( $subscription_id ) {
 	$payments_made = subscrpt_count_payments_made( $subscription_id );
 	
 	// Check if limit reached
-	return $payments_made >= $renewal_limit;
+	return $payments_made >= $max_payments;
 }
 
 /**
- * Get remaining renewals for a subscription.
+ * Get remaining payments for a subscription.
  *
  * @param int $subscription_id Subscription ID.
- * @return int|string Number of remaining renewals or 'unlimited'.
+ * @return int|string Number of remaining payments or 'unlimited'.
  */
-function subscrpt_get_remaining_renewals( $subscription_id ) {
+function subscrpt_get_remaining_payments( $subscription_id ) {
 	// Get the product ID from subscription
 	$product_id = get_post_meta( $subscription_id, '_subscrpt_product_id', true );
 	if ( ! $product_id ) {
 		return 'unlimited';
 	}
 	
-	// Get renewal limit from product
-	$renewal_limit = get_post_meta( $product_id, '_subscrpt_renewal_limit', true );
+	// Get maximum payments from product
+	$max_payments = get_post_meta( $product_id, '_subscrpt_max_no_payment', true );
 	
 	// If no limit set or unlimited
-	if ( empty( $renewal_limit ) || $renewal_limit <= 0 ) {
+	if ( empty( $max_payments ) || $max_payments <= 0 ) {
 		return 'unlimited';
 	}
 	
@@ -182,7 +193,7 @@ function subscrpt_get_remaining_renewals( $subscription_id ) {
 	$payments_made = subscrpt_count_payments_made( $subscription_id );
 	
 	// Calculate remaining
-	$remaining = $renewal_limit - $payments_made;
+	$remaining = $max_payments - $payments_made;
 	
 	return max( 0, $remaining );
 }

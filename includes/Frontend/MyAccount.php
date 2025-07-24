@@ -77,8 +77,8 @@ class MyAccount {
 					'label' => __( 'Reactive', 'wp_subscription' ),
 				);
 			} elseif ( 'expired' === $status && 'pending' !== $order->get_status() ) {
-				// Check if renewal limit has been reached before showing renew button
-				if ( ! subscrpt_is_renewal_limit_reached( $id ) ) {
+				// Check if maximum payments reached before showing renew button
+				if ( ! subscrpt_is_max_payments_reached( $id ) ) {
 					$action_buttons['renew'] = array(
 						'url'   => subscrpt_get_action_url( 'renew', $subscrpt_nonce, $id ),
 						'label' => __( 'Renew', 'wp_subscription' ),
@@ -102,8 +102,8 @@ class MyAccount {
 		$saved_methods = wc_get_customer_saved_methods_list( get_current_user_id() );
 		$has_methods   = isset( $saved_methods['cc'] );
 		if ( $has_methods && '1' === $renewal_setting && class_exists( 'WC_Stripe' ) && $order && 'stripe' === $order->get_payment_method() ) {
-			// Check renewal limit for auto-renewal buttons too
-			if ( ! subscrpt_is_renewal_limit_reached( $id ) ) {
+			// Check maximum payment limit for auto-renewal buttons too
+			if ( ! subscrpt_is_max_payments_reached( $id ) ) {
 				if ( '0' === $is_auto_renew ) {
 					$action_buttons['auto-renew-on'] = array(
 						'url'   => subscrpt_get_action_url( 'renew-on', $subscrpt_nonce, $id ),

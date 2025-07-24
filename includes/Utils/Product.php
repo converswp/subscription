@@ -115,7 +115,11 @@ abstract class Product {
 	}
 
 	public function get_renewal_limit() {
-		return $this->product->get_meta( '_subscrpt_renewal_limit' );
+		return $this->product->get_meta( '_subscrpt_max_no_payment' );
+	}
+	
+	public function get_max_no_payment() {
+		return $this->product->get_meta( '_subscrpt_max_no_payment' );
 	}
 
 	public function is_enabled(): bool {
