@@ -74,10 +74,17 @@ class Paypal extends \WC_Payment_Gateway {
 		$this->description = $this->get_option( 'description' );
 
 		// PayPal Credentials.
-		$this->sandbox_mode  = 'yes' === $this->get_option( 'testmode', 'no' );
-		$this->client_id     = $this->get_option( 'client_id' );
-		$this->client_secret = $this->get_option( 'client_secret' );
-		$this->webhook_id    = $this->get_option( 'webhook_id' );
+		$this->sandbox_mode = 'yes' === $this->get_option( 'testmode', 'no' );
+
+		if ( $this->sandbox_mode ) {
+			$this->client_id     = $this->get_option( 'sandbox_client_id' );
+			$this->client_secret = $this->get_option( 'sandbox_client_secret' );
+			$this->webhook_id    = $this->get_option( 'sandbox_webhook_id' );
+		} else {
+			$this->client_id     = $this->get_option( 'client_id' );
+			$this->client_secret = $this->get_option( 'client_secret' );
+			$this->webhook_id    = $this->get_option( 'webhook_id' );
+		}
 
 		// Set Webhook URL.
 		$this->update_option( 'webhook_url', $this->get_webhook_url() );
@@ -119,8 +126,11 @@ class Paypal extends \WC_Payment_Gateway {
 		// Settings JS.
 		wp_enqueue_script( 'wp-subscription-gateway-settings-script', WP_SUBSCRIPTION_ASSETS . '/js/gateway.js', [ 'jquery' ], WP_SUBSCRIPTION_VERSION, true );
 
+		// Live/Sandbox toggle script.
+		wp_enqueue_script( 'wp-subscription-gateway-settings-toggle-script', WP_SUBSCRIPTION_ASSETS . '/js/gateway_options_toggler.js', [ 'jquery' ], WP_SUBSCRIPTION_VERSION, true );
+
 		$this->form_fields = [
-			'enabled'            => [
+			'enabled'                    => [
 				'title'       => __( 'Enable/Disable', 'wp_subscription' ),
 				'type'        => 'checkbox',
 				'label'       => __( 'Enable PayPal for WPSubscription', 'wp_subscription' ),
@@ -129,14 +139,24 @@ class Paypal extends \WC_Payment_Gateway {
 				'desc_tip'    => true,
 				'class'       => 'wpsubs-toggle',
 			],
-			'title'              => [
+			'testmode'                   => [
+				'title'       => __( 'Test Mode', 'wp_subscription' ),
+				'type'        => 'checkbox',
+				'label'       => __( 'Enable PayPal Sandbox', 'wp_subscription' ),
+				'default'     => 'no',
+				'description' => __( 'PayPal sandbox can be used to test payments without using real money.', 'wp_subscription' ),
+				'desc_tip'    => true,
+				'class'       => 'wpsubs-toggle',
+			],
+
+			'title'                      => [
 				'title'       => __( 'Title', 'wp_subscription' ),
 				'type'        => 'text',
 				'description' => __( 'This controls the title which the user sees during checkout.', 'wp_subscription' ),
 				'default'     => __( 'PayPal', 'wp_subscription' ),
 				'desc_tip'    => true,
 			],
-			'description'        => [
+			'description'                => [
 				'title'       => __( 'Description', 'wp_subscription' ),
 				'type'        => 'textarea',
 				'description' => __( 'This controls the description which the user sees during checkout.', 'wp_subscription' ),
@@ -145,8 +165,21 @@ class Paypal extends \WC_Payment_Gateway {
 				'css'         => 'width: 400px; height: 75px;',
 			],
 
-			'paypal_creds_title' => [
+			'paypal_creds_title'         => [
 				'title'       => __( 'PayPal Credentials', 'wp_subscription' ),
+				'type'        => 'title',
+				'description' => '',
+				'class'       => 'wpsubs-paypal-live-creds',
+			],
+			'paypal_sandbox_creds_title' => [
+				'title'       => __( 'PayPal Sandbox Credentials', 'wp_subscription' ),
+				'type'        => 'title',
+				'description' => '',
+				'class'       => 'wpsubs-paypal-sandbox-creds',
+			],
+
+			'paypal_creds_desc'          => [
+				'title'       => '',
 				'type'        => 'title',
 				'description' => sprintf(
 					// Translators: %1$s is the link to PayPal developer account, %2$s is the link to My Apps & Credentials.
@@ -155,44 +188,67 @@ class Paypal extends \WC_Payment_Gateway {
 					'https://developer.paypal.com/dashboard/applications'
 				),
 			],
-			'testmode'           => [
-				'title'       => __( 'PayPal Sandbox', 'wp_subscription' ),
-				'type'        => 'checkbox',
-				'label'       => __( 'Enable PayPal Sandbox', 'wp_subscription' ),
-				'default'     => 'no',
-				'description' => __( 'PayPal sandbox can be used to test payments without using real money.', 'wp_subscription' ),
-				'desc_tip'    => true,
-				'class'       => 'wpsubs-toggle',
-			],
-			'email'              => [
+			'email'                      => [
 				'title'       => __( 'Email', 'wp_subscription' ),
 				'type'        => 'email',
 				'description' => __( 'PayPal Email Address (used to receive payments)', 'wp_subscription' ),
 				'default'     => '',
 				'desc_tip'    => true,
 			],
-			'client_id'          => [
+
+			// Live Credentials.
+			'client_id'                  => [
 				'title'       => __( 'Client ID', 'wp_subscription' ),
 				'type'        => 'password',
 				'description' => __( 'Enter your PayPal Client ID copied from PayPal Apps & Credentials.', 'wp_subscription' ),
 				'default'     => '',
 				'desc_tip'    => true,
+				'class'       => 'wpsubs-paypal-live-creds',
 			],
-			'client_secret'      => [
+			'client_secret'              => [
 				'title'       => __( 'Secret', 'wp_subscription' ),
 				'type'        => 'password',
 				'description' => __( 'Enter your PayPal Secret copied from PayPal Apps & Credentials.', 'wp_subscription' ),
 				'default'     => '',
 				'desc_tip'    => true,
+				'class'       => 'wpsubs-paypal-live-creds',
 			],
-			'webhook_id'         => [
+			'webhook_id'                 => [
 				'title'       => __( 'Webhook ID', 'wp_subscription' ),
 				'type'        => 'password',
 				'description' => __( 'Enter your Webhook ID copied from PayPal Apps & Credentials for webhook validation.', 'wp_subscription' ),
 				'default'     => '',
 				'desc_tip'    => true,
+				'class'       => 'wpsubs-paypal-live-creds',
 			],
-			'webhook_url'        => [
+
+			// Sandbox Credentials.
+			'sandbox_client_id'          => [
+				'title'       => __( 'Client ID', 'wp_subscription' ),
+				'type'        => 'password',
+				'description' => __( 'Enter your PayPal Client ID copied from PayPal Apps & Credentials.', 'wp_subscription' ),
+				'default'     => '',
+				'desc_tip'    => true,
+				'class'       => 'wpsubs-paypal-sandbox-creds',
+			],
+			'sandbox_client_secret'      => [
+				'title'       => __( 'Secret', 'wp_subscription' ),
+				'type'        => 'password',
+				'description' => __( 'Enter your PayPal Secret copied from PayPal Apps & Credentials.', 'wp_subscription' ),
+				'default'     => '',
+				'desc_tip'    => true,
+				'class'       => 'wpsubs-paypal-sandbox-creds',
+			],
+			'sandbox_webhook_id'         => [
+				'title'       => __( 'Webhook ID', 'wp_subscription' ),
+				'type'        => 'password',
+				'description' => __( 'Enter your Webhook ID copied from PayPal Apps & Credentials for webhook validation.', 'wp_subscription' ),
+				'default'     => '',
+				'desc_tip'    => true,
+				'class'       => 'wpsubs-paypal-sandbox-creds',
+			],
+
+			'webhook_url'                => [
 				'title'       => __( 'Webhook URL', 'wp_subscription' ),
 				'type'        => 'text',
 				'description' => __( '<p>In the <strong style="color:#1d4ed8">Apps & Credentials</strong> page of PayPal developer account open the newly created application and click <strong style="color:#1d4ed8">Add Webhook</strong> button.<br> On the <strong>Webhook URL</strong> field use this webhook link', 'wp_subscription' ),
