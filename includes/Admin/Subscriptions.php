@@ -340,7 +340,7 @@ class Subscriptions {
 		$product_link = get_the_permalink( $order_item->get_product_id() );
 		
 		// Get payment information
-		$product_id = get_post_meta( get_the_ID(), '_subscrpt_product_id', true );
+		$product_id = $order_item->get_product_id(); //get_post_meta( get_the_ID(), '_subscrpt_product_id', true );
 		$max_payments = $product_id ? get_post_meta( $product_id, '_subscrpt_max_no_payment', true ) : 0;
 		$payments_made = subscrpt_count_payments_made( get_the_ID() );
 		
@@ -463,6 +463,15 @@ class Subscriptions {
 		$product = $order_item->get_product();
 		$subscrpt_type = $product ? get_post_meta( $product->get_id(), '_subscrpt_type', true ) : '';
 		$subscrpt_time = $product ? get_post_meta( $product->get_id(), '_subscrpt_time', true ) : '';
+		
+		// If subscrpt_type is empty, try alternate meta keys
+		if ( empty( $subscrpt_type ) ) {
+			$subscrpt_type = $product ? get_post_meta( $product->get_id(), '_subscrpt_timing_option', true ) : '';
+		}
+		if ( empty( $subscrpt_time ) ) {
+			$subscrpt_time = $product ? get_post_meta( $product->get_id(), '_subscrpt_timing_per', true ) : '';
+		}
+		
 		$trial_days = $product ? get_post_meta( $product->get_id(), '_subscrpt_trial_days', true ) : '';
 		$signup_fee = $product ? get_post_meta( $product->get_id(), '_subscrpt_sign_up_fee', true ) : '';
 		
@@ -510,7 +519,9 @@ class Subscriptions {
 							<th><?php esc_html_e( 'Billing', 'wp_subscription' ); ?></th>
 							<td>
 								<?php echo wp_kses_post( wc_price( $cost ) ); ?> / 
-								<?php echo esc_html( $subscrpt_time > 1 ? $subscrpt_time . '-' : '' ); ?><?php echo esc_html( $subscrpt_type ); ?>
+								<?php 								
+									echo esc_html( $subscrpt_time > 1 ? $subscrpt_time . '-' : '' ); ?><?php echo esc_html( $subscrpt_type ); 
+								?>
 							</td>
 						</tr>
 						<?php if ( $signup_fee ) : ?>
