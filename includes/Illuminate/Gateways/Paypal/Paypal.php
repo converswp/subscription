@@ -307,14 +307,14 @@ class Paypal extends \WC_Payment_Gateway {
 		$headers      = getallheaders();
 
 		if ( empty( $webhook_data ) || ! count( $webhook_data ) ) {
-			$post_data    = file_get_contents( 'php://input' );
-			// Sanitize the raw input before decoding
+			$post_data = file_get_contents( 'php://input' );
+			// Sanitize the raw input before decoding.
 			$post_data    = sanitize_text_field( $post_data );
 			$webhook_data = json_decode( $post_data, true );
 
 			if ( ! $webhook_data ) {
 				wp_subscrpt_write_log( 'Webhook data is empty.' );
-				wp_subscrpt_write_debug_log( 'process_webhook EMPTY ' . file_get_contents( 'php://input' ) );
+				wp_subscrpt_write_debug_log( "process_webhook EMPTY \n" . file_get_contents( 'php://input' ) );
 				exit( 'Webhook data is empty.' );
 			}
 		}
@@ -414,6 +414,7 @@ class Paypal extends \WC_Payment_Gateway {
 		// Get PayPal Access Token.
 		$access_token = $this->get_paypal_access_token();
 		if ( ! $access_token ) {
+			wp_subscrpt_write_log( 'PayPal webhook: Access Token unavailable.' );
 			wp_die( 'Error: Access token not available. Cannot verify webhook.', '401 Unauthorized', array( 'response' => 401 ) );
 		}
 
@@ -1089,9 +1090,6 @@ class Paypal extends \WC_Payment_Gateway {
 				wp_subscrpt_write_log( $log_message );
 				wp_subscrpt_write_debug_log( $log_message );
 
-				// Throw error.
-				throw new Exception( $log_message );
-
 				return null;
 			}
 
@@ -1100,10 +1098,6 @@ class Paypal extends \WC_Payment_Gateway {
 			$log_message = $e->getMessage();
 			wp_subscrpt_write_log( $log_message );
 			wp_subscrpt_write_debug_log( $log_message );
-
-			// log the error and Throw error.
-			error_log( $log_message );
-			throw new Exception( $log_message );
 
 			return null;
 		}
