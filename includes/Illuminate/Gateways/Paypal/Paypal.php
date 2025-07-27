@@ -1000,8 +1000,9 @@ class Paypal extends \WC_Payment_Gateway {
 		$trial_interval = $convert_interval( $wpsubs_product->get_trial_timing_option() );
 		$signup_fee     = $wpsubs_product->get_signup_fee();
 
-		// get value for total_cycles from _subscrpt_renewal_limit
-		$total_cycles = $wc_product->get_meta( '_subscrpt_renewal_limit' ) ?? 1;
+		// get value for total_cycles from _subscrpt_max_no_payment
+		$total_cycles = $wc_product->get_meta( '_subscrpt_max_no_payment' ) ?: 0;
+		$total_cycles = $total_cycles ?? 1;
 
 		// Billing Cycles.
 		$billing_cycles = [];
