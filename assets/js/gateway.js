@@ -94,6 +94,10 @@ jQuery(document).ready(function ($) {
   addPasswordToggle("woocommerce_wp_subscription_paypal_client_secret");
   addPasswordToggle("woocommerce_wp_subscription_paypal_webhook_id");
 
+  addPasswordToggle("woocommerce_wp_subscription_paypal_sandbox_client_id");
+  addPasswordToggle("woocommerce_wp_subscription_paypal_sandbox_client_secret");
+  addPasswordToggle("woocommerce_wp_subscription_paypal_sandbox_webhook_id");
+
   // Add copy buttons
   addCopyButton("woocommerce_wp_subscription_paypal_webhook_url");
 });
