@@ -66,30 +66,42 @@ class MyAccount {
 
 		if ( 'cancelled' !== $status ) {
 			if ( in_array( $status, array( 'pending', 'active', 'on_hold' ), true ) && 'yes' === $user_cancel ) {
+				$label = __( 'Cancel', 'wp_subscription' );
+				$label = apply_filters( 'subscrpt_split_payment_button_text', $label, 'cancel', $id, $status );
+				
 				$action_buttons['cancel'] = array(
 					'url'   => subscrpt_get_action_url( 'cancelled', $subscrpt_nonce, $id ),
-					'label' => __( 'Cancel', 'wp_subscription' ),
+					'label' => $label,
 					'class' => 'cancel',
 				);
 			} elseif ( trim( $status ) === trim( 'pe_cancelled' ) ) {
+				$label = __( 'Reactive', 'wp_subscription' );
+				$label = apply_filters( 'subscrpt_split_payment_button_text', $label, 'reactive', $id, $status );
+				
 				$action_buttons['reactive'] = array(
 					'url'   => subscrpt_get_action_url( 'reactive', $subscrpt_nonce, $id ),
-					'label' => __( 'Reactive', 'wp_subscription' ),
+					'label' => $label,
 				);
 			} elseif ( 'expired' === $status && 'pending' !== $order->get_status() ) {
 				// Check if maximum payments reached before showing renew button
 				if ( ! subscrpt_is_max_payments_reached( $id ) ) {
+					$label = __( 'Renew', 'wp_subscription' );
+					$label = apply_filters( 'subscrpt_split_payment_button_text', $label, 'renew', $id, $status );
+					
 					$action_buttons['renew'] = array(
 						'url'   => subscrpt_get_action_url( 'renew', $subscrpt_nonce, $id ),
-						'label' => __( 'Renew', 'wp_subscription' ),
+						'label' => $label,
 					);
 				}
 			}
 
 			if ( 'pending' === $order->get_status() ) {
+				$label = __( 'Pay now', 'wp_subscription' );
+				$label = apply_filters( 'subscrpt_split_payment_button_text', $label, 'pay_now', $id, $status );
+				
 				$action_buttons['pay_now'] = array(
 					'url'   => $order->get_checkout_payment_url(),
-					'label' => __( 'Pay now', 'wp_subscription' ),
+					'label' => $label,
 				);
 			}
 		}
@@ -105,20 +117,33 @@ class MyAccount {
 			// Check maximum payment limit for auto-renewal buttons too
 			if ( ! subscrpt_is_max_payments_reached( $id ) ) {
 				if ( '0' === $is_auto_renew ) {
+					$label = __( 'Turn on Auto Renewal', 'wp_subscription' );
+					$label = apply_filters( 'subscrpt_split_payment_button_text', $label, 'auto-renew-on', $id, $status );
+					
 					$action_buttons['auto-renew-on'] = array(
 						'url'   => subscrpt_get_action_url( 'renew-on', $subscrpt_nonce, $id ),
-						'label' => __( 'Turn on Auto Renewal', 'wp_subscription' ),
+						'label' => $label,
 					);
 				} else {
+					$label = __( 'Turn off Auto Renewal', 'wp_subscription' );
+					$label = apply_filters( 'subscrpt_split_payment_button_text', $label, 'auto-renew-off', $id, $status );
+					
 					$action_buttons['auto-renew-off'] = array(
 						'url'   => subscrpt_get_action_url( 'renew-off', $subscrpt_nonce, $id ),
-						'label' => __( 'Turn off Auto Renewal', 'wp_subscription' ),
+						'label' => $label,
 					);
 				}
 			}
 		}
 
 		$post_status_object = get_post_status_object( $status );
+		
+		// Allow programmatically disabling cancel button
+		$disable_cancel = apply_filters( 'subscrpt_split_payment_disable_cancel', false, $id, $status );
+		if ( $disable_cancel && isset( $action_buttons['cancel'] ) ) {
+			unset( $action_buttons['cancel'] );
+		}
+		
 		$action_buttons     = apply_filters( 'subscrpt_single_action_buttons', $action_buttons, $id, $subscrpt_nonce, $status );
 
 		wc_get_template(

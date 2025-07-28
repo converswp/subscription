@@ -302,6 +302,9 @@ class Helper {
 				'type'            => 'renew',
 			)
 		);
+		
+		// Fire action when split payment is renewed
+		do_action( 'subscrpt_split_payment_renewed', $subscription_id, $order_id, $order_item_id );
 	}
 
 	/**
@@ -317,10 +320,25 @@ class Helper {
 		global $wpdb;
 		$history_table = $wpdb->prefix . 'subscrpt_order_relation';
 
+		// Prepare split payment arguments
+		$split_payment_args = array(
+			'product_id'    => $product->get_id(),
+			'order_id'      => $order_item->get_order_id(),
+			'order_item_id' => $order_item->get_id(),
+			'post_status'   => $post_status,
+			'max_payments'  => $product->get_meta( '_subscrpt_max_no_payment' ),
+			'timing_per'    => $product->get_meta( '_subscrpt_timing_per' ),
+			'timing_option' => $product->get_meta( '_subscrpt_timing_option' ),
+			'price'         => $product->get_price(),
+		);
+		
+		// Allow modification of split payment arguments
+		$split_payment_args = apply_filters( 'subscrpt_split_payment_args', $split_payment_args, $order_item, $product );
+
 		$args            = array(
 			'post_title'  => 'Subscription',
 			'post_type'   => 'subscrpt_order',
-			'post_status' => $post_status,
+			'post_status' => $split_payment_args['post_status'],
 		);
 		$subscription_id = wp_insert_post( $args );
 		wp_update_post(
@@ -354,6 +372,9 @@ class Helper {
 				'type'            => 'new',
 			)
 		);
+		
+		// Fire action when split payment plan is created
+		do_action( 'subscrpt_split_payment_created', $subscription_id, $split_payment_args, $order_item );
 
 		return $subscription_id;
 	}

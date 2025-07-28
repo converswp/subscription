@@ -135,6 +135,9 @@ function subscrpt_is_max_payments_reached( $subscription_id ) {
 	// Get maximum payments from product
 	$max_payments = get_post_meta( $product_id, '_subscrpt_max_no_payment', true );
 	
+	// Allow override of total installments
+	$max_payments = apply_filters( 'subscrpt_split_payment_total_override', $max_payments, $subscription_id, $product_id );
+	
 	// If no limit set or unlimited, more payments are allowed
 	if ( empty( $max_payments ) || $max_payments <= 0 ) {
 		return false;
@@ -144,7 +147,27 @@ function subscrpt_is_max_payments_reached( $subscription_id ) {
 	$payments_made = subscrpt_count_payments_made( $subscription_id );
 	
 	// Check if limit reached
-	return $payments_made >= $max_payments;
+	$is_reached = $payments_made >= $max_payments;
+	
+	// Fire action when split payment plan is completed (first time only)
+	if ( $is_reached && ! get_post_meta( $subscription_id, '_subscrpt_split_payment_completed_fired', true ) ) {
+		// Allow customization of subscription status after completion
+		$expire_status = apply_filters( 'subscrpt_split_payment_expire_status', 'expired', $subscription_id, $payments_made, $max_payments );
+		
+		// Update subscription status if different from current
+		$current_status = get_post_status( $subscription_id );
+		if ( $current_status !== $expire_status ) {
+			wp_update_post( array(
+				'ID' => $subscription_id,
+				'post_status' => $expire_status
+			) );
+		}
+		
+		do_action( 'subscrpt_split_payment_completed', $subscription_id, $payments_made, $max_payments );
+		update_post_meta( $subscription_id, '_subscrpt_split_payment_completed_fired', true );
+	}
+	
+	return $is_reached;
 }
 
 /**

@@ -60,16 +60,18 @@ class Order {
 			}
 			$next_date = sdevs_wp_strtotime( $recurr_timing, time() );
 		} elseif ( 'early-renew' === $subscription_history->type ) {
-			$next_date = sdevs_wp_strtotime( $recurr_timing, get_post_meta( $subscription_id, '_subscrpt_next_date', true ) );
-
 			if ( $trial ) {
-				$trial_mode = get_post_meta( $subscription_id, '_subscrpt_trial_mode', true );
-				if ( 'on' === $trial_mode ) {
-					update_post_meta( $subscription_id, '_subscrpt_trial_mode', 'extended' );
-					$next_date = sdevs_wp_strtotime( $recurr_timing, get_post_meta( $subscription_id, '_subscrpt_trial_ended', true ) );
-				}
+				delete_post_meta( $subscription_id, '_subscrpt_trial' );
+				delete_post_meta( $subscription_id, '_subscrpt_trial_mode' );
+				delete_post_meta( $subscription_id, '_subscrpt_trial_started' );
+				delete_post_meta( $subscription_id, '_subscrpt_trial_ended' );
 			}
+			$next_date = sdevs_wp_strtotime( $recurr_timing, time() );
 		}
+		
+		// Allow filtering of next due date logic
+		$next_date = apply_filters( 'subscrpt_split_payment_next_due_date', $next_date, $subscription_id, $recurr_timing, $subscription_history->type );
+		
 		update_post_meta( $subscription_id, '_subscrpt_next_date', $next_date );
 	}
 

@@ -123,7 +123,7 @@ class Action {
 	}
 
 	/**
-	 * Write Comment About Subscription Cancelled.
+	 * Write Comment About cancelled Subscription.
 	 *
 	 * @param int $subscription_id Subscription ID.
 	 */
@@ -141,6 +141,9 @@ class Action {
 		WC()->mailer();
 		do_action( 'subscrpt_subscription_cancelled_email_notification', $subscription_id );
 		do_action( 'subscrpt_subscription_cancelled', $subscription_id );
+		
+		// Fire split payment cancelled action
+		do_action( 'subscrpt_split_payment_cancelled', $subscription_id );
 	}
 
 	/**
