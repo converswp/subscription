@@ -19,9 +19,12 @@ const modifyCartItemPrice = ( defaultValue, extensions, args, validation ) => {
 		return defaultValue;
 	}
 	if ( totals.line_total === '0' ) {
-		return `<price/> Due Today`;
+		return `<price/> ${ __( 'Due Today', 'wp_subscription' ) }`;
 	}
 	if ( sdevs_subscription && sdevs_subscription.type ) {
+		// Capitalize the first letter to match product page display
+		const capitalizedType = sdevs_subscription.type.charAt(0).toUpperCase() + sdevs_subscription.type.slice(1);
+		
 		// Check max_no_payment - handle string, number, null, undefined
 		const maxPayments = parseInt(sdevs_subscription.max_no_payment, 10);
 		const paymentInfo = !isNaN(maxPayments) && maxPayments > 0 
@@ -31,7 +34,7 @@ const modifyCartItemPrice = ( defaultValue, extensions, args, validation ) => {
 			sdevs_subscription.time && sdevs_subscription.time > 1
 				? ' ' + sdevs_subscription.time + '-'
 				: ''
-		}${ sdevs_subscription.type }${paymentInfo}`;
+		}${ capitalizedType }${paymentInfo}`;
 	}
 	return defaultValue;
 };
@@ -46,15 +49,18 @@ const modifySubtotalPriceFormat = (
 	const { sdevs_subscription: recurrings } = extensions;
 	
 	if ( sdevs_subscription && sdevs_subscription.type ) {
+		// Capitalize the first letter to match product page display
+		const capitalizedType = sdevs_subscription.type.charAt(0).toUpperCase() + sdevs_subscription.type.slice(1);
+		
 		// Check max_no_payment - handle string, number, null, undefined
 		const maxPayments = parseInt(sdevs_subscription.max_no_payment, 10);
 		const paymentInfo = !isNaN(maxPayments) && maxPayments > 0 
 			? ` x ${maxPayments}` 
 			: '';
-		return `<price/> ${ __('Every', 'wp_subscription') } ${
+		return `<price/> ${ __( 'Every', 'wp_subscription' ) } ${
 			sdevs_subscription.time && sdevs_subscription.time > 1
 				? ' ' + sdevs_subscription.time + '-'
-				: ''}${ sdevs_subscription.type }${paymentInfo}`;
+				: ''}${ capitalizedType }${paymentInfo}`;
 	}
 	
 	return defaultValue;
@@ -81,41 +87,46 @@ const RecurringTotals = ( { cart, extensions } ) => {
 			label={ __( 'Recurring totals', 'wp_subscription' ) }
 			description={
 				<div style={ { display: 'grid' } }>
-					{ recurrings.map( ( recurring ) => (
-						<div style={ { margin: '20px 0', float: 'right' } }>
-							<div style={ { fontSize: '18px' } }>
-								<FormattedMonetaryAmount
-									currency={ currency }
-									value={ parseInt( recurring.price, 10 ) }
-								/>{ ' ' }
-								/{ ' ' }
-								{ recurring.time && recurring.time > 1
-									? `${
-											recurring.time +
-											'-' +
-											recurring.type
-									  } `
-									: recurring.type }
+					{ recurrings.map( ( recurring ) => {
+						// Capitalize the first letter to match product page display
+						const capitalizedType = recurring.type.charAt(0).toUpperCase() + recurring.type.slice(1);
+						
+						return (
+							<div style={ { margin: '20px 0', float: 'right' } }>
+								<div style={ { fontSize: '18px' } }>
+									<FormattedMonetaryAmount
+										currency={ currency }
+										value={ parseInt( recurring.price, 10 ) }
+									/>{ ' ' }
+									/{ ' ' }
+									{ recurring.time && recurring.time > 1
+										? `${
+												recurring.time +
+												'-' +
+												capitalizedType
+										  } `
+										: capitalizedType }
+								</div>
+								<small>{ recurring.description }</small>
+								{ recurring.can_user_cancel === 'yes' && (
+									<>
+										<br />
+										<small>
+											{ __( 'You can cancel subscription at any time!', 'wp_subscription' ) }{ ' ' }
+										</small>
+									</>
+								) }
+								{ recurring.max_no_payment > 0 && (
+									<>
+										<br />
+										<small>
+											{ __( 'This subscription will be built for', 'wp_subscription' ) } { recurring.max_no_payment } { __( 'times.', 'wp_subscription' ) }
+										</small>
+									</>
+								) }
 							</div>
-							<small>{ recurring.description }</small>
-							{ recurring.can_user_cancel === 'yes' && (
-								<>
-									<br />
-									<small>
-										You can cancel subscription at any time!{ ' ' }
-									</small>
-								</>
-							) }
-							{ recurring.max_no_payment > 0 && (
-								<>
-									<br />
-									<small>
-										This subscription will be built for { recurring.max_no_payment } times.
-									</small>
-								</>
-							) }
-						</div>
-					) ) }
+						);
+					} ) }
 				</div>
 			}
 		></TotalsItem>
