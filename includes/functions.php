@@ -28,15 +28,15 @@ function subscrpt_get_action_url( $action, $nonce, $subscription_id ) {
 
 function subscrpt_get_typos( $number, $typo ) {
 	if ( $number == 1 && $typo == 'days' ) {
-		return __( 'day', 'wp_subscription' );
+		return ucfirst( __( 'day', 'wp_subscription' ) );
 	} elseif ( $number == 1 && $typo == 'weeks' ) {
-		return __( 'week', 'wp_subscription' );
+		return ucfirst( __( 'week', 'wp_subscription' ) );
 	} elseif ( $number == 1 && $typo == 'months' ) {
-		return __( 'month', 'wp_subscription' );
+		return ucfirst( __( 'month', 'wp_subscription' ) );
 	} elseif ( $number == 1 && $typo == 'years' ) {
-		return __( 'year', 'wp_subscription' );
+		return ucfirst( __( 'year', 'wp_subscription' ) );
 	} else {
-		return $typo;
+		return ucfirst( $typo );
 	}
 }
 

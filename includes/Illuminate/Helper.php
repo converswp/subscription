@@ -24,15 +24,15 @@ class Helper {
 	 */
 	public static function get_typos( $number, $typo ) {
 		if ( 1 === (int) $number && 'days' === $typo ) {
-			return __( 'day', 'wp_subscription' );
+			return ucfirst( __( 'day', 'wp_subscription' ) );
 		} elseif ( 1 === (int) $number && 'weeks' === $typo ) {
-			return __( 'week', 'wp_subscription' );
+			return ucfirst( __( 'week', 'wp_subscription' ) );
 		} elseif ( 1 === (int) $number && 'months' === $typo ) {
-			return __( 'month', 'wp_subscription' );
+			return ucfirst( __( 'month', 'wp_subscription' ) );
 		} elseif ( 1 === (int) $number && 'years' === $typo ) {
-			return __( 'year', 'wp_subscription' );
+			return ucfirst( __( 'year', 'wp_subscription' ) );
 		} else {
-			return $typo;
+			return ucfirst( $typo );
 		}
 	}
 
