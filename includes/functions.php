@@ -165,6 +165,13 @@ function subscrpt_is_max_payments_reached( $subscription_id ) {
 		
 		do_action( 'subscrpt_split_payment_completed', $subscription_id, $payments_made, $max_payments );
 		update_post_meta( $subscription_id, '_subscrpt_split_payment_completed_fired', true );
+		
+		// Handle split payment access timing if Pro version is active
+		if ( function_exists( 'subscrpt_pro_activated' ) && subscrpt_pro_activated() ) {
+			if ( class_exists( '\SpringDevs\SubscriptionPro\Illuminate\SplitPaymentHandler' ) ) {
+				\SpringDevs\SubscriptionPro\Illuminate\SplitPaymentHandler::handle_split_payment_completion( $subscription_id, $payments_made, $max_payments );
+			}
+		}
 	}
 	
 	return $is_reached;
