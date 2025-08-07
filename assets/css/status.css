@@ -1,5 +1,5 @@
 .my_account_subscrpt .order-status {
-    min-width: 100px;
+  min-width: 100px;
 }
 
 span[class*="subscrpt-"] {
@@ -32,7 +32,8 @@ span.subscrpt-cancelled {
   color: #475569;
 }
 
-span.subscrpt-pe_cancelled {
+span.subscrpt-pe_cancelled,
+span.subscrpt-on-hold {
   background: #ffedd5;
   color: #b45309;
 }
