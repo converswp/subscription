@@ -552,7 +552,7 @@ class Paypal extends \WC_Payment_Gateway {
 			return [
 				'result'   => 'error',
 				'redirect' => '',
-				'response' => 'PayPal payment failed. Please try again.',
+				'response' => 'PayPal payment failed. Please try again. (Failed to get PayPal product ID)',
 			];
 		}
 
@@ -563,7 +563,7 @@ class Paypal extends \WC_Payment_Gateway {
 			return [
 				'result'   => 'error',
 				'redirect' => '',
-				'response' => 'PayPal payment failed. Please try again.',
+				'response' => 'PayPal payment failed. Please try again. (Failed to get PayPal plan ID)',
 			];
 		}
 
@@ -582,7 +582,7 @@ class Paypal extends \WC_Payment_Gateway {
 			return [
 				'result'   => 'error',
 				'redirect' => '',
-				'response' => 'PayPal payment failed. Please try again.',
+				'response' => 'PayPal payment failed. Please try again. (Failed to create PayPal subscription)',
 			];
 		}
 
@@ -603,7 +603,7 @@ class Paypal extends \WC_Payment_Gateway {
 			return [
 				'result'   => 'error',
 				'redirect' => '',
-				'response' => 'PayPal payment failed. Please try again.',
+				'response' => 'PayPal payment failed. Please try again. (Failed to get PayPal subscription approval link)',
 			];
 		} else {
 			return [
@@ -1261,7 +1261,7 @@ class Paypal extends \WC_Payment_Gateway {
 			$response_data = json_decode( wp_remote_retrieve_body( $response ) );
 
 			if ( empty( $response_data->id ?? null ) ) {
-				$log_message = 'Error creating PayPal plan: ' . ( $response_data->error_description ?? 'Unknown error' );
+				$log_message = 'Error creating PayPal plan: ' . ( $response_data->error_description ?? $response_data->message ?? 'Unknown error' );
 				wp_subscrpt_write_log( $log_message );
 				wp_subscrpt_write_debug_log( $log_message . ' ' . wp_json_encode( $response_data ) );
 				return null;
@@ -1306,7 +1306,7 @@ class Paypal extends \WC_Payment_Gateway {
 			$response_data = json_decode( wp_remote_retrieve_body( $response ) );
 
 			if ( empty( $response_data->id ?? null ) ) {
-				$log_message = 'Error creating PayPal subscription: ' . ( $response_data->error_description ?? 'Unknown error' );
+				$log_message = 'Error creating PayPal subscription: ' . ( $response_data->error_description ?? $response_data->message ?? 'Unknown error' );
 				wp_subscrpt_write_log( $log_message );
 				wp_subscrpt_write_debug_log( $log_message . ' ' . wp_json_encode( $response_data ) );
 				return null;
