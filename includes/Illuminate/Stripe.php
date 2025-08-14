@@ -174,11 +174,8 @@ class Stripe extends \WC_Stripe_Payment_Gateway {
 				$relation      = $relation[0];
 				$is_auto_renew = get_post_meta( (int) $relation->subscription_id, '_subscrpt_auto_renew', true );
 
-				// Get renewal limit from product meta
-				$product_id = get_post_meta( (int) $relation->subscription_id, '_subscrpt_product_id', true );
-				if ( $product_id ) {
-					$renewal_limit = get_post_meta( $product_id, '_subscrpt_max_no_payment', true ) ?: 0;					
-				}
+				// Get renewal limit from product meta (handles variations)
+				$renewal_limit = subscrpt_get_max_payments( (int) $relation->subscription_id ) ?: 0;
 
 				if ( in_array( $is_auto_renew, array( 1, '1' ), true ) && in_array( $relation->type, array( 'early-renew', 'renew' ), true ) ) {
 					$recurring = true;

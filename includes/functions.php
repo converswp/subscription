@@ -77,6 +77,39 @@ function subscrpt_is_auto_renew_enabled() {
 }
 
 /**
+ * Get maximum payments for a subscription, checking variation, product, and subscription meta.
+ *
+ * @param int $subscription_id Subscription ID.
+ * @return string|int Maximum payments or empty string if not set.
+ */
+function subscrpt_get_max_payments( $subscription_id ) {
+	$product_id = get_post_meta( $subscription_id, '_subscrpt_product_id', true );
+	if ( ! $product_id ) {
+		return '';
+	}
+	
+	$max_payments = null;
+	
+	// Check for variation first
+	$variation_id = get_post_meta( $subscription_id, '_subscrpt_variation_id', true );
+	if ( $variation_id ) {
+		$max_payments = get_post_meta( $variation_id, '_subscrpt_max_no_payment', true );
+	}
+	
+	// Fallback to product if variation doesn't have max payments or no variation
+	if ( ! $max_payments ) {
+		$max_payments = get_post_meta( $product_id, '_subscrpt_max_no_payment', true );
+	}
+	
+	// Also check subscription's own meta data as final fallback
+	if ( ! $max_payments ) {
+		$max_payments = get_post_meta( $subscription_id, '_subscrpt_max_no_payment', true );
+	}
+	
+	return $max_payments ?: '';
+}
+
+/**
  * Count total payments made for a subscription (including original + renewals).
  *
  * @param int $subscription_id Subscription ID.
@@ -132,14 +165,14 @@ function subscrpt_is_max_payments_reached( $subscription_id ) {
 		return false;
 	}
 	
-	// Get maximum payments from product
-	$max_payments = get_post_meta( $product_id, '_subscrpt_max_no_payment', true );
+	// Get maximum payments using helper function
+	$max_payments = subscrpt_get_max_payments( $subscription_id );
 	
 	// Allow override of total installments
 	$max_payments = apply_filters( 'subscrpt_split_payment_total_override', $max_payments, $subscription_id, $product_id );
 	
 	// If no limit set or unlimited, more payments are allowed
-	if ( empty( $max_payments ) || $max_payments <= 0 ) {
+	if ( ! $max_payments || intval( $max_payments ) <= 0 ) {
 		return false;
 	}
 	
@@ -184,17 +217,11 @@ function subscrpt_is_max_payments_reached( $subscription_id ) {
  * @return int|string Number of remaining payments or 'unlimited'.
  */
 function subscrpt_get_remaining_payments( $subscription_id ) {
-	// Get the product ID from subscription
-	$product_id = get_post_meta( $subscription_id, '_subscrpt_product_id', true );
-	if ( ! $product_id ) {
-		return 'unlimited';
-	}
-	
-	// Get maximum payments from product
-	$max_payments = get_post_meta( $product_id, '_subscrpt_max_no_payment', true );
-	
+	// Get maximum payments using helper function
+	$max_payments = subscrpt_get_max_payments( $subscription_id );
+
 	// If no limit set or unlimited
-	if ( empty( $max_payments ) || $max_payments <= 0 ) {
+	if ( ! $max_payments || intval( $max_payments ) <= 0 ) {
 		return 'unlimited';
 	}
 	
@@ -202,7 +229,7 @@ function subscrpt_get_remaining_payments( $subscription_id ) {
 	$payments_made = subscrpt_count_payments_made( $subscription_id );
 	
 	// Calculate remaining
-	$remaining = $max_payments - $payments_made;
+	$remaining = intval( $max_payments ) - intval( $payments_made );
 	
 	return max( 0, $remaining );
 }
