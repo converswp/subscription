@@ -101,6 +101,11 @@ class PaymentFailureHandler {
     // Manage retries and grace periods
     public static function schedule_payment_retry($subscription_id, $failure_count)
     public static function start_grace_period($subscription_id, $grace_period_days)
+    
+    // Send notifications
+    public static function send_failure_notification($subscription_id, $failure_count, $max_retries)
+    public static function send_delayed_failure_notification($subscription_id, $failure_count, $max_retries)
+    public static function send_grace_period_warnings()
 }
 ```
 
@@ -135,6 +140,7 @@ function subscrpt_count_payments_made($subscription_id)
 - `_subscrpt_access_end_date`: Calculated access end timestamp
 - `_subscrpt_payment_failure_count`: Current failure count
 - `_subscrpt_grace_period_start`: Grace period start timestamp
+- `_subscrpt_grace_period_warning_sent`: Prevents duplicate grace period warnings
 
 #### Database Tables
 - `wp_subscrpt_order_relation`: Links orders to subscriptions
@@ -152,13 +158,22 @@ do_action('subscrpt_split_payment_completed', $subscription_id, $payments_made, 
 do_action('subscrpt_payment_failure_logged', $subscription_id, $failure_count);
 
 // Payment failure notification sent
-do_action('subscrpt_payment_failure_notification_sent', $subscription_id, $failure_count, $max_retries);
+do_action('subscrpt_payment_failure_notification_sent', $subscription_id, $customer_id, $failure_count);
+
+// Delayed payment failure notification sent
+do_action('subscrpt_delayed_payment_failure_notification_sent', $subscription_id, $customer_id, $failure_count);
 
 // Access suspended
 do_action('subscrpt_access_suspended', $subscription_id);
 
 // Access restored
 do_action('subscrpt_access_restored', $subscription_id);
+
+// Grace period warning sent
+do_action('subscrpt_grace_period_warning_sent', $subscription_id, $customer_id, $days_remaining);
+
+// Grace period expired
+do_action('subscrpt_grace_period_expired', $subscription_id);
 ```
 
 #### Filters (apply_filters)
@@ -174,6 +189,12 @@ $expire_status = apply_filters('subscrpt_split_payment_expire_status', 'expired'
 
 // Modify next due date
 $next_date = apply_filters('subscrpt_split_payment_next_due_date', $next_date, $subscription_id, $recurr_timing, $type);
+
+// Override default max payment retries
+$default_retries = apply_filters('subscrpt_default_max_payment_retries', $default_retries);
+
+// Override default grace period days
+$default_grace_period = apply_filters('subscrpt_default_grace_period_days', $default_grace_period);
 ```
 
 ### 📧 **EMAIL TEMPLATES**
@@ -181,28 +202,37 @@ $next_date = apply_filters('subscrpt_split_payment_next_due_date', $next_date, $
 #### Available Email Types
 1. **Payment Due Reminders**: Sent before next payment date
 2. **Payment Failure Notifications**: Alert customers of failed payments
-3. **Completion Notifications**: Inform when split payment plan is finished
-4. **Grace Period Warnings**: Notify before access suspension
+3. **Delayed Payment Failure Notifications**: Sent after configurable delay to avoid spam
+4. **Grace Period Warnings**: Notify customers before access suspension
+5. **Completion Notifications**: Inform when split payment plan is finished
 
 #### Email Customization
 - Templates located in `templates/emails/`
 - Customizable subjects and content
 - Placeholder support for dynamic data
 - Triggered automatically via cron jobs
+- Configurable delays and frequency
 
 ### ⚙️ **CONFIGURATION OPTIONS**
 
-#### Global Settings
-- **Default Payment Retries**: 3 attempts
-- **Default Grace Period**: 7 days
-- **Reminder Days**: 7 days before payment due
-- **Email Notifications**: Enabled by default
+#### Global Settings (WPS Pro Settings Page)
+- **Default Payment Retries**: 3 attempts (0-10, can be overridden per product)
+- **Default Grace Period**: 7 days (0-30, can be overridden per product)
+- **Enable Payment Failure Emails**: Toggle email notifications on/off
+- **Payment Failure Email Delay**: 24 hours delay to avoid spam (1-168 hours)
+- **Enable Grace Period Notifications**: Toggle grace period warnings on/off
+- **Grace Period Warning Days**: 2 days before expiry (1-7 days)
 
 #### Per-Product Settings
 - **Payment Type**: Recurring or Split Payment
 - **Installment Count**: 2-∞ payments
 - **Access Timing**: Flexible access control
-- **Failure Handling**: Custom retry and grace settings
+- **Failure Handling**: Custom retry and grace settings (overrides global defaults)
+
+#### Email Settings
+- **Failure Notification Delay**: Prevents spam during temporary payment issues
+- **Grace Period Warnings**: Proactive customer communication
+- **Configurable Content**: Customizable email templates and messages
 
 ### 🔍 **DEBUGGING & MONITORING**
 
@@ -211,39 +241,42 @@ $next_date = apply_filters('subscrpt_split_payment_next_due_date', $next_date, $
 - Payment progress tracking
 - Access timing calculations
 - Retry attempt monitoring
+- Grace period management
 
 #### Admin Notifications
 - Payment failure alerts
 - Completion status updates
 - Access suspension notifications
 - Grace period warnings
+- Retry attempt logging
 
-## �� **NEXT STEPS & RECOMMENDATIONS**
+#### Customer Communication
+- Immediate failure notifications
+- Delayed failure notifications (configurable)
+- Grace period warnings
+- Access suspension alerts
 
-### Immediate Actions
-1. **Test Payment Flow**: Verify split payment creation and completion
-2. **Validate Email Templates**: Ensure all notification emails are working
-3. **Check Admin Interface**: Verify all settings are properly saved and displayed
-4. **Test Failure Handling**: Simulate payment failures to test retry logic
+## 🆕 **NEW PAYMENT FAILURE HANDLING FEATURES**
 
-### Potential Enhancements
-1. **Advanced Analytics**: Payment success rates, completion times
-2. **Customer Communication**: SMS notifications, in-app alerts
-3. **Payment Gateway Integration**: Better failure handling for specific gateways
-4. **Reporting**: Split payment performance metrics
+### Enhanced Settings Integration
+The Payment Failure Handling settings are now fully integrated into the WPS Pro Settings page, following the same pattern as the existing API settings. This provides administrators with centralized control over:
 
-### Quality Assurance
-1. **Edge Case Testing**: Various payment timing scenarios
-2. **Performance Testing**: Large numbers of split payment subscriptions
-3. **Security Review**: Payment data handling and validation
-4. **User Experience**: Customer-facing interface optimization
+1. **Global Defaults**: Set default retry and grace period values for all products
+2. **Email Management**: Control when and how failure notifications are sent
+3. **Customer Experience**: Balance between immediate alerts and spam prevention
+4. **Flexibility**: Product-specific settings can override global defaults
 
-## 📚 **RESOURCES**
+### Smart Email Delivery
+- **Configurable Delays**: Prevent spam during temporary payment issues
+- **Grace Period Warnings**: Proactive customer communication
+- **Failure Tracking**: Comprehensive logging of all payment attempts
+- **Customer Support**: Clear communication about next steps
 
-- **Plugin Documentation**: `docs/` directory
-- **Hook Reference**: `hooks.md` for complete hook documentation
-- **Code Examples**: See implementation files for usage patterns
-- **Support**: Check plugin documentation and support channels
+### Automated Workflow
+- **Retry Scheduling**: Exponential backoff for payment retries
+- **Grace Period Management**: Automatic access control during payment issues
+- **Status Tracking**: Real-time subscription status updates
+- **Cleanup**: Automatic cleanup when payments succeed
 
 ---
 
