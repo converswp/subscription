@@ -317,7 +317,56 @@ class Paypal extends \WC_Payment_Gateway {
 			return;
 		}
 
-		// dd( '🔽 order_id', $order_id );
+		$order = wc_get_order( $order_id );
+
+		// Return if order is not valid.
+		if ( ! $order || empty( $order ) ) {
+			return;
+		}
+		// Return if the order is not using WPSUBS PayPal.
+		if ( $order->get_payment_method() !== $this->id ) {
+			return;
+		}
+
+		// Return if the order is already completed.
+		if ( 'completed' === $order->get_status() ) {
+			// Translators: %d is the order ID.
+			$log_message = sprintf( __( 'Order %d was already completed. Skipping PayPal check.', 'wp_subscription' ), $order_id );
+			wp_subscrpt_write_log( $log_message );
+			wp_subscrpt_write_debug_log( $log_message );
+			return;
+		}
+
+		$paypal_subscription_id = isset( $_GET['subscription_id'] ) ? sanitize_text_field( wp_unslash( $_GET['subscription_id'] ) ) : '';
+		$paypal_ba_token        = isset( $_GET['ba_token'] ) ? sanitize_text_field( wp_unslash( $_GET['ba_token'] ) ) : '';
+		$paypal_token           = isset( $_GET['token'] ) ? sanitize_text_field( wp_unslash( $_GET['token'] ) ) : '';
+
+		$paypal_payment_approved = false;
+
+		if ( empty( $paypal_subscription_id ) ) {
+			$paypal_subscription_id = $order->get_meta( $this->get_meta_key( 'subscription_id' ), true );
+		}
+		if ( ! empty( $paypal_subscription_id ) ) {
+			$paypal_subscription_data = $this->get_paypal_subscription( $paypal_subscription_id );
+
+			if ( $paypal_subscription_data && in_array( $paypal_subscription_data->status ?? '', [ 'ACTIVE', 'APPROVED' ], true ) ) {
+				$paypal_payment_approved = true;
+			}
+		}
+
+		// Fallback to check PayPal Order if Subscription is not available.
+		if ( ! $paypal_payment_approved && ! empty( $paypal_token ) ) {
+			$paypal_order_data = $this->get_paypal_order( $paypal_token );
+
+			if ( $paypal_order_data && in_array( $paypal_order_data->status ?? '', [ 'APPROVED', 'COMPLETED' ], true ) ) {
+				$paypal_payment_approved = true;
+			}
+		}
+
+		if ( $paypal_payment_approved ) {
+			$order->update_status( 'completed', __( 'PayPal payment completed successfully.', 'wp_subscription' ) );
+			$order->save();
+		}
 	}
 
 	/**
@@ -1142,7 +1191,8 @@ class Paypal extends \WC_Payment_Gateway {
 			$response_data = json_decode( wp_remote_retrieve_body( $response ) );
 
 			if ( isset( $response_data->error ) || ! isset( $response_data->access_token ) ) {
-				$log_message = 'Gateway Error : PayPal access token - ' . $response_data->error_description ?? 'Unknown error';
+				$error_description = ! empty( $response_data ) ? $response_data->error_description ?? 'Unknown error' : 'Unknown error';
+				$log_message       = 'Gateway Error : PayPal access token - ' . $error_description;
 				wp_subscrpt_write_log( $log_message );
 				wp_subscrpt_write_debug_log( $log_message );
 
@@ -1401,6 +1451,90 @@ class Paypal extends \WC_Payment_Gateway {
 			wp_subscrpt_write_log( $log_message );
 			wp_subscrpt_write_debug_log( $log_message );
 			return false;
+		}
+	}
+
+	/**
+	 * Get PayPal order details.
+	 *
+	 * @param string $order_id      PayPal Order ID.
+	 */
+	public function get_paypal_order( string $order_id ) {
+		// Get PayPal Access Token.
+		$access_token = $this->get_paypal_access_token();
+		if ( ! $access_token ) {
+			wp_subscrpt_write_log( 'Failed to get PayPal order; Access Token unavailable.' );
+			return false;
+		}
+
+		try {
+			$url  = $this->api_endpoint . "/v2/checkout/orders/$order_id";
+			$args = [
+				'method'  => 'GET',
+				'headers' => [
+					'Authorization' => 'Bearer ' . $access_token,
+					'Content-Type'  => 'application/json',
+				],
+			];
+
+			$response      = wp_remote_get( $url, $args );
+			$response_data = json_decode( wp_remote_retrieve_body( $response ) );
+
+			if ( empty( $response_data->id ?? null ) ) {
+				$log_message = 'Error getting PayPal order: ' . ( $response_data->error_description ?? $response_data->message ?? 'Unknown error' );
+				wp_subscrpt_write_log( $log_message );
+				wp_subscrpt_write_debug_log( $log_message . ' ' . wp_json_encode( $response_data ) );
+				return null;
+			}
+
+			return $response_data;
+		} catch ( Exception $e ) {
+			$log_message = 'Failed to get PayPal order; ' . $e->getMessage();
+			wp_subscrpt_write_log( $log_message );
+			wp_subscrpt_write_debug_log( $log_message );
+			return false;
+		}
+	}
+
+	/**
+	 * Get PayPal subscription details.
+	 *
+	 * @param string $subscription_id PayPal Subscription ID.
+	 */
+	public function get_paypal_subscription( string $subscription_id ): ?object {
+		// Get PayPal Access Token.
+		$access_token = $this->get_paypal_access_token();
+		if ( ! $access_token ) {
+			wp_subscrpt_write_log( 'Failed to get PayPal Subscription; Access Token unavailable.' );
+			return null;
+		}
+
+		try {
+			$url  = $this->api_endpoint . "/v1/billing/subscriptions/$subscription_id";
+			$args = [
+				'method'  => 'GET',
+				'headers' => [
+					'Authorization' => 'Bearer ' . $access_token,
+					'Content-Type'  => 'application/json',
+				],
+			];
+
+			$response      = wp_remote_get( $url, $args );
+			$response_data = json_decode( wp_remote_retrieve_body( $response ) );
+
+			if ( empty( $response_data->id ?? null ) ) {
+				$log_message = 'Error getting PayPal subscription: ' . ( $response_data->error_description ?? $response_data->message ?? 'Unknown error' );
+				wp_subscrpt_write_log( $log_message );
+				wp_subscrpt_write_debug_log( $log_message . ' ' . wp_json_encode( $response_data ) );
+				return null;
+			}
+
+			return $response_data;
+		} catch ( Exception $e ) {
+			$log_message = 'Failed to get PayPal subscription; ' . $e->getMessage();
+			wp_subscrpt_write_log( $log_message );
+			wp_subscrpt_write_debug_log( $log_message );
+			return null;
 		}
 	}
 
