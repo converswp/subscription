@@ -179,8 +179,8 @@ function subscrpt_is_max_payments_reached( $subscription_id ) {
 	// Count payments made
 	$payments_made = subscrpt_count_payments_made( $subscription_id );
 	
-	// Check if limit reached
-	$is_reached = $payments_made >= $max_payments;
+	// Enhanced completion logic considering failed payments
+	$is_reached = subscrpt_check_enhanced_completion( $subscription_id, $payments_made, $max_payments );
 	
 	// Fire action when split payment plan is completed (first time only)
 	if ( $is_reached && ! get_post_meta( $subscription_id, '_subscrpt_split_payment_completed_fired', true ) ) {
@@ -232,6 +232,142 @@ function subscrpt_get_remaining_payments( $subscription_id ) {
 	$remaining = intval( $max_payments ) - intval( $payments_made );
 	
 	return max( 0, $remaining );
+}
+
+/**
+ * Get payment type for a subscription (handles variations properly).
+ *
+ * @param int $subscription_id Subscription ID.
+ * @return string Payment type ('split_payment' or 'recurring').
+ */
+function subscrpt_get_payment_type( $subscription_id ) {
+	$product_id = get_post_meta( $subscription_id, '_subscrpt_product_id', true );
+	$variation_id = get_post_meta( $subscription_id, '_subscrpt_variation_id', true );
+	
+	$payment_type = 'recurring'; // Default
+	
+	// Check variation first if it exists
+	if ( $variation_id ) {
+		$variation_payment_type = get_post_meta( $variation_id, '_subscrpt_payment_type', true );
+		if ( $variation_payment_type ) {
+			$payment_type = $variation_payment_type;
+		}
+	}
+	
+	// Fallback to product if no variation payment type
+	if ( $payment_type === 'recurring' && $product_id ) {
+		$product_payment_type = get_post_meta( $product_id, '_subscrpt_payment_type', true );
+		if ( $product_payment_type ) {
+			$payment_type = $product_payment_type;
+		}
+	}
+	
+	// Final fallback: check subscription's own meta data
+	if ( $payment_type === 'recurring' ) {
+		$subscription_payment_type = get_post_meta( $subscription_id, '_subscrpt_payment_type', true );
+		if ( $subscription_payment_type ) {
+			$payment_type = $subscription_payment_type;
+		}
+	}
+	
+	return $payment_type;
+}
+
+/**
+ * Enhanced completion check considering failed payments and access suspension.
+ *
+ * @param int $subscription_id Subscription ID.
+ * @param int $payments_made Number of successful payments made.
+ * @param int $max_payments Maximum payments required.
+ * @return bool True if subscription should be considered complete.
+ */
+function subscrpt_check_enhanced_completion( $subscription_id, $payments_made, $max_payments ) {
+	// Standard completion check
+	if ( $payments_made >= $max_payments ) {
+		return true;
+	}
+	
+	// Check for access suspension due to payment failures
+	if ( function_exists( '\SpringDevs\SubscriptionPro\Illuminate\PaymentFailureHandler::is_access_suspended' ) ) {
+		$is_suspended = \SpringDevs\SubscriptionPro\Illuminate\PaymentFailureHandler::is_access_suspended( $subscription_id );
+		if ( $is_suspended ) {
+			// If access is suspended, check if we should force completion
+			$force_completion_on_suspension = apply_filters( 'subscrpt_force_completion_on_suspension', false, $subscription_id );
+			if ( $force_completion_on_suspension ) {
+				return true;
+			}
+		}
+	}
+	
+	// Check for maximum failure threshold
+	$failure_count = get_post_meta( $subscription_id, '_subscrpt_payment_failure_count', true ) ?: 0;
+	$max_failures_before_completion = apply_filters( 'subscrpt_max_failures_before_completion', 0, $subscription_id );
+	
+	if ( $max_failures_before_completion > 0 && $failure_count >= $max_failures_before_completion ) {
+		// Force completion after too many failures
+		return true;
+	}
+	
+	// Check for time-based completion (e.g., if too much time has passed)
+	$completion_timeout_days = apply_filters( 'subscrpt_completion_timeout_days', 0, $subscription_id );
+	if ( $completion_timeout_days > 0 ) {
+		$start_date = get_post_meta( $subscription_id, '_subscrpt_start_date', true );
+		if ( $start_date ) {
+			$timeout_timestamp = $start_date + ( $completion_timeout_days * DAY_IN_SECONDS );
+			if ( current_time( 'timestamp' ) >= $timeout_timestamp ) {
+				return true;
+			}
+		}
+	}
+	
+	return false;
+}
+
+/**
+ * Count total payment attempts (including failed ones) for a subscription.
+ *
+ * @param int $subscription_id Subscription ID.
+ * @return array Array with 'successful', 'failed', and 'total' counts.
+ */
+function subscrpt_count_all_payment_attempts( $subscription_id ) {
+	global $wpdb;
+	
+	$table_name = $wpdb->prefix . 'subscrpt_order_relation';
+	
+	// Get all relations for this subscription
+	$relations = $wpdb->get_results( $wpdb->prepare(
+		"SELECT sr.*, p.post_status, p.post_date 
+		FROM {$table_name} sr 
+		INNER JOIN {$wpdb->posts} p ON sr.order_id = p.ID 
+		WHERE sr.subscription_id = %d
+		ORDER BY p.post_date ASC",
+		$subscription_id
+	) );
+	
+	// Define all payment-related order types
+	$payment_types = apply_filters( 'subscrpt_payment_order_types', array( 'new', 'renew', 'early-renew' ) );
+	
+	$successful_count = 0;
+	$failed_count = 0;
+	
+	foreach ( $relations as $relation ) {
+		if ( in_array( $relation->type, $payment_types ) ) {
+			$order = wc_get_order( $relation->order_id );
+			if ( $order ) {
+				if ( $order->is_paid() || in_array( $order->get_status(), array( 'completed', 'processing', 'on-hold' ) ) ) {
+					$successful_count++;
+				} elseif ( in_array( $order->get_status(), array( 'failed', 'cancelled' ) ) ) {
+					$failed_count++;
+				}
+			}
+		}
+	}
+	
+	return array(
+		'successful' => $successful_count,
+		'failed' => $failed_count,
+		'total' => $successful_count + $failed_count
+	);
 }
 
 if ( ! function_exists( 'wps_subscription_order_relation_type_cast' ) ) {
