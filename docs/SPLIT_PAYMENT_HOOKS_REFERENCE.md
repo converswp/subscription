@@ -61,6 +61,19 @@ This document provides a comprehensive reference for the Split Payment feature i
 
 **Files**: `includes/Illuminate/Emails/RenewReminder.php`
 
+#### 6. Email System
+- **Payment Due Reminders**: Automated emails before next payment
+- **Payment Failure Notifications**: Professional email templates for failed payments
+- **Delayed Failure Notifications**: Configurable delayed emails to prevent spam
+- **Grace Period Warnings**: Proactive customer communication
+- **Completion Notifications**: Emails when split payment plan is completed
+
+**Files**: 
+- `includes/Illuminate/Emails/RenewReminder.php` (Free)
+- `includes/Illuminate/Emails/PaymentFailure.php` (Pro)
+- `templates/emails/payment-failure-html.php` (Pro)
+- `templates/emails/plains/payment-failure-plain.php` (Pro)
+
 #### 7. Core Split Payment Hooks
 - **Payment Completion**: `subscrpt_split_payment_completed`
 - **Payment Failure**: `subscrpt_split_payment_failed`
@@ -201,17 +214,27 @@ $default_grace_period = apply_filters('subscrpt_default_grace_period_days', $def
 
 #### Available Email Types
 1. **Payment Due Reminders**: Sent before next payment date
-2. **Payment Failure Notifications**: Alert customers of failed payments
+2. **Payment Failure Notifications**: Professional email templates for failed payments
 3. **Delayed Payment Failure Notifications**: Sent after configurable delay to avoid spam
 4. **Grace Period Warnings**: Notify customers before access suspension
 5. **Completion Notifications**: Inform when split payment plan is finished
 
 #### Email Customization
-- Templates located in `templates/emails/`
-- Customizable subjects and content
-- Placeholder support for dynamic data
-- Triggered automatically via cron jobs
-- Configurable delays and frequency
+- **Free Templates**: Located in `templates/emails/` (subscription plugin)
+- **Pro Templates**: Located in `templates/emails/` (subscription-pro plugin)
+- **Customizable**: Subjects, content, and styling
+- **Placeholder Support**: Dynamic data insertion
+- **Automatic Triggers**: Cron job integration
+- **Configurable Delays**: Prevent spam during temporary issues
+- **HTML & Plain Text**: Both formats supported
+- **Theme Override**: Templates can be customized in active theme
+
+#### Payment Failure Email Features
+- **Professional Design**: WooCommerce-compatible email styling
+- **Dynamic Content**: Shows failure count, remaining attempts, and subscription details
+- **Smart Messaging**: Different content based on failure status
+- **Delayed Delivery**: Configurable delays to prevent spam
+- **Customer Support**: Clear next steps and contact information
 
 ### ⚙️ **CONFIGURATION OPTIONS**
 
