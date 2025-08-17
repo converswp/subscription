@@ -1,205 +1,250 @@
-# Split Payment System - Hooks & Filters Reference
+# Split Payment Hooks Reference
 
-## ⚙️ Action Hooks & Filters (subscrpt_ Prefix)
+## Overview
+This document provides a comprehensive reference for the Split Payment feature implementation in WP Subscription Pro. The split payment system allows customers to pay for subscriptions in installments rather than recurring payments.
 
-Below is a curated list of useful developer hooks to extend or automate split payment logic:
+## Current Implementation Status
 
-## 🔧 Actions
+### ✅ **COMPLETED FEATURES**
 
-| Hook Name | Trigger | Purpose | Parameters |
-|-----------|---------|---------|------------|
-| `subscrpt_split_payment_created` | When a new split payment plan is created | Log subscription, sync to CRM | `$subscription_id`, `$split_payment_args`, `$order_item` |
-| `subscrpt_split_payment_completed` | When the final installment is paid | Trigger access, send license or mark course as complete | `$subscription_id`, `$payments_made`, `$max_payments` |
-| `subscrpt_split_payment_renewed` | After each successful payment | Update usage, notify customer | `$subscription_id`, `$order_id`, `$order_item_id` |
-| `subscrpt_split_payment_failed` | When a payment fails | Trigger fallback, retry, or notify | `$subscription_id` |
-| `subscrpt_split_payment_cancelled` | When customer cancels the split plan | Pause service or revoke access | `$subscription_id` |
-| `subscrpt_split_payment_early_renew_triggered` | When customer triggers early renewal | Enable early delivery or unlock content | `$subscription_id`, `$new_order_id`, `$new_order_item_id` |
+#### 1. Product Page Settings
+- **Payment Type Selection**: Choose between 'recurring' and 'split_payment'
+- **Number of Payments**: Set total installments (minimum 2)
+- **Access Ends Timing**: Three options:
+  - `after_last_payment`: Access ends immediately after final payment
+  - `after_full_duration`: Access ends after full subscription duration
+  - `custom_duration`: Custom access period after first payment
+- **Custom Access Duration**: Time and type (days/weeks/months/years) for custom duration
+- **Payment Failure Settings**: 
+  - Maximum payment retries (0-10)
+  - Grace period in days (0-30)
 
-## 🧩 Filters
+**Files**: 
+- `includes/Admin/Product/Simple.php` (Simple products)
+- `includes/Admin/Product/Variable.php` (Variable products)
 
-| Filter Name | Description | Parameters | Return |
-|-------------|-------------|------------|--------|
-| `subscrpt_split_payment_args` | Modify arguments like interval, price before creation | `$args`, `$order_item`, `$product` | Modified args array |
-| `subscrpt_split_payment_total_override` | Dynamically override total number of installments | `$max_payments`, `$subscription_id`, `$product_id` | Modified max payments integer |
-| `subscrpt_split_payment_expire_status` | Customize how status changes after final payment | `$expire_status`, `$subscription_id`, `$payments_made`, `$max_payments` | Modified status string |
-| `subscrpt_split_payment_next_due_date` | Alter date logic for next installment | `$next_date`, `$subscription_id`, `$recurr_timing`, `$payment_type` | Modified timestamp |
-| `subscrpt_split_payment_disable_cancel` | Programmatically disable cancel button | `$disable_cancel`, `$subscription_id`, `$status` | Boolean |
-| `subscrpt_split_payment_button_text` | Customize "Early Renew" or payment action buttons | `$label`, `$button_type`, `$subscription_id`, `$status` | Modified button text |
+#### 2. Order Page Integration
+- **Split Payment Notes**: Orders automatically show split payment information
+- **Payment Progress Tracking**: Shows current payment vs total payments
+- **Order-Subscription Linking**: Proper relationship tracking between orders and subscriptions
 
-## 📝 Usage Examples
+**Files**: `includes/Illuminate/Helper.php`
 
-### Action Hook Examples
+#### 3. Subscription Admin Page
+- **Split Payment Activities**: Complete payment history and status tracking
+- **Payment Progress**: Shows payments made vs total required
+- **Access Control Information**: Displays when access will end based on settings
+- **Payment Failure Logging**: Tracks failed payments and retry attempts
+- **Renewal Notes**: Comprehensive activity logging
 
-#### Log New Split Payment Plans
+**Files**: `includes/Illuminate/SplitPaymentHandler.php`
+
+#### 4. User Subscription Page
+- **Payment Progress Display**: Shows "X/Y payments completed"
+- **Payment Type Indicator**: Clearly shows "Split Payment" vs "Recurring"
+- **Remaining Payments**: Displays count of remaining installments
+- **Access Duration Info**: Shows when access will end
+
+**Files**: `templates/myaccount/single.php`
+
+#### 5. WPS Settings Page
+- **Split Payment Retry Settings**: Global configuration for payment retries
+- **Grace Period Management**: Default grace period settings
+- **Payment Failure Handling**: Comprehensive failure management system
+
+**Files**: `includes/Admin/Settings.php`
+
+#### 6. Reminder Emails
+- **Payment Due Reminders**: Automated emails before next payment
+- **Failure Notifications**: Alerts for failed payments
+- **Completion Notifications**: Emails when split payment plan is completed
+
+**Files**: `includes/Illuminate/Emails/RenewReminder.php`
+
+#### 7. Core Split Payment Hooks
+- **Payment Completion**: `subscrpt_split_payment_completed`
+- **Payment Failure**: `subscrpt_split_payment_failed`
+- **Arguments Filter**: `subscrpt_split_payment_args`
+- **Total Override**: `subscrpt_split_payment_total_override`
+- **Expire Status**: `subscrpt_split_payment_expire_status`
+- **Next Due Date**: `subscrpt_split_payment_next_due_date`
+
+**Files**: `includes/functions.php`, `includes/Illuminate/SplitPaymentHandler.php`
+
+### 🔧 **CORE CLASSES & FUNCTIONS**
+
+#### SplitPaymentHandler Class
 ```php
-add_action( 'subscrpt_split_payment_created', 'log_new_split_payment', 10, 3 );
-function log_new_split_payment( $subscription_id, $split_payment_args, $order_item ) {
-    error_log( "New split payment plan created: Subscription #{$subscription_id}" );
+namespace SpringDevs\SubscriptionPro\Illuminate;
+
+class SplitPaymentHandler {
+    // Calculate access end dates
+    public static function calculate_access_end_date($subscription_id)
     
-    // Sync to CRM
-    $customer_email = $order_item->get_order()->get_billing_email();
-    // send_to_crm( $customer_email, $split_payment_args );
+    // Handle payment completion
+    public static function handle_split_payment_completion($subscription_id, $payments_made, $max_payments)
+    
+    // Get payment dates
+    public static function get_final_payment_date($subscription_id)
+    public static function get_first_payment_date($subscription_id)
 }
 ```
 
-#### Grant Access on Completion
+#### PaymentFailureHandler Class
 ```php
-add_action( 'subscrpt_split_payment_completed', 'grant_full_access', 10, 3 );
-function grant_full_access( $subscription_id, $payments_made, $max_payments ) {
-    $user_id = get_post_field( 'post_author', $subscription_id );
-    $product_id = get_post_meta( $subscription_id, '_subscrpt_product_id', true );
+namespace SpringDevs\SubscriptionPro\Illuminate;
+
+class PaymentFailureHandler {
+    // Handle payment failures
+    public static function handle_payment_failure($subscription_id)
     
-    // Grant premium access
-    update_user_meta( $user_id, "full_access_{$product_id}", true );
-    
-    // Send completion email
-    wp_mail( 
-        get_userdata( $user_id )->user_email,
-        'Payment Plan Complete!',
-        'Congratulations! You have completed all payments and now have full access.'
-    );
+    // Manage retries and grace periods
+    public static function schedule_payment_retry($subscription_id, $failure_count)
+    public static function start_grace_period($subscription_id, $grace_period_days)
 }
 ```
 
-#### Track Each Payment
+#### Helper Functions
 ```php
-add_action( 'subscrpt_split_payment_renewed', 'track_payment_progress', 10, 3 );
-function track_payment_progress( $subscription_id, $order_id, $order_item_id ) {
-    $payments_made = subscrpt_count_payments_made( $subscription_id );
-    $remaining = subscrpt_get_remaining_payments( $subscription_id );
-    
-    // Send progress update email
-    $order = wc_get_order( $order_id );
-    $customer_email = $order->get_billing_email();
-    
-    wp_mail( 
-        $customer_email,
-        'Payment Received - Progress Update',
-        "Payment #{$payments_made} received. {$remaining} payments remaining."
-    );
-}
+// Check if max payments reached
+function subscrpt_is_max_payments_reached($subscription_id)
+
+// Get remaining payments
+function subscrpt_get_remaining_payments($subscription_id)
+
+// Get payment type
+function subscrpt_get_payment_type($subscription_id)
+
+// Count payments made
+function subscrpt_count_payments_made($subscription_id)
 ```
 
-#### Handle Payment Failures
+### 📋 **IMPLEMENTATION DETAILS**
+
+#### Product Meta Fields
+- `_subscrpt_payment_type`: 'recurring' or 'split_payment'
+- `_subscrpt_max_no_payment`: Number of total payments
+- `_subscrpt_access_ends_timing`: When access ends
+- `_subscrpt_custom_access_duration_time`: Custom duration value
+- `_subscrpt_custom_access_duration_type`: Custom duration unit
+- `_subscrpt_max_payment_retries`: Maximum retry attempts
+- `_subscrpt_payment_grace_period`: Grace period in days
+
+#### Subscription Meta Fields
+- `_subscrpt_split_payment_completed_fired`: Prevents duplicate completion actions
+- `_subscrpt_access_end_date`: Calculated access end timestamp
+- `_subscrpt_payment_failure_count`: Current failure count
+- `_subscrpt_grace_period_start`: Grace period start timestamp
+
+#### Database Tables
+- `wp_subscrpt_order_relation`: Links orders to subscriptions
+- `wp_posts`: Subscription posts with custom post type 'subscrpt_order'
+- `wp_comments`: Activity notes and payment history
+
+### 🚀 **AVAILABLE HOOKS FOR DEVELOPERS**
+
+#### Actions (do_action)
 ```php
-add_action( 'subscrpt_split_payment_failed', 'handle_payment_failure', 10, 1 );
-function handle_payment_failure( $subscription_id ) {
-    $user_id = get_post_field( 'post_author', $subscription_id );
-    
-    // Temporarily suspend access
-    update_user_meta( $user_id, "access_suspended_{$subscription_id}", true );
-    
-    // Send retry email
-    $user = get_userdata( $user_id );
-    wp_mail( 
-        $user->user_email,
-        'Payment Failed - Action Required',
-        'Your payment failed. Please update your payment method to continue.'
-    );
-}
+// Split payment completed
+do_action('subscrpt_split_payment_completed', $subscription_id, $payments_made, $max_payments);
+
+// Payment failure logged
+do_action('subscrpt_payment_failure_logged', $subscription_id, $failure_count);
+
+// Payment failure notification sent
+do_action('subscrpt_payment_failure_notification_sent', $subscription_id, $failure_count, $max_retries);
+
+// Access suspended
+do_action('subscrpt_access_suspended', $subscription_id);
+
+// Access restored
+do_action('subscrpt_access_restored', $subscription_id);
 ```
 
-### Filter Hook Examples
-
-#### Modify Payment Plan Arguments
+#### Filters (apply_filters)
 ```php
-add_filter( 'subscrpt_split_payment_args', 'customize_payment_args', 10, 3 );
-function customize_payment_args( $args, $order_item, $product ) {
-    // VIP customers get extended payment terms
-    $order = $order_item->get_order();
-    $customer_email = $order->get_billing_email();
-    
-    if ( is_vip_customer( $customer_email ) ) {
-        $args['max_payments'] = $args['max_payments'] + 2; // Extra payments for VIP
-    }
-    
-    return $args;
-}
+// Modify split payment arguments
+$args = apply_filters('subscrpt_split_payment_args', $args, $order_item, $product);
+
+// Override total payments
+$max_payments = apply_filters('subscrpt_split_payment_total_override', $max_payments, $subscription_id, $product_id);
+
+// Customize expire status
+$expire_status = apply_filters('subscrpt_split_payment_expire_status', 'expired', $subscription_id, $payments_made, $max_payments);
+
+// Modify next due date
+$next_date = apply_filters('subscrpt_split_payment_next_due_date', $next_date, $subscription_id, $recurr_timing, $type);
 ```
 
-#### Dynamic Payment Limits
-```php
-add_filter( 'subscrpt_split_payment_total_override', 'dynamic_payment_limits', 10, 3 );
-function dynamic_payment_limits( $max_payments, $subscription_id, $product_id ) {
-    $user_id = get_post_field( 'post_author', $subscription_id );
-    $user_level = get_user_meta( $user_id, 'membership_level', true );
-    
-    // Premium members get more payment options
-    if ( $user_level === 'premium' ) {
-        return $max_payments * 2;
-    }
-    
-    return $max_payments;
-}
-```
+### 📧 **EMAIL TEMPLATES**
 
-#### Custom Completion Status
-```php
-add_filter( 'subscrpt_split_payment_expire_status', 'custom_completion_status', 10, 4 );
-function custom_completion_status( $expire_status, $subscription_id, $payments_made, $max_payments ) {
-    // Keep subscription active instead of expired for course access
-    $product_id = get_post_meta( $subscription_id, '_subscrpt_product_id', true );
-    $product_category = wp_get_post_terms( $product_id, 'product_cat', array( 'fields' => 'slugs' ) );
-    
-    if ( in_array( 'online-courses', $product_category ) ) {
-        return 'active'; // Keep active for course access
-    }
-    
-    return $expire_status;
-}
-```
+#### Available Email Types
+1. **Payment Due Reminders**: Sent before next payment date
+2. **Payment Failure Notifications**: Alert customers of failed payments
+3. **Completion Notifications**: Inform when split payment plan is finished
+4. **Grace Period Warnings**: Notify before access suspension
 
-#### Disable Cancel for Certain Plans
-```php
-add_filter( 'subscrpt_split_payment_disable_cancel', 'disable_cancel_for_discounted', 10, 3 );
-function disable_cancel_for_discounted( $disable_cancel, $subscription_id, $status ) {
-    // Disable cancel for discounted payment plans
-    $product_id = get_post_meta( $subscription_id, '_subscrpt_product_id', true );
-    $is_discounted = get_post_meta( $product_id, '_discounted_split_plan', true );
-    
-    if ( $is_discounted ) {
-        return true; // Disable cancel button
-    }
-    
-    return $disable_cancel;
-}
-```
+#### Email Customization
+- Templates located in `templates/emails/`
+- Customizable subjects and content
+- Placeholder support for dynamic data
+- Triggered automatically via cron jobs
 
-#### Custom Button Text
-```php
-add_filter( 'subscrpt_split_payment_button_text', 'custom_button_text', 10, 4 );
-function custom_button_text( $label, $button_type, $subscription_id, $status ) {
-    switch ( $button_type ) {
-        case 'early-renew':
-            return 'Pay Next Installment Early';
-        case 'cancel':
-            return 'End Payment Plan';
-        case 'renew':
-            return 'Restart Payment Plan';
-    }
-    
-    return $label;
-}
-```
+### ⚙️ **CONFIGURATION OPTIONS**
 
-## 📍 Hook Locations
+#### Global Settings
+- **Default Payment Retries**: 3 attempts
+- **Default Grace Period**: 7 days
+- **Reminder Days**: 7 days before payment due
+- **Email Notifications**: Enabled by default
 
-### Actions are fired in:
-- `subscrpt_split_payment_created`: `includes/Illuminate/Helper.php` - `process_new_subscription_order()`
-- `subscrpt_split_payment_completed`: `includes/functions.php` - `subscrpt_is_max_payments_reached()`
-- `subscrpt_split_payment_renewed`: `includes/Illuminate/Helper.php` - `process_order_renewal()`
-- `subscrpt_split_payment_failed`: `subscription-pro/includes/Api/SubscriptionAction.php`
-- `subscrpt_split_payment_cancelled`: `includes/Illuminate/Action.php` - `cancelled()`
-- `subscrpt_split_payment_early_renew_triggered`: `subscription-pro/includes/Illuminate/Helper.php` - `create_early_renewal_history()`
+#### Per-Product Settings
+- **Payment Type**: Recurring or Split Payment
+- **Installment Count**: 2-∞ payments
+- **Access Timing**: Flexible access control
+- **Failure Handling**: Custom retry and grace settings
 
-### Filters are applied in:
-- `subscrpt_split_payment_args`: `includes/Illuminate/Helper.php` - `process_new_subscription_order()`
-- `subscrpt_split_payment_total_override`: `includes/functions.php` - `subscrpt_is_max_payments_reached()`
-- `subscrpt_split_payment_expire_status`: `includes/functions.php` - `subscrpt_is_max_payments_reached()`
-- `subscrpt_split_payment_next_due_date`: `includes/Illuminate/Order.php` - `generate_dates_for_subscription()`
-- `subscrpt_split_payment_disable_cancel`: `includes/Frontend/MyAccount.php` - `view_subscrpt_content()`
-- `subscrpt_split_payment_button_text`: `includes/Frontend/MyAccount.php` & `subscription-pro/includes/Frontend/Account.php`
+### 🔍 **DEBUGGING & MONITORING**
+
+#### Debug Logging
+- Comprehensive error logging for payment failures
+- Payment progress tracking
+- Access timing calculations
+- Retry attempt monitoring
+
+#### Admin Notifications
+- Payment failure alerts
+- Completion status updates
+- Access suspension notifications
+- Grace period warnings
+
+## �� **NEXT STEPS & RECOMMENDATIONS**
+
+### Immediate Actions
+1. **Test Payment Flow**: Verify split payment creation and completion
+2. **Validate Email Templates**: Ensure all notification emails are working
+3. **Check Admin Interface**: Verify all settings are properly saved and displayed
+4. **Test Failure Handling**: Simulate payment failures to test retry logic
+
+### Potential Enhancements
+1. **Advanced Analytics**: Payment success rates, completion times
+2. **Customer Communication**: SMS notifications, in-app alerts
+3. **Payment Gateway Integration**: Better failure handling for specific gateways
+4. **Reporting**: Split payment performance metrics
+
+### Quality Assurance
+1. **Edge Case Testing**: Various payment timing scenarios
+2. **Performance Testing**: Large numbers of split payment subscriptions
+3. **Security Review**: Payment data handling and validation
+4. **User Experience**: Customer-facing interface optimization
+
+## 📚 **RESOURCES**
+
+- **Plugin Documentation**: `docs/` directory
+- **Hook Reference**: `hooks.md` for complete hook documentation
+- **Code Examples**: See implementation files for usage patterns
+- **Support**: Check plugin documentation and support channels
 
 ---
 
-*These hooks provide comprehensive control over the split payment system behavior and user experience.* 
+*This documentation covers the current implementation as of the latest plugin version. For updates and new features, refer to the plugin changelog and development notes.*
