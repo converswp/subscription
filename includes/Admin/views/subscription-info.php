@@ -54,6 +54,169 @@ $shipping_address = $order ? $order->get_formatted_shipping_address() : '-';
                         <th style="padding:8px 10px;">Qty</th>
                         <td style="padding:8px 10px;"><?php echo esc_html($qty); ?></td>
                     </tr>
+                    
+                    <?php 
+                    // Display payment information if max_payments is set
+                    $product_id = get_post_meta($post->ID, '_subscrpt_product_id', true);
+                    $max_payments = subscrpt_get_max_payments($post->ID) ?: 0;
+                    
+                    // Get payment type information first (needed for condition)
+                    $payment_type = $product_id ? get_post_meta($product_id, '_subscrpt_payment_type', true) : 'recurring';
+                    $payment_type = $payment_type ?: 'recurring'; // Default to recurring if empty
+                    
+                    // Also check subscription's own meta data
+                    $subscription_payment_type = get_post_meta($post->ID, '_subscrpt_payment_type', true);
+                    $subscription_max_payments = get_post_meta($post->ID, '_subscrpt_max_no_payment', true);
+                    
+                    // Also check if this subscription has variation data
+                    $variation_id = get_post_meta($post->ID, '_subscrpt_variation_id', true);
+                    if ($variation_id) {
+                        $variation_payment_type = get_post_meta($variation_id, '_subscrpt_payment_type', true);
+                        $variation_max_payments = get_post_meta($variation_id, '_subscrpt_max_no_payment', true);
+                        
+                        // Use variation data if product data is not available
+                        if (empty($payment_type) || 'recurring' === $payment_type) {
+                            if (!empty($variation_payment_type)) {
+                                $payment_type = $variation_payment_type;
+                            }
+                        }
+                        if (!$max_payments && !empty($variation_max_payments)) {
+                            $max_payments = $variation_max_payments;
+                        }
+                    }
+                    
+                    // Use subscription's own data if available and more specific
+                    if (!empty($subscription_payment_type)) {
+                        $payment_type = $subscription_payment_type;
+                    }
+                    if (!empty($subscription_max_payments)) {
+                        $max_payments = $subscription_max_payments;
+                    }
+                    
+                    // Final fallback: Infer payment type from max_payments if not explicitly set
+                    if ((empty($payment_type) || 'recurring' === $payment_type) && $max_payments > 0) {
+                        $payment_type = 'split_payment';
+                    }
+                    
+                    // Ensure max_payments is properly set for display
+                    $max_payments = (int) $max_payments;
+                    
+                    // Show Total Payments if conditions are met
+                    if ((!empty($max_payments) && $max_payments > 0) || ('split_payment' === $payment_type && $max_payments > 0)) :
+                        $payments_made = subscrpt_count_payments_made($post->ID);
+                    ?>
+                    <tr>
+                        <th style="padding:8px 10px;"><?php esc_html_e('Total Payments', 'wp_subscription'); ?></th>
+                        <td style="padding:8px 10px;"><?php echo esc_html($payments_made) . ' / ' . esc_html($max_payments); ?></td>
+                    </tr>
+                    <?php endif; ?>
+                    
+                    <?php
+                    // Display Payment Type and Access Duration information
+                    $payment_type = $product_id ? get_post_meta($product_id, '_subscrpt_payment_type', true) : 'recurring';
+                    $payment_type = $payment_type ?: 'recurring'; // Default to recurring if empty
+                    
+                    // Also check subscription's own meta data
+                    $subscription_payment_type = get_post_meta($post->ID, '_subscrpt_payment_type', true);
+                    $subscription_max_payments = get_post_meta($post->ID, '_subscrpt_max_no_payment', true);
+                    
+                    // Also check if this subscription has variation data
+                    $variation_id = get_post_meta($post->ID, '_subscrpt_variation_id', true);
+                    if ($variation_id) {
+                        $variation_payment_type = get_post_meta($variation_id, '_subscrpt_payment_type', true);
+                        $variation_max_payments = get_post_meta($variation_id, '_subscrpt_max_no_payment', true);
+                        
+                        // Use variation data if product data is not available
+                        if (empty($payment_type) || 'recurring' === $payment_type) {
+                            if (!empty($variation_payment_type)) {
+                                $payment_type = $variation_payment_type;
+                            }
+                        }
+                        if (!$max_payments && !empty($variation_max_payments)) {
+                            $max_payments = $variation_max_payments;
+                        }
+                    }
+                    
+                    // Use subscription's own data if available and more specific
+                    if (!empty($subscription_payment_type)) {
+                        $payment_type = $subscription_payment_type;
+                    }
+                    if (!empty($subscription_max_payments)) {
+                        $max_payments = $subscription_max_payments;
+                    }
+                    
+                    // Final fallback: Infer payment type from max_payments if not explicitly set
+                    if ((empty($payment_type) || 'recurring' === $payment_type) && $max_payments > 0) {
+                        $payment_type = 'split_payment';
+                    }
+                    
+                    // Ensure max_payments is properly set for display
+                    $max_payments = (int) $max_payments;
+                    ?>
+                    <tr>
+                        <th style="padding:8px 10px;"><?php esc_html_e('Payment Type', 'wp_subscription'); ?></th>
+                        <td style="padding:8px 10px;">
+                            <?php 
+                            if ('split_payment' === $payment_type) {
+                                esc_html_e('Split Payment', 'wp_subscription');
+                            } else {
+                                esc_html_e('Recurring', 'wp_subscription');
+                            }
+                            ?>
+                        </td>
+                    </tr>
+                    
+                    <!-- Access Duration Information for Split Payments -->
+                    <?php if ('split_payment' === $payment_type && !empty($max_payments) && $max_payments > 0) : ?>
+                        <?php 
+                        $access_ends_timing = get_post_meta($product_id, '_subscrpt_access_ends_timing', true) ?: 'after_full_duration';
+                        $custom_duration_time = get_post_meta($product_id, '_subscrpt_custom_access_duration_time', true) ?: 1;
+                        $custom_duration_type = get_post_meta($product_id, '_subscrpt_custom_access_duration_type', true) ?: 'months';
+                        
+                        // Calculate access end date if Pro version is available
+                        $access_end_date_string = null;
+                        if (function_exists('subscrpt_pro_activated') && subscrpt_pro_activated()) {
+                            if (class_exists('\SpringDevs\SubscriptionPro\Illuminate\SplitPaymentHandler')) {
+                                $access_end_date_string = \SpringDevs\SubscriptionPro\Illuminate\SplitPaymentHandler::get_access_end_date_string($post->ID);
+                            }
+                        }
+                        ?>
+                        <tr>
+                            <th style="padding:8px 10px;"><?php esc_html_e('Access Duration', 'wp_subscription'); ?></th>
+                            <td style="padding:8px 10px;">
+                                <?php 
+                                switch ($access_ends_timing) {
+                                    case 'lifetime':
+                                        esc_html_e('Lifetime access after completion', 'wp_subscription');
+                                        break;
+                                    case 'after_full_duration':
+                                        esc_html_e('Full subscription duration', 'wp_subscription');
+                                        break;
+                                    case 'custom_duration':
+                                        printf(
+                                            /* translators: %1$s: duration time, %2$s: duration type */
+                                            esc_html__('%1$s %2$s after first payment', 'wp_subscription'),
+                                            esc_html($custom_duration_time),
+                                            esc_html(Helper::get_typos($custom_duration_time, $custom_duration_type))
+                                        );
+                                        break;
+                                    default:
+                                        esc_html_e('Full subscription duration', 'wp_subscription');
+                                        break;
+                                }
+                                ?>
+                            </td>
+                        </tr>
+                        
+                        <!-- Show calculated access end date if available -->
+                        <?php if ($access_end_date_string) : ?>
+                        <tr>
+                            <th style="padding:8px 10px;"><?php esc_html_e('Access Ends On', 'wp_subscription'); ?></th>
+                            <td style="padding:8px 10px;"><?php echo esc_html($access_end_date_string); ?></td>
+                        </tr>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                    
                     <tr>
                         <th style="padding:8px 10px;">Started date</th>
                         <td style="padding:8px 10px;"><?php echo $start_date ? esc_html(gmdate('F d, Y', $start_date)) : '-'; ?></td>

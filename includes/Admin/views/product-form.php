@@ -18,7 +18,7 @@
         );
         ?>
         <p class="form-field subscrpt_field">
-            <label for="subscrpt_trial_time"><?php esc_html_e( 'Offer a free trial of', 'wp_subscription' ); ?></label>
+            <label for="subscrpt_trial_time"><?php esc_html_e( '	Free Trial Duration', 'wp_subscription' ); ?></label>
             <input type="number" class="short" name="subscrpt_trial_time" id="subscrpt_trial_time"
                    value="<?php echo esc_attr( $subscrpt_trial_time ); ?>"/>
             <select name="subscrpt_trial_timing" id="subscrpt_trial_timing">
@@ -33,7 +33,7 @@
                 <?php endforeach; ?>
             </select>
             <small
-                class="description"><?php esc_html_e( 'You can offer a free trial of this subscription. In this way the user can purchase the subscription and will pay when the trial period expires.', 'wp_subscription' ); ?></small>
+                class="description"><?php esc_html_e( 'Let users try the subscription for free before the first payment is collected.', 'wp_subscription' ); ?></small>
         </p>
 
         <?php
@@ -41,10 +41,10 @@
         woocommerce_wp_text_input(
             array(
                 'id'          => 'subscrpt_cart_txt',
-                'label'       => __( 'Add to Cart Text', 'wp_subscription' ),
+                'label'       => __( 'Button Text (Custom)', 'wp_subscription' ),
                 'type'        => 'text',
                 'value'       => $subscrpt_cart_txt,
-                'description' => __( 'change Add to Cart Text default is "subscribe"', 'wp_subscription' ),
+                'description' => __( 'Customize the button label shown on the product or shop page. Default is "Subscribe"', 'wp_subscription' ),
                 'desc_tip'    => true,
             )
         );
@@ -52,13 +52,13 @@
         woocommerce_wp_select(
             array(
                 'id'          => 'subscrpt_user_cancel',
-                'label'       => __( 'Can User Cancel', 'wp_subscription' ),
+                'label'       => __( 'Allow User Cancellation?', 'wp_subscription' ),
                 'value'       => $subscrpt_user_cancell,
                 'options'     => array(
                     'yes' => __( 'Yes', 'wp_subscription' ),
                     'no'  => __( 'No', 'wp_subscription' ),
                 ),
-                'description' => __( 'if "Yes",then user can be cancelled."No" means cannot do this !!', 'wp_subscription' ),
+                'description' => __( 'Allow subscribers to cancel their subscription manually from their account dashboard.', 'wp_subscription' ),
                 'desc_tip'    => true,
             )
         );

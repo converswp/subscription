@@ -60,16 +60,18 @@ class Order {
 			}
 			$next_date = sdevs_wp_strtotime( $recurr_timing, time() );
 		} elseif ( 'early-renew' === $subscription_history->type ) {
-			$next_date = sdevs_wp_strtotime( $recurr_timing, get_post_meta( $subscription_id, '_subscrpt_next_date', true ) );
-
 			if ( $trial ) {
-				$trial_mode = get_post_meta( $subscription_id, '_subscrpt_trial_mode', true );
-				if ( 'on' === $trial_mode ) {
-					update_post_meta( $subscription_id, '_subscrpt_trial_mode', 'extended' );
-					$next_date = sdevs_wp_strtotime( $recurr_timing, get_post_meta( $subscription_id, '_subscrpt_trial_ended', true ) );
-				}
+				delete_post_meta( $subscription_id, '_subscrpt_trial' );
+				delete_post_meta( $subscription_id, '_subscrpt_trial_mode' );
+				delete_post_meta( $subscription_id, '_subscrpt_trial_started' );
+				delete_post_meta( $subscription_id, '_subscrpt_trial_ended' );
 			}
+			$next_date = sdevs_wp_strtotime( $recurr_timing, time() );
 		}
+		
+		// Allow filtering of next due date logic
+		$next_date = apply_filters( 'subscrpt_split_payment_next_due_date', $next_date, $subscription_id, $recurr_timing, $subscription_history->type );
+		
 		update_post_meta( $subscription_id, '_subscrpt_next_date', $next_date );
 	}
 
@@ -178,6 +180,16 @@ class Order {
 					)
 				);
 
+				// Increment renewal count for completed renewal orders (wps-pro)
+				if ( 'renew' === $history->type && 'active' === $post_status && function_exists( 'subscrpt_pro_activated' ) && subscrpt_pro_activated() ) {
+					if ( class_exists( '\\SpringDevs\\SubscriptionPro\\Illuminate\\LimitChecker' ) ) {
+						\SpringDevs\SubscriptionPro\Illuminate\LimitChecker::increment_renewal_count( $history->subscription_id );
+					}
+				}
+
+				// Add enhanced split payment activity logging
+				$this->add_split_payment_activity_note( $history->subscription_id, $history->type, $post_status, $order );
+
 				Action::write_comment( $post_status, $history->subscription_id );
 			} else {
 				do_action( 'subscrpt_order_status_changed', $order, $history );
@@ -206,5 +218,175 @@ class Order {
 
 		// phpcs:ignore
 		$wpdb->delete( $table_name, array( 'order_id' => $order_id ), array( '%d' ) );
+	}
+
+	/**
+	 * Add enhanced split payment activity note with payment progress and access information.
+	 *
+	 * @param int       $subscription_id Subscription ID.
+	 * @param string    $history_type    History type (new, renew, etc.).
+	 * @param string    $post_status     Post status.
+	 * @param \WC_Order $order           WooCommerce order object.
+	 */
+	private function add_split_payment_activity_note( $subscription_id, $history_type, $post_status, $order ) {
+		// Only add enhanced notes for active subscriptions
+		if ( 'active' !== $post_status ) {
+			return;
+		}
+
+		// Check if this is a split payment subscription
+		if ( ! function_exists( 'subscrpt_get_payment_type' ) ) {
+			return;
+		}
+
+		$payment_type = subscrpt_get_payment_type( $subscription_id );
+		if ( 'split_payment' !== $payment_type ) {
+			return;
+		}
+
+		// Get payment progress information
+		$max_payments = function_exists( 'subscrpt_get_max_payments' ) ? subscrpt_get_max_payments( $subscription_id ) : 0;
+		$payments_made = function_exists( 'subscrpt_count_payments_made' ) ? subscrpt_count_payments_made( $subscription_id ) : 0;
+		$remaining_payments = function_exists( 'subscrpt_get_remaining_payments' ) ? subscrpt_get_remaining_payments( $subscription_id ) : 0;
+
+		// Determine payment number for this order
+		$payment_number = $payments_made;
+		$order_total = $order->get_total();
+		$order_currency = $order->get_currency();
+
+		// Create enhanced activity note
+		$comment_content = '';
+		$activity_type = '';
+
+		if ( 'new' === $history_type ) {
+			$comment_content = sprintf(
+				/* translators: %1$d: payment number, %2$d: total payments, %3$s: amount, %4$s: currency */
+				__( 'Split payment %1$d of %2$d received (%3$s %4$s). Initial access granted.', 'wp_subscription' ),
+				$payment_number,
+				$max_payments,
+				$order_total,
+				$order_currency
+			);
+			$activity_type = __( 'Split Payment - Initial', 'wp_subscription' );
+		} elseif ( 'renew' === $history_type ) {
+			$comment_content = sprintf(
+				/* translators: %1$d: payment number, %2$d: total payments, %3$s: amount, %4$s: currency, %5$d: remaining */
+				__( 'Split payment %1$d of %2$d received (%3$s %4$s). %5$d payments remaining.', 'wp_subscription' ),
+				$payment_number,
+				$max_payments,
+				$order_total,
+				$order_currency,
+				$remaining_payments
+			);
+			$activity_type = __( 'Split Payment - Installment', 'wp_subscription' );
+		}
+
+		// Add the enhanced activity note
+		if ( $comment_content ) {
+			$comment_id = wp_insert_comment(
+				array(
+					'comment_author'  => 'Subscription for WooCommerce',
+					'comment_content' => $comment_content,
+					'comment_post_ID' => $subscription_id,
+					'comment_type'    => 'order_note',
+				)
+			);
+			update_comment_meta( $comment_id, '_subscrpt_activity', $activity_type );
+
+			// Add order note with split payment context
+			$order_note = sprintf(
+				/* translators: %1$d: payment number, %2$d: total payments, %3$d: subscription id */
+				__( 'Split payment %1$d of %2$d received for subscription #%3$d', 'wp_subscription' ),
+				$payment_number,
+				$max_payments,
+				$subscription_id
+			);
+			$order->add_order_note( $order_note );
+		}
+
+		// Add payment milestone notes for significant progress
+		$this->add_payment_milestone_notes( $subscription_id, $payments_made, $max_payments );
+	}
+
+	/**
+	 * Add payment milestone notes for significant progress (25%, 50%, 75%, 100%).
+	 *
+	 * @param int $subscription_id Subscription ID.
+	 * @param int $payments_made   Number of payments made.
+	 * @param int $max_payments    Maximum number of payments.
+	 */
+	private function add_payment_milestone_notes( $subscription_id, $payments_made, $max_payments ) {
+		if ( ! $max_payments || $max_payments <= 0 ) {
+			return;
+		}
+
+		$percentage = round( ( $payments_made / $max_payments ) * 100 );
+		$milestone_key = '_subscrpt_milestone_' . $percentage . '_logged';
+
+		// Check if this milestone has already been logged
+		if ( get_post_meta( $subscription_id, $milestone_key, true ) ) {
+			return;
+		}
+
+		$milestone_note = '';
+		$activity_type = '';
+
+		switch ( $percentage ) {
+			case 25:
+				$milestone_note = sprintf(
+					/* translators: %1$d: payments made, %2$d: total payments */
+					__( 'Payment milestone reached: %1$d of %2$d payments completed (25%%).', 'wp_subscription' ),
+					$payments_made,
+					$max_payments
+				);
+				$activity_type = __( 'Payment Milestone - 25%', 'wp_subscription' );
+				break;
+
+			case 50:
+				$milestone_note = sprintf(
+					/* translators: %1$d: payments made, %2$d: total payments */
+					__( 'Payment milestone reached: %1$d of %2$d payments completed (50%%). Halfway there!', 'wp_subscription' ),
+					$payments_made,
+					$max_payments
+				);
+				$activity_type = __( 'Payment Milestone - 50%', 'wp_subscription' );
+				break;
+
+			case 75:
+				$milestone_note = sprintf(
+					/* translators: %1$d: payments made, %2$d: total payments */
+					__( 'Payment milestone reached: %1$d of %2$d payments completed (75%%). Almost complete!', 'wp_subscription' ),
+					$payments_made,
+					$max_payments
+				);
+				$activity_type = __( 'Payment Milestone - 75%', 'wp_subscription' );
+				break;
+
+			case 100:
+				$milestone_note = sprintf(
+					/* translators: %1$d: payments made, %2$d: total payments */
+					__( 'Payment milestone reached: %1$d of %2$d payments completed (100%%). Split payment plan complete!', 'wp_subscription' ),
+					$payments_made,
+					$max_payments
+				);
+				$activity_type = __( 'Payment Milestone - 100%', 'wp_subscription' );
+				break;
+		}
+
+		// Add milestone note if applicable
+		if ( $milestone_note ) {
+			$comment_id = wp_insert_comment(
+				array(
+					'comment_author'  => 'Subscription for WooCommerce',
+					'comment_content' => $milestone_note,
+					'comment_post_ID' => $subscription_id,
+					'comment_type'    => 'order_note',
+				)
+			);
+			update_comment_meta( $comment_id, '_subscrpt_activity', $activity_type );
+
+			// Mark milestone as logged
+			update_post_meta( $subscription_id, $milestone_key, current_time( 'timestamp' ) );
+		}
 	}
 }

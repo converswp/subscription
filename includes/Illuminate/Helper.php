@@ -24,15 +24,15 @@ class Helper {
 	 */
 	public static function get_typos( $number, $typo ) {
 		if ( 1 === (int) $number && 'days' === $typo ) {
-			return __( 'day', 'wp_subscription' );
+			return ucfirst( __( 'day', 'wp_subscription' ) );
 		} elseif ( 1 === (int) $number && 'weeks' === $typo ) {
-			return __( 'week', 'wp_subscription' );
+			return ucfirst( __( 'week', 'wp_subscription' ) );
 		} elseif ( 1 === (int) $number && 'months' === $typo ) {
-			return __( 'month', 'wp_subscription' );
+			return ucfirst( __( 'month', 'wp_subscription' ) );
 		} elseif ( 1 === (int) $number && 'years' === $typo ) {
-			return __( 'year', 'wp_subscription' );
+			return ucfirst( __( 'year', 'wp_subscription' ) );
 		} else {
-			return $typo;
+			return ucfirst( $typo );
 		}
 	}
 
@@ -279,19 +279,41 @@ class Helper {
 		global $wpdb;
 		$history_table = $wpdb->prefix . 'subscrpt_order_relation';
 
+		// Check if this is a split payment subscription
+		$payment_type = function_exists( 'subscrpt_get_payment_type' ) ? subscrpt_get_payment_type( $subscription_id ) : 'recurring';
+		$max_payments = function_exists( 'subscrpt_get_max_payments' ) ? subscrpt_get_max_payments( $subscription_id ) : 0;
+		$payments_made = function_exists( 'subscrpt_count_payments_made' ) ? subscrpt_count_payments_made( $subscription_id ) : 0;
+		
+		$comment_content = '';
+		$activity_type = '';
+		
+		if ( 'split_payment' === $payment_type && $max_payments ) {
+			$comment_content = sprintf(
+				/* translators: %1$s: order id, %2$d: payment number, %3$d: total payments */
+				__( 'Split payment installment %2$d of %3$d. Order %1$s created for subscription.', 'wp_subscription' ),
+				$order_id,
+				$payments_made + 1, // +1 because this is a new renewal
+				$max_payments
+			);
+			$activity_type = __( 'Split Payment - Renewal', 'wp_subscription' );
+		} else {
+			$comment_content = sprintf(
+				/* translators: order id. */
+				__( 'The order %s has been created for the subscription', 'wp_subscription' ),
+				$order_id
+			);
+			$activity_type = __( 'Renewal Order', 'wp_subscription' );
+		}
+		
 		$comment_id = wp_insert_comment(
 			array(
 				'comment_author'  => 'Subscription for WooCommerce',
-				'comment_content' => sprintf(
-					// translators: order id.
-					__( 'The order %s has been created for the subscription', 'wp_subscription' ),
-					$order_id
-				),
+				'comment_content' => $comment_content,
 				'comment_post_ID' => $subscription_id,
 				'comment_type'    => 'order_note',
 			)
 		);
-		update_comment_meta( $comment_id, '_subscrpt_activity', __( 'Renewal Order', 'wp_subscription' ) );
+		update_comment_meta( $comment_id, '_subscrpt_activity', $activity_type );
 
 		$wpdb->insert(
 			$history_table,
@@ -302,6 +324,9 @@ class Helper {
 				'type'            => 'renew',
 			)
 		);
+		
+		// Fire action when split payment is renewed
+		do_action( 'subscrpt_split_payment_renewed', $subscription_id, $order_id, $order_item_id );
 	}
 
 	/**
@@ -317,10 +342,25 @@ class Helper {
 		global $wpdb;
 		$history_table = $wpdb->prefix . 'subscrpt_order_relation';
 
+		// Prepare split payment arguments
+		$split_payment_args = array(
+			'product_id'    => $product->get_id(),
+			'order_id'      => $order_item->get_order_id(),
+			'order_item_id' => $order_item->get_id(),
+			'post_status'   => $post_status,
+			'max_payments'  => $product->get_meta( '_subscrpt_max_no_payment' ),
+			'timing_per'    => $product->get_meta( '_subscrpt_timing_per' ),
+			'timing_option' => $product->get_meta( '_subscrpt_timing_option' ),
+			'price'         => $product->get_price(),
+		);
+		
+		// Allow modification of split payment arguments
+		$split_payment_args = apply_filters( 'subscrpt_split_payment_args', $split_payment_args, $order_item, $product );
+
 		$args            = array(
 			'post_title'  => 'Subscription',
 			'post_type'   => 'subscrpt_order',
-			'post_status' => $post_status,
+			'post_status' => $split_payment_args['post_status'],
 		);
 		$subscription_id = wp_insert_post( $args );
 		wp_update_post(
@@ -329,19 +369,39 @@ class Helper {
 				'post_title' => "Subscription #{$subscription_id}",
 			)
 		);
+		// Check if this is a split payment subscription
+		$payment_type = $product->get_meta( '_subscrpt_payment_type' ) ?: 'recurring';
+		$max_payments = $product->get_meta( '_subscrpt_max_no_payment' );
+		
+		$comment_content = '';
+		$activity_type = '';
+		
+		if ( 'split_payment' === $payment_type && $max_payments ) {
+			$comment_content = sprintf(
+				/* translators: %1$s: order id, %2$d: max payments */
+				__( 'Split payment subscription created successfully. Order: %1$s. Total installments: %2$d.', 'wp_subscription' ),
+				$order_item->get_order_id(),
+				$max_payments
+			);
+			$activity_type = __( 'Split Payment - New Subscription', 'wp_subscription' );
+		} else {
+			$comment_content = sprintf(
+				/* translators: Order Id. */
+				__( 'Subscription successfully created. Order is %s', 'wp_subscription' ),
+				$order_item->get_order_id()
+			);
+			$activity_type = __( 'New Subscription', 'wp_subscription' );
+		}
+		
 		$comment_id = wp_insert_comment(
 			array(
 				'comment_author'  => 'Subscription for WooCommerce',
-				'comment_content' => sprintf(
-					// translators: Order Id.
-					__( 'Subscription successfully created.	order is %s', 'wp_subscription' ),
-					$order_item->get_order_id()
-				),
+				'comment_content' => $comment_content,
 				'comment_post_ID' => $subscription_id,
 				'comment_type'    => 'order_note',
 			)
 		);
-		update_comment_meta( $comment_id, '_subscrpt_activity', __( 'New Subscription', 'wp_subscription' ) );
+		update_comment_meta( $comment_id, '_subscrpt_activity', $activity_type );
 
 		update_post_meta( $subscription_id, '_subscrpt_product_id', $product->get_id() );
 
@@ -354,6 +414,9 @@ class Helper {
 				'type'            => 'new',
 			)
 		);
+		
+		// Fire action when split payment plan is created
+		do_action( 'subscrpt_split_payment_created', $subscription_id, $split_payment_args, $order_item );
 
 		return $subscription_id;
 	}
@@ -380,6 +443,7 @@ class Helper {
 					'start_date'      => self::start_date( $cart_subscription['trial'] ),
 					'next_date'       => self::next_date( ( $cart_subscription['time'] ?? 1 ) . ' ' . $cart_subscription['type'], $cart_subscription['trial'] ),
 					'can_user_cancel' => $cart_item['data']->get_meta( '_subscrpt_user_cancel' ),
+					'max_no_payment'  => $cart_item['data']->get_meta( '_subscrpt_max_no_payment' ),
 				);
 			}
 		}
@@ -395,6 +459,18 @@ class Helper {
 	 * @throws \Exception Exception.
 	 */
 	public static function create_renewal_order( $subscription_id ) {
+		// Check if maximum payment limit has been reached
+		if ( subscrpt_is_max_payments_reached( $subscription_id ) ) {
+			// Mark subscription as expired due to limit reached
+			wp_update_post( array(
+				'ID'          => $subscription_id,
+				'post_status' => 'expired'
+			) );
+			
+			error_log( "WPS: Maximum payment limit reached for subscription #{$subscription_id}. No renewal order created." );
+			return false;
+		}
+		
 		$order_item_id = get_post_meta( $subscription_id, '_subscrpt_order_item_id', true );
 		$order_id      = wc_get_order_id_by_order_item_id( $order_item_id );
 		$old_order     = self::check_order_for_renewal( $order_id );
@@ -425,6 +501,15 @@ class Helper {
 
 		self::clone_order_metadata( $new_order, $old_order );
 		self::clone_stripe_metadata_for_renewal( $subscription_id, $old_order, $new_order );
+
+		// Store Stripe subscription ID if available
+		if ( $old_order->get_payment_method() === 'stripe' ) {
+			$stripe_subscription_id = $old_order->get_meta('_stripe_subscription_id');
+			if ( $stripe_subscription_id ) {
+				$new_order->update_meta_data('_stripe_subscription_id', $stripe_subscription_id);
+				$new_order->save();
+			}
+		}
 
 		$new_order->calculate_totals();
 		$new_order->save();

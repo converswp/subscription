@@ -114,6 +114,14 @@ abstract class Product {
 		return $this->product->get_meta( '_subscrpt_limit' );
 	}
 
+	public function get_renewal_limit() {
+		return $this->product->get_meta( '_subscrpt_max_no_payment' );
+	}
+	
+	public function get_max_no_payment() {
+		return $this->product->get_meta( '_subscrpt_max_no_payment' );
+	}
+
 	public function is_enabled(): bool {
 		return $this->product->get_meta( '_subscrpt_enabled' );
 	}
@@ -128,5 +136,59 @@ abstract class Product {
 
 	public function get_signup_fee(): int {
 		return 0;
+	}
+	
+	/**
+	 * Get the payment type (recurring or split_payment).
+	 *
+	 * @return string Payment type.
+	 */
+	public function get_payment_type(): string {
+		return $this->product->get_meta( '_subscrpt_payment_type' ) ?: 'recurring';
+	}
+	
+	/**
+	 * Check if product uses split payment type.
+	 *
+	 * @return bool True if split payment, false otherwise.
+	 */
+	public function is_split_payment(): bool {
+		return 'split_payment' === $this->get_payment_type();
+	}
+	
+	/**
+	 * Get access ends timing for split payments.
+	 *
+	 * @return string Access ends timing option.
+	 */
+	public function get_access_ends_timing(): string {
+		return $this->product->get_meta( '_subscrpt_access_ends_timing' ) ?: 'after_full_duration';
+	}
+	
+	/**
+	 * Get custom access duration time.
+	 *
+	 * @return int Custom access duration time.
+	 */
+	public function get_custom_access_duration_time(): int {
+		return (int) ( $this->product->get_meta( '_subscrpt_custom_access_duration_time' ) ?: 1 );
+	}
+	
+	/**
+	 * Get custom access duration type.
+	 *
+	 * @return string Custom access duration type (days, weeks, months, years).
+	 */
+	public function get_custom_access_duration_type(): string {
+		return $this->product->get_meta( '_subscrpt_custom_access_duration_type' ) ?: 'months';
+	}
+	
+	/**
+	 * Check if product has custom access duration.
+	 *
+	 * @return bool True if custom duration, false otherwise.
+	 */
+	public function has_custom_access_duration(): bool {
+		return 'custom_duration' === $this->get_access_ends_timing();
 	}
 }

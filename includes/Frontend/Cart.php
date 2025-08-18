@@ -229,8 +229,13 @@ class Cart {
 						'readonly'    => true,
 					),
 					'can_user_cancel' => array(
-						'description' => __( 'Can User Cancel?', 'wp_subscription' ),
+						'description' => __( 'Allow User Cancellation?', 'wp_subscription' ),
 						'type'        => array( 'string' ),
+						'readonly'    => true,
+					),
+					'max_no_payment'   => array(
+						'description' => __( 'Maximum Total Payments', 'wp_subscription' ),
+						'type'        => array( 'number' ),
 						'readonly'    => true,
 					),
 				),
@@ -259,11 +264,12 @@ class Cart {
 					$recurrings[] = apply_filters(
 						'subscrpt_cart_recurring_data',
 						array(
-							'price'           => ( $cart_item['subscription']['per_cost'] * $cart_item['quantity'] ) * 100,
+							'price'           => ( (float) $cart_item['subscription']['per_cost'] * $cart_item['quantity'] ) * 100,
 							'time'            => $cart_subscription['time'],
 							'type'            => $cart_subscription['type'],
 							'description'     => empty( $cart_subscription['trial'] ) ? 'Next billing on: ' . $next_date : 'First billing on: ' . $start_date,
 							'can_user_cancel' => $cart_item['data']->get_meta( '_subscrpt_user_cancel' ),
+							'max_no_payment'  => $cart_item['data']->get_meta( '_subscrpt_max_no_payment' ),
 						),
 						$cart_item
 					);
@@ -306,6 +312,11 @@ class Cart {
 				'type'        => array( 'string', 'null' ),
 				'readonly'    => true,
 			),
+			'max_no_payment'   => array(
+				'description' => __( 'Maximum Total Payments', 'wp_subscription' ),
+				'type'        => array( 'number' ),
+				'readonly'    => true,
+			),
 		);
 	}
 
@@ -323,11 +334,13 @@ class Cart {
 			'trial'      => null,
 			'signup_fee' => null,
 			'cost'       => null,
+			'max_no_payment'   => null,
 		);
+		
 		if ( isset( $cart_item['subscription'] ) ) {
 			$item_data = $cart_item['subscription'];
 			unset( $item_data['per_cost'] );
-			$item_data['cost'] = $cart_item['subscription']['per_cost'] * $cart_item['quantity'];
+			$item_data['cost'] = (float) $cart_item['subscription']['per_cost'] * $cart_item['quantity'];
 		}
 		if ( ! subscrpt_pro_activated() ) {
 			$item_data['time']       = null;
@@ -361,6 +374,7 @@ class Cart {
 			$subscription_data['signup_fee'] = null;
 			$subscription_data['per_cost']   = $product->get_price();
 			$cart_item_data['subscription']  = apply_filters( 'subscrpt_block_simple_cart_item_data', $subscription_data, $product, $cart_item_data );
+			$cart_item_data['subscription']['max_no_payment'] = $product->get_meta( '_subscrpt_max_no_payment' );
 		endif;
 
 		return $cart_item_data;
@@ -417,7 +431,11 @@ class Cart {
 			<td data-title="<?php esc_attr_e( 'Recurring totals', 'wp_subscription' ); ?>">
 				<?php foreach ( $recurrs as $recurr ) : ?>
 					<p>
-						<span><?php echo wp_kses_post( $recurr['price_html'] ); ?></span><br />
+						<span><?php echo wp_kses_post( $recurr['price_html'] ); ?></span>
+						<?php if ( $recurr['max_no_payment'] > 0 ) : ?>
+							<span>x <?php echo esc_html( $recurr['max_no_payment'] ); ?></span>
+						<?php endif; ?>
+						<br />
 						<small><?php 
 						$billing_text = $recurr['trial_status'] ? 'First billing on' : 'Next billing on';
 						esc_html_e( $billing_text, 'wp_subscription' ); 
@@ -426,6 +444,12 @@ class Cart {
 						<?php if ( 'yes' === $recurr['can_user_cancel'] ) : ?>
 							<br>
 							<small><?php esc_html_e( 'You can cancel subscription at any time!', 'wp_subscription' ); ?></small>
+						<?php endif; ?>
+
+						<!-- add how many times will be build if _subscrpt_renewal_limit is not 0 -->
+						<?php if ( $recurr['max_no_payment'] > 0 ) : ?>
+							<br>
+							<small><?php esc_html_e( 'This subscription will be built for', 'wp_subscription' ); ?> <?php echo esc_html( $recurr['max_no_payment'] ); ?> <?php esc_html_e( 'times.', 'wp_subscription' ); ?></small>
 						<?php endif; ?>
 					</p>
 				<?php endforeach; ?>
@@ -445,6 +469,12 @@ class Cart {
 	public function set_renew_status( $cart_item_data, $product_id ) {
 		$expired = Helper::subscription_exists( $product_id, 'expired' );
 		if ( $expired ) {
+			// Check if maximum payment limit has been reached
+			if ( subscrpt_is_max_payments_reached( $expired ) ) {
+				wc_add_notice( __( 'This subscription has reached its maximum payment limit and cannot be renewed further.', 'wp_subscription' ), 'error' );
+				return $cart_item_data; // Don't add renew status
+			}
+			
 			$cart_item_data['renew_subscrpt'] = true;
 		}
 

@@ -164,6 +164,7 @@ class Stripe extends \WC_Stripe_Payment_Gateway {
 
 		global $wpdb;
 		$recurring = false;
+		$renewal_limit = null;
 		foreach ( $order->get_items() as $order_item ) {
 			$table_name = $wpdb->prefix . 'subscrpt_order_relation';
 			// @phpcs:ignore
@@ -172,6 +173,9 @@ class Stripe extends \WC_Stripe_Payment_Gateway {
 			if ( 0 < count( $relation ) ) {
 				$relation      = $relation[0];
 				$is_auto_renew = get_post_meta( (int) $relation->subscription_id, '_subscrpt_auto_renew', true );
+
+				// Get renewal limit from product meta (handles variations)
+				$renewal_limit = subscrpt_get_max_payments( (int) $relation->subscription_id ) ?: 0;
 
 				if ( in_array( $is_auto_renew, array( 1, '1' ), true ) && in_array( $relation->type, array( 'early-renew', 'renew' ), true ) ) {
 					$recurring = true;
@@ -184,6 +188,9 @@ class Stripe extends \WC_Stripe_Payment_Gateway {
 			$metadata += array(
 				'payment_type' => 'recurring',
 			);
+			if ( $renewal_limit !== null ) {
+				$metadata['renewal_limit'] = $renewal_limit;
+			}
 		}
 
 		return $metadata;

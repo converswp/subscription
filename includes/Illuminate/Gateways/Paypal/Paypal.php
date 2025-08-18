@@ -959,6 +959,7 @@ class Paypal extends \WC_Payment_Gateway {
 	 */
 	public function generate_plan_data( WC_Product $wc_product, string $paypal_product_id ): array {
 		// Get WPSubscription wrapped product.
+		// $wpsubs_product type WC_Product
 		$wpsubs_product = sdevs_get_subscription_product( $wc_product );
 
 		// Name.
@@ -968,7 +969,7 @@ class Paypal extends \WC_Payment_Gateway {
 		$description = $this->truncate_string( $wc_product->get_short_description(), 126 );
 
 		// Price.
-		$price = wc_get_price_including_tax( $wpsubs_product );
+		$price = wc_get_price_including_tax( $wc_product );
 		$price = $this->wpsubs_format_price( $price );
 
 		// Convert plural interval to singular.
@@ -999,6 +1000,10 @@ class Paypal extends \WC_Payment_Gateway {
 		$trial_interval = $convert_interval( $wpsubs_product->get_trial_timing_option() );
 		$signup_fee     = $wpsubs_product->get_signup_fee();
 
+		// get value for total_cycles from _subscrpt_max_no_payment
+		$total_cycles = $wc_product->get_meta( '_subscrpt_max_no_payment' ) ?: 0;
+		$total_cycles = $total_cycles ?? 1;
+
 		// Billing Cycles.
 		$billing_cycles = [];
 
@@ -1007,7 +1012,7 @@ class Paypal extends \WC_Payment_Gateway {
 			$billing_cycles[] = [
 				'tenure_type'  => 'TRIAL',
 				'sequence'     => 1,
-				'total_cycles' => 1,
+				'total_cycles' => $total_cycles,
 				'frequency'    => [
 					'interval_unit'  => $trial_interval,
 					'interval_count' => (int) $trial_length,
