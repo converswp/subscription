@@ -74,10 +74,17 @@ class Paypal extends \WC_Payment_Gateway {
 		$this->description = $this->get_option( 'description' );
 
 		// PayPal Credentials.
-		$this->sandbox_mode  = 'yes' === $this->get_option( 'testmode', 'no' );
-		$this->client_id     = $this->get_option( 'client_id' );
-		$this->client_secret = $this->get_option( 'client_secret' );
-		$this->webhook_id    = $this->get_option( 'webhook_id' );
+		$this->sandbox_mode = 'yes' === $this->get_option( 'testmode', 'no' );
+
+		if ( $this->sandbox_mode ) {
+			$this->client_id     = $this->get_option( 'sandbox_client_id' );
+			$this->client_secret = $this->get_option( 'sandbox_client_secret' );
+			$this->webhook_id    = $this->get_option( 'sandbox_webhook_id' );
+		} else {
+			$this->client_id     = $this->get_option( 'client_id' );
+			$this->client_secret = $this->get_option( 'client_secret' );
+			$this->webhook_id    = $this->get_option( 'webhook_id' );
+		}
 
 		// Set Webhook URL.
 		$this->update_option( 'webhook_url', $this->get_webhook_url() );
@@ -119,8 +126,11 @@ class Paypal extends \WC_Payment_Gateway {
 		// Settings JS.
 		wp_enqueue_script( 'wp-subscription-gateway-settings-script', WP_SUBSCRIPTION_ASSETS . '/js/gateway.js', [ 'jquery' ], WP_SUBSCRIPTION_VERSION, true );
 
+		// Live/Sandbox toggle script.
+		wp_enqueue_script( 'wp-subscription-gateway-settings-toggle-script', WP_SUBSCRIPTION_ASSETS . '/js/gateway_options_toggler.js', [ 'jquery' ], WP_SUBSCRIPTION_VERSION, true );
+
 		$this->form_fields = [
-			'enabled'            => [
+			'enabled'                    => [
 				'title'       => __( 'Enable/Disable', 'wp_subscription' ),
 				'type'        => 'checkbox',
 				'label'       => __( 'Enable PayPal for WPSubscription', 'wp_subscription' ),
@@ -129,14 +139,24 @@ class Paypal extends \WC_Payment_Gateway {
 				'desc_tip'    => true,
 				'class'       => 'wpsubs-toggle',
 			],
-			'title'              => [
+			'testmode'                   => [
+				'title'       => __( 'Test Mode', 'wp_subscription' ),
+				'type'        => 'checkbox',
+				'label'       => __( 'Enable PayPal Sandbox', 'wp_subscription' ),
+				'default'     => 'no',
+				'description' => __( 'PayPal sandbox can be used to test payments without using real money.', 'wp_subscription' ),
+				'desc_tip'    => true,
+				'class'       => 'wpsubs-toggle',
+			],
+
+			'title'                      => [
 				'title'       => __( 'Title', 'wp_subscription' ),
 				'type'        => 'text',
 				'description' => __( 'This controls the title which the user sees during checkout.', 'wp_subscription' ),
 				'default'     => __( 'PayPal', 'wp_subscription' ),
 				'desc_tip'    => true,
 			],
-			'description'        => [
+			'description'                => [
 				'title'       => __( 'Description', 'wp_subscription' ),
 				'type'        => 'textarea',
 				'description' => __( 'This controls the description which the user sees during checkout.', 'wp_subscription' ),
@@ -145,8 +165,21 @@ class Paypal extends \WC_Payment_Gateway {
 				'css'         => 'width: 400px; height: 75px;',
 			],
 
-			'paypal_creds_title' => [
+			'paypal_creds_title'         => [
 				'title'       => __( 'PayPal Credentials', 'wp_subscription' ),
+				'type'        => 'title',
+				'description' => '',
+				'class'       => 'wpsubs-paypal-live-creds',
+			],
+			'paypal_sandbox_creds_title' => [
+				'title'       => __( 'PayPal Sandbox Credentials', 'wp_subscription' ),
+				'type'        => 'title',
+				'description' => '',
+				'class'       => 'wpsubs-paypal-sandbox-creds',
+			],
+
+			'paypal_creds_desc'          => [
+				'title'       => '',
 				'type'        => 'title',
 				'description' => sprintf(
 					// Translators: %1$s is the link to PayPal developer account, %2$s is the link to My Apps & Credentials.
@@ -155,44 +188,67 @@ class Paypal extends \WC_Payment_Gateway {
 					'https://developer.paypal.com/dashboard/applications'
 				),
 			],
-			'testmode'           => [
-				'title'       => __( 'PayPal Sandbox', 'wp_subscription' ),
-				'type'        => 'checkbox',
-				'label'       => __( 'Enable PayPal Sandbox', 'wp_subscription' ),
-				'default'     => 'no',
-				'description' => __( 'PayPal sandbox can be used to test payments without using real money.', 'wp_subscription' ),
-				'desc_tip'    => true,
-				'class'       => 'wpsubs-toggle',
-			],
-			'email'              => [
+			'email'                      => [
 				'title'       => __( 'Email', 'wp_subscription' ),
 				'type'        => 'email',
 				'description' => __( 'PayPal Email Address (used to receive payments)', 'wp_subscription' ),
 				'default'     => '',
 				'desc_tip'    => true,
 			],
-			'client_id'          => [
+
+			// Live Credentials.
+			'client_id'                  => [
 				'title'       => __( 'Client ID', 'wp_subscription' ),
 				'type'        => 'password',
 				'description' => __( 'Enter your PayPal Client ID copied from PayPal Apps & Credentials.', 'wp_subscription' ),
 				'default'     => '',
 				'desc_tip'    => true,
+				'class'       => 'wpsubs-paypal-live-creds',
 			],
-			'client_secret'      => [
+			'client_secret'              => [
 				'title'       => __( 'Secret', 'wp_subscription' ),
 				'type'        => 'password',
 				'description' => __( 'Enter your PayPal Secret copied from PayPal Apps & Credentials.', 'wp_subscription' ),
 				'default'     => '',
 				'desc_tip'    => true,
+				'class'       => 'wpsubs-paypal-live-creds',
 			],
-			'webhook_id'         => [
+			'webhook_id'                 => [
 				'title'       => __( 'Webhook ID', 'wp_subscription' ),
 				'type'        => 'password',
 				'description' => __( 'Enter your Webhook ID copied from PayPal Apps & Credentials for webhook validation.', 'wp_subscription' ),
 				'default'     => '',
 				'desc_tip'    => true,
+				'class'       => 'wpsubs-paypal-live-creds',
 			],
-			'webhook_url'        => [
+
+			// Sandbox Credentials.
+			'sandbox_client_id'          => [
+				'title'       => __( 'Client ID', 'wp_subscription' ),
+				'type'        => 'password',
+				'description' => __( 'Enter your PayPal Client ID copied from PayPal Apps & Credentials.', 'wp_subscription' ),
+				'default'     => '',
+				'desc_tip'    => true,
+				'class'       => 'wpsubs-paypal-sandbox-creds',
+			],
+			'sandbox_client_secret'      => [
+				'title'       => __( 'Secret', 'wp_subscription' ),
+				'type'        => 'password',
+				'description' => __( 'Enter your PayPal Secret copied from PayPal Apps & Credentials.', 'wp_subscription' ),
+				'default'     => '',
+				'desc_tip'    => true,
+				'class'       => 'wpsubs-paypal-sandbox-creds',
+			],
+			'sandbox_webhook_id'         => [
+				'title'       => __( 'Webhook ID', 'wp_subscription' ),
+				'type'        => 'password',
+				'description' => __( 'Enter your Webhook ID copied from PayPal Apps & Credentials for webhook validation.', 'wp_subscription' ),
+				'default'     => '',
+				'desc_tip'    => true,
+				'class'       => 'wpsubs-paypal-sandbox-creds',
+			],
+
+			'webhook_url'                => [
 				'title'       => __( 'Webhook URL', 'wp_subscription' ),
 				'type'        => 'text',
 				'description' => __( '<p>In the <strong style="color:#1d4ed8">Apps & Credentials</strong> page of PayPal developer account open the newly created application and click <strong style="color:#1d4ed8">Add Webhook</strong> button.<br> On the <strong>Webhook URL</strong> field use this webhook link', 'wp_subscription' ),
@@ -261,7 +317,56 @@ class Paypal extends \WC_Payment_Gateway {
 			return;
 		}
 
-		// dd( '🔽 order_id', $order_id );
+		$order = wc_get_order( $order_id );
+
+		// Return if order is not valid.
+		if ( ! $order || empty( $order ) ) {
+			return;
+		}
+		// Return if the order is not using WPSUBS PayPal.
+		if ( $order->get_payment_method() !== $this->id ) {
+			return;
+		}
+
+		// Return if the order is already completed.
+		if ( 'completed' === $order->get_status() ) {
+			// Translators: %d is the order ID.
+			$log_message = sprintf( __( 'Order %d was already completed. Skipping PayPal check.', 'wp_subscription' ), $order_id );
+			wp_subscrpt_write_log( $log_message );
+			wp_subscrpt_write_debug_log( $log_message );
+			return;
+		}
+
+		$paypal_subscription_id = isset( $_GET['subscription_id'] ) ? sanitize_text_field( wp_unslash( $_GET['subscription_id'] ) ) : '';
+		$paypal_ba_token        = isset( $_GET['ba_token'] ) ? sanitize_text_field( wp_unslash( $_GET['ba_token'] ) ) : '';
+		$paypal_token           = isset( $_GET['token'] ) ? sanitize_text_field( wp_unslash( $_GET['token'] ) ) : '';
+
+		$paypal_payment_approved = false;
+
+		if ( empty( $paypal_subscription_id ) ) {
+			$paypal_subscription_id = $order->get_meta( $this->get_meta_key( 'subscription_id' ), true );
+		}
+		if ( ! empty( $paypal_subscription_id ) ) {
+			$paypal_subscription_data = $this->get_paypal_subscription( $paypal_subscription_id );
+
+			if ( $paypal_subscription_data && in_array( $paypal_subscription_data->status ?? '', [ 'ACTIVE', 'APPROVED' ], true ) ) {
+				$paypal_payment_approved = true;
+			}
+		}
+
+		// Fallback to check PayPal Order if Subscription is not available.
+		if ( ! $paypal_payment_approved && ! empty( $paypal_token ) ) {
+			$paypal_order_data = $this->get_paypal_order( $paypal_token );
+
+			if ( $paypal_order_data && in_array( $paypal_order_data->status ?? '', [ 'APPROVED', 'COMPLETED' ], true ) ) {
+				$paypal_payment_approved = true;
+			}
+		}
+
+		if ( $paypal_payment_approved ) {
+			$order->update_status( 'completed', __( 'PayPal payment completed successfully.', 'wp_subscription' ) );
+			$order->save();
+		}
 	}
 
 	/**
@@ -307,14 +412,14 @@ class Paypal extends \WC_Payment_Gateway {
 		$headers      = getallheaders();
 
 		if ( empty( $webhook_data ) || ! count( $webhook_data ) ) {
-			$post_data    = file_get_contents( 'php://input' );
-			// Sanitize the raw input before decoding
+			$post_data = file_get_contents( 'php://input' );
+			// Sanitize the raw input before decoding.
 			$post_data    = sanitize_text_field( $post_data );
 			$webhook_data = json_decode( $post_data, true );
 
 			if ( ! $webhook_data ) {
 				wp_subscrpt_write_log( 'Webhook data is empty.' );
-				wp_subscrpt_write_debug_log( 'process_webhook EMPTY ' . file_get_contents( 'php://input' ) );
+				wp_subscrpt_write_debug_log( "process_webhook EMPTY \n" . file_get_contents( 'php://input' ) );
 				exit( 'Webhook data is empty.' );
 			}
 		}
@@ -414,6 +519,7 @@ class Paypal extends \WC_Payment_Gateway {
 		// Get PayPal Access Token.
 		$access_token = $this->get_paypal_access_token();
 		if ( ! $access_token ) {
+			wp_subscrpt_write_log( 'PayPal webhook: Access Token unavailable.' );
 			wp_die( 'Error: Access token not available. Cannot verify webhook.', '401 Unauthorized', array( 'response' => 401 ) );
 		}
 
@@ -495,7 +601,7 @@ class Paypal extends \WC_Payment_Gateway {
 			return [
 				'result'   => 'error',
 				'redirect' => '',
-				'response' => 'PayPal payment failed. Please try again.',
+				'response' => 'PayPal payment failed. Please try again. (Failed to get PayPal product ID)',
 			];
 		}
 
@@ -506,7 +612,7 @@ class Paypal extends \WC_Payment_Gateway {
 			return [
 				'result'   => 'error',
 				'redirect' => '',
-				'response' => 'PayPal payment failed. Please try again.',
+				'response' => 'PayPal payment failed. Please try again. (Failed to get PayPal plan ID)',
 			];
 		}
 
@@ -525,7 +631,7 @@ class Paypal extends \WC_Payment_Gateway {
 			return [
 				'result'   => 'error',
 				'redirect' => '',
-				'response' => 'PayPal payment failed. Please try again.',
+				'response' => 'PayPal payment failed. Please try again. (Failed to create PayPal subscription)',
 			];
 		}
 
@@ -546,7 +652,7 @@ class Paypal extends \WC_Payment_Gateway {
 			return [
 				'result'   => 'error',
 				'redirect' => '',
-				'response' => 'PayPal payment failed. Please try again.',
+				'response' => 'PayPal payment failed. Please try again. (Failed to get PayPal subscription approval link)',
 			];
 		} else {
 			return [
@@ -1090,12 +1196,10 @@ class Paypal extends \WC_Payment_Gateway {
 			$response_data = json_decode( wp_remote_retrieve_body( $response ) );
 
 			if ( isset( $response_data->error ) || ! isset( $response_data->access_token ) ) {
-				$log_message = 'Gateway Error : PayPal access token - ' . $response_data->error_description ?? 'Unknown error';
+				$error_description = ! empty( $response_data ) ? $response_data->error_description ?? 'Unknown error' : 'Unknown error';
+				$log_message       = 'Gateway Error : PayPal access token - ' . $error_description;
 				wp_subscrpt_write_log( $log_message );
 				wp_subscrpt_write_debug_log( $log_message );
-
-				// Throw error.
-				throw new Exception( $log_message );
 
 				return null;
 			}
@@ -1105,10 +1209,6 @@ class Paypal extends \WC_Payment_Gateway {
 			$log_message = $e->getMessage();
 			wp_subscrpt_write_log( $log_message );
 			wp_subscrpt_write_debug_log( $log_message );
-
-			// log the error and Throw error.
-			error_log( $log_message );
-			throw new Exception( $log_message );
 
 			return null;
 		}
@@ -1216,7 +1316,7 @@ class Paypal extends \WC_Payment_Gateway {
 			$response_data = json_decode( wp_remote_retrieve_body( $response ) );
 
 			if ( empty( $response_data->id ?? null ) ) {
-				$log_message = 'Error creating PayPal plan: ' . ( $response_data->error_description ?? 'Unknown error' );
+				$log_message = 'Error creating PayPal plan: ' . ( $response_data->error_description ?? $response_data->message ?? 'Unknown error' );
 				wp_subscrpt_write_log( $log_message );
 				wp_subscrpt_write_debug_log( $log_message . ' ' . wp_json_encode( $response_data ) );
 				return null;
@@ -1261,7 +1361,7 @@ class Paypal extends \WC_Payment_Gateway {
 			$response_data = json_decode( wp_remote_retrieve_body( $response ) );
 
 			if ( empty( $response_data->id ?? null ) ) {
-				$log_message = 'Error creating PayPal subscription: ' . ( $response_data->error_description ?? 'Unknown error' );
+				$log_message = 'Error creating PayPal subscription: ' . ( $response_data->error_description ?? $response_data->message ?? 'Unknown error' );
 				wp_subscrpt_write_log( $log_message );
 				wp_subscrpt_write_debug_log( $log_message . ' ' . wp_json_encode( $response_data ) );
 				return null;
@@ -1356,6 +1456,90 @@ class Paypal extends \WC_Payment_Gateway {
 			wp_subscrpt_write_log( $log_message );
 			wp_subscrpt_write_debug_log( $log_message );
 			return false;
+		}
+	}
+
+	/**
+	 * Get PayPal order details.
+	 *
+	 * @param string $order_id      PayPal Order ID.
+	 */
+	public function get_paypal_order( string $order_id ) {
+		// Get PayPal Access Token.
+		$access_token = $this->get_paypal_access_token();
+		if ( ! $access_token ) {
+			wp_subscrpt_write_log( 'Failed to get PayPal order; Access Token unavailable.' );
+			return false;
+		}
+
+		try {
+			$url  = $this->api_endpoint . "/v2/checkout/orders/$order_id";
+			$args = [
+				'method'  => 'GET',
+				'headers' => [
+					'Authorization' => 'Bearer ' . $access_token,
+					'Content-Type'  => 'application/json',
+				],
+			];
+
+			$response      = wp_remote_get( $url, $args );
+			$response_data = json_decode( wp_remote_retrieve_body( $response ) );
+
+			if ( empty( $response_data->id ?? null ) ) {
+				$log_message = 'Error getting PayPal order: ' . ( $response_data->error_description ?? $response_data->message ?? 'Unknown error' );
+				wp_subscrpt_write_log( $log_message );
+				wp_subscrpt_write_debug_log( $log_message . ' ' . wp_json_encode( $response_data ) );
+				return null;
+			}
+
+			return $response_data;
+		} catch ( Exception $e ) {
+			$log_message = 'Failed to get PayPal order; ' . $e->getMessage();
+			wp_subscrpt_write_log( $log_message );
+			wp_subscrpt_write_debug_log( $log_message );
+			return false;
+		}
+	}
+
+	/**
+	 * Get PayPal subscription details.
+	 *
+	 * @param string $subscription_id PayPal Subscription ID.
+	 */
+	public function get_paypal_subscription( string $subscription_id ): ?object {
+		// Get PayPal Access Token.
+		$access_token = $this->get_paypal_access_token();
+		if ( ! $access_token ) {
+			wp_subscrpt_write_log( 'Failed to get PayPal Subscription; Access Token unavailable.' );
+			return null;
+		}
+
+		try {
+			$url  = $this->api_endpoint . "/v1/billing/subscriptions/$subscription_id";
+			$args = [
+				'method'  => 'GET',
+				'headers' => [
+					'Authorization' => 'Bearer ' . $access_token,
+					'Content-Type'  => 'application/json',
+				],
+			];
+
+			$response      = wp_remote_get( $url, $args );
+			$response_data = json_decode( wp_remote_retrieve_body( $response ) );
+
+			if ( empty( $response_data->id ?? null ) ) {
+				$log_message = 'Error getting PayPal subscription: ' . ( $response_data->error_description ?? $response_data->message ?? 'Unknown error' );
+				wp_subscrpt_write_log( $log_message );
+				wp_subscrpt_write_debug_log( $log_message . ' ' . wp_json_encode( $response_data ) );
+				return null;
+			}
+
+			return $response_data;
+		} catch ( Exception $e ) {
+			$log_message = 'Failed to get PayPal subscription; ' . $e->getMessage();
+			wp_subscrpt_write_log( $log_message );
+			wp_subscrpt_write_debug_log( $log_message );
+			return null;
 		}
 	}
 
