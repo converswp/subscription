@@ -59,7 +59,6 @@ class Checkout {
 			$product = sdevs_get_subscription_product( $order_item['product_id'] );
 
 			if ( $product->is_type( 'simple' ) && ! subscrpt_pro_activated() ) {
-
 				if ( $product->is_enabled() ) {
 					$is_renew = isset( $order_item['renew_subscrpt'] );
 
@@ -150,6 +149,14 @@ class Checkout {
 	public function save_order_item_product_meta( $item, $cart_item_key, $cart_item ) {
 		if ( isset( $cart_item['renew_subscrpt'] ) ) {
 			$item->update_meta_data( '_renew_subscrpt', $cart_item['renew_subscrpt'] );
+		}
+
+		if ( ! empty( $cart_item['wp_subs_switch'] ?? null ) && ! empty( $cart_item['switch_context'] ?? null ) ) {
+			$switch_context = $cart_item['switch_context'];
+
+			// Add switch context data to order item meta.
+			$item->update_meta_data( '_wp_subs_switch', true, true );
+			$item->update_meta_data( '_wp_subs_switch_context', $switch_context, true );
 		}
 	}
 }

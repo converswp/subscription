@@ -21,7 +21,7 @@ use SpringDevs\Subscription\Illuminate\Helper;
 			<th scope="col" class="order-product"><?php esc_html_e( 'Product', 'wp_subscription' ); ?></th>
 			<th scope="col" class="subscrpt-next-date"><?php esc_html_e( 'Next Payment', 'wp_subscription' ); ?></th>
 			<th scope="col" class="subscrpt-total"><?php esc_html_e( 'Total', 'wp_subscription' ); ?></th>
-			<th scope="col" class="subscrpt-action"></th>
+			<th scope="col" class="subscrpt-action">Actions</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -45,18 +45,30 @@ use SpringDevs\Subscription\Illuminate\Helper;
 				$product_link       = get_the_permalink( $product_id );
 				$product_price_html = Helper::format_price_with_order_item( get_post_meta( get_the_ID(), '_subscrpt_price', true ), $order_item->get_id() );
 				?>
+
 				<tr>
 					<td data-title="Subscription"><?php the_ID(); ?></td>
-					<td data-title="Status"><span class="subscrpt-<?php echo esc_attr( $post_status_object->name ); ?>"><?php echo esc_html( strlen( $post_status_object->label ) > 9 ? substr( $post_status_object->label, 0, 6 ) . '...' : $post_status_object->label ); ?></span></td>
-					<td data-title="Product"><a href="<?php echo esc_html( $product_link ); ?>" target="_blank"><?php echo esc_html( $product_name ); ?></a></td>
+
+					<td data-title="Status">
+						<span class="subscrpt-<?php echo esc_attr( $post_status_object->name ); ?>">
+							<?php echo esc_html( strlen( $post_status_object->label ) > 9 ? substr( $post_status_object->label, 0, 9 ) . '...' : $post_status_object->label ); ?>
+						</span>
+					</td>
+					
+					<td data-title="Product"><?php echo esc_html( $product_name ); ?></td>
+					
 					<?php if ( 'on' !== $trial_mode ) : ?>
 						<td data-title="Next Payment"><?php echo esc_html( $next_date ? gmdate( 'F d, Y', $next_date ) : '-' ); ?></td>
 					<?php else : ?>
 						<td data-title="Next Payment"><small>First Billing : </small><?php echo esc_html( gmdate( 'F d, Y', $start_date ) ); ?></td>
 					<?php endif; ?>
+
 					<td data-title="Total"><?php echo wp_kses_post( $product_price_html ); ?></td>
-					<td data-title="Actions">
-						<a href="<?php echo esc_html( wc_get_endpoint_url( 'view-subscription', get_the_ID(), wc_get_page_permalink( 'myaccount' ) ) ); ?>" class="woocommerce-button <?php echo esc_attr( $wp_button_class ); ?> button view"><span class="dashicons dashicons-visibility"></span></a>
+
+					<td data-title="Actions">						
+						<a href="<?php echo esc_html( wc_get_endpoint_url( 'view-subscription', get_the_ID(), wc_get_page_permalink( 'myaccount' ) ) ); ?>" class="woocommerce-button <?php echo esc_attr( $wp_button_class ); ?> button view">
+							<?php echo esc_html_e( 'View', 'wp_subscription' ); ?>
+						</a>
 					</td>
 				</tr>
 				<?php

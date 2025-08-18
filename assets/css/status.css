@@ -1,34 +1,43 @@
-span.subscrpt-pending {
-  background: #535050;
-  color: white;
+.my_account_subscrpt .order-status {
+    min-width: 100px;
+}
+
+span[class*="subscrpt-"] {
+  background: #bfdbfe;
+  color: #1e40af;
+  font-weight: 600;
+  font-size: 12px;
   text-transform: capitalize;
-  padding: 8px;
+  padding: 8px 10px;
+  border-radius: 5px;
+}
+
+span.subscrpt-pending {
+  background: #dbeafe;
+  color: #1e40af;
 }
 
 span.subscrpt-active {
-  background: green;
-  color: white;
-  text-transform: capitalize;
-  padding: 8px;
+  background: #bbf7d0;
+  color: #166534;
 }
 
 span.subscrpt-expired {
-  background: red;
-  color: white;
-  text-transform: capitalize;
-  padding: 8px;
+  background: #fecaca;
+  color: #991b1b;
 }
 
 span.subscrpt-cancelled {
-  background: #cecece;
-  color: white;
-  text-transform: capitalize;
-  padding: 8px;
+  background: #e2e8f0;
+  color: #475569;
 }
 
 span.subscrpt-pe_cancelled {
-  background: #ecb03e;
-  color: white;
-  text-transform: capitalize;
-  padding: 8px;
+  background: #ffedd5;
+  color: #b45309;
+}
+
+span.subscrpt-draft {
+  background: #f3f3f3;
+  color: #888;
 }

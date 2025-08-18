@@ -27,8 +27,8 @@
 }
 
 .subscrpt-order-label {
-  background: #e1edf7;
-  color: #2683aa;
+  background: #dbeafe;
+  color: #1e40af;
   display: inline-block;
   padding: 5px 10px;
   font-weight: 500;
@@ -36,6 +36,7 @@
   margin-top: 10px;
   clear: both;
   margin-bottom: 5px;
+  border-radius: 5px;
 }
 
 @media (min-width: 1024px) {
@@ -365,35 +366,6 @@ body.wp-subscription_page_wp-subscription-integrations #wpcontent
     color: #fff;
 }
 
-/* Status Label Styles */
-.wp-subscription-list-table .subscrpt-active {
-    background: #e6f4ea;
-    color: #1a7f37;
-    border-radius: 999px;
-    padding: 4px 16px;
-    font-weight: 600;
-    font-size: 13px;
-    display: inline-block;
-}
-.wp-subscription-list-table .subscrpt-cancelled {
-    background: #fbeaea;
-    color: #d93025;
-    border-radius: 999px;
-    padding: 4px 16px;
-    font-weight: 600;
-    font-size: 13px;
-    display: inline-block;
-}
-.wp-subscription-list-table .subscrpt-draft {
-    background: #f3f3f3;
-    color: #888;
-    border-radius: 999px;
-    padding: 4px 16px;
-    font-weight: 600;
-    font-size: 13px;
-    display: inline-block;
-}
-
 /* =====================
    Subscriptions List Page
    ===================== */
@@ -466,27 +438,6 @@ body.wp-subscription_page_wp-subscription-integrations #wpcontent
     color: #1e40af;
     text-decoration: underline;
 }
-.subscrpt-status-badge {
-    display: inline-block;
-    min-width: 48px;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 500;
-    color: #222;
-    text-align: center;
-    letter-spacing: 0.01em;
-    background: #e9ecef;
-    box-shadow: none;
-    text-transform: capitalize;
-}
-.subscrpt-status-active { background: #27c775 !important; color: #ffffff !important; }
-.subscrpt-status-cancelled { background: #fee2e2 !important; color: #b91c1c !important; }
-.subscrpt-status-draft { background: #e0e7ef !important; color: #374151 !important; }
-.subscrpt-status-pending { background: #fef9c3 !important; color: #b45309 !important; }
-.subscrpt-status-expired { background: #e5e7eb !important; color: #6b7280 !important; }
-.subscrpt-status-pe_cancelled { background: #ffedd5 !important; color: #b45309 !important; }
-.subscrpt-status-trash { background: #fef2f2 !important; color: #dc2626 !important; }
 .subscrpt-id-title {
     font-size: 11px;
     color: #888;

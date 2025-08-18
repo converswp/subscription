@@ -130,7 +130,7 @@ class Subscriptions {
 	public function add_custom_columns_data( $column, $post_id ) {
 		// HPOS: Safe. Only retrieves WooCommerce order via CRUD, and subscription meta via post meta.
 		$order_id = get_post_meta( $post_id, '_subscrpt_order_id', true ); // HPOS: Only subscription meta, not order meta.
-		$order = wc_get_order( $order_id ); // HPOS: Safe, uses WooCommerce CRUD.
+		$order    = wc_get_order( $order_id ); // HPOS: Safe, uses WooCommerce CRUD.
 		if ( $order ) {
 			if ( 'subscrpt_start_date' === $column ) {
 				$start_date = get_post_meta( $post_id, '_subscrpt_start_date', true );
@@ -216,11 +216,15 @@ class Subscriptions {
 		$subscription_id = $post->ID;
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'subscrpt_order_relation';
-        // @phpcs:ignore
-        $order_histories = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i WHERE subscription_id=%d', array(
-			$table_name,
-			$subscription_id,
-			)
+
+		// @phpcs:ignore
+		$order_histories = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT * FROM %i WHERE subscription_id=%d ORDER BY id DESC',
+				array(
+					$table_name,
+					$subscription_id,
+				)
 			)
 		);
 
@@ -764,7 +768,7 @@ class Subscriptions {
 
 	public function add_overview_submenu() {
 		// Remove and re-add submenu to ensure Overview is first
-		remove_submenu_page('edit.php?post_type=subscrpt_order', 'edit.php?post_type=subscrpt_order');
+		remove_submenu_page( 'edit.php?post_type=subscrpt_order', 'edit.php?post_type=subscrpt_order' );
 		add_submenu_page(
 			'edit.php?post_type=subscrpt_order',
 			__( 'Overview', 'wp_subscription' ),
@@ -783,7 +787,7 @@ class Subscriptions {
 			'',
 			1
 		);
-		if ( ! class_exists('Sdevs_Wc_Subscription_Pro') ) {
+		if ( ! class_exists( 'Sdevs_Wc_Subscription_Pro' ) ) {
 			add_submenu_page(
 				'edit.php?post_type=subscrpt_order',
 				__( 'Go Pro', 'wp_subscription' ),
@@ -873,7 +877,7 @@ class Subscriptions {
 	}
 
 	public function render_go_pro_page() {
-		if ( class_exists('Sdevs_Wc_Subscription_Pro') ) {
+		if ( class_exists( 'Sdevs_Wc_Subscription_Pro' ) ) {
 			echo '<div class="notice notice-info" style="margin:40px auto;max-width:700px;text-align:center;font-size:1.2em;">Pro is already active.</div>';
 			return;
 		}
