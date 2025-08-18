@@ -11,7 +11,7 @@ This document provides a comprehensive reference for the Split Payment feature i
 - **Payment Type Selection**: Choose between 'recurring' and 'split_payment'
 - **Number of Payments**: Set total installments (minimum 2)
 - **Access Ends Timing**: Three options:
-  - `after_last_payment`: Access ends immediately after final payment is completed
+  - `lifetime`: Lifetime access after completing all payments
   - `after_full_duration`: Access ends after full subscription duration (payment interval × number of payments)
   - `custom_duration`: Custom access period after first payment (e.g., 6 months after first payment)
 - **Custom Access Duration**: Time and type (days/weeks/months/years) for custom duration
@@ -293,10 +293,10 @@ The Access Time Settings control **when customer access ends** for split payment
 
 #### **Three Access Timing Options:**
 
-1. **`after_last_payment`** - Immediate Access Termination
-   - **Behavior**: Access ends immediately when the final payment is completed
-   - **Use Case**: For products where you want to ensure customers pay the full amount before getting access
-   - **Example**: A 12-month course with 4 payments - access ends after the 4th payment, regardless of time passed
+1. **`lifetime`** - Lifetime Access After Completion
+   - **Behavior**: Access continues indefinitely after completing all payments
+   - **Use Case**: For products where you want to reward customers with permanent access after completing their payment plan
+   - **Example**: A premium course with 4 payments - customers get lifetime access after completing all installments
 
 2. **`after_full_duration`** - Full Subscription Duration (Default)
    - **Behavior**: Access continues for the full subscription period (payment interval × number of payments)
@@ -325,7 +325,7 @@ The Access Time Settings are implemented through the `SplitPaymentHandler` class
 1. **Calculates Access End Dates**: Uses different logic based on the selected timing option
 2. **Handles Payment Completion**: Applies the appropriate access control when payments are completed
 3. **Logs Access Decisions**: Records detailed activity notes explaining why access continues or expires
-4. **Integrates with Cron**: Automatically expires access when the calculated end date is reached
+4. **Integrates with Cron**: Automatically expires access when the calculated end date is reached (except for lifetime access)
 
 #### **Key Methods:**
 ```php

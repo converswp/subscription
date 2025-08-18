@@ -196,8 +196,8 @@ do_action( 'before_single_subscrpt_content' );
 				<td>
 					<?php 
 					switch ( $access_ends_timing ) {
-						case 'after_last_payment':
-							esc_html_e( 'Ends after final payment', 'wp_subscription' );
+						case 'lifetime':
+							esc_html_e( 'Lifetime access after completion', 'wp_subscription' );
 							break;
 						case 'after_full_duration':
 							esc_html_e( 'Full subscription duration', 'wp_subscription' );

@@ -186,8 +186,8 @@ $shipping_address = $order ? $order->get_formatted_shipping_address() : '-';
                             <td style="padding:8px 10px;">
                                 <?php 
                                 switch ($access_ends_timing) {
-                                    case 'after_last_payment':
-                                        esc_html_e('Ends after final payment', 'wp_subscription');
+                                    case 'lifetime':
+                                        esc_html_e('Lifetime access after completion', 'wp_subscription');
                                         break;
                                     case 'after_full_duration':
                                         esc_html_e('Full subscription duration', 'wp_subscription');
