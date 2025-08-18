@@ -167,25 +167,12 @@ do_action( 'before_single_subscrpt_content' );
 				}
 				?>
 				<!-- DEBUG: Show raw values -->
-				<small style="color: #666; font-size: 11px; display: block;">
+				<!-- <small style="color: #666; font-size: 11px; display: block;">
 					Debug: Product ID: <?php echo esc_html( $product_id ); ?>, 
 					Variation ID: <?php echo esc_html( $variation_id ?: 'None' ); ?>, 
 					Type: <?php echo esc_html( $payment_type ); ?>, 
 					Max: <?php echo esc_html( $max_payments ); ?>
-				</small>
-			</td>
-		</tr>
-		
-		<!-- Show Total Payments regardless of conditions for debugging -->
-		<tr>
-			<td><?php esc_html_e( 'Total Payments (Debug)', 'wp_subscription' ); ?></td>
-			<td>
-				<?php echo esc_html( $payments_made ) . ' / ' . esc_html( $max_payments ); ?>
-				<small style="color: #666; font-size: 11px; display: block;">
-					Remaining: <?php echo esc_html( $remaining_payments ); ?>, 
-					max_payments: <?php echo esc_html( $max_payments ); ?>, 
-					Condition: <?php echo ( ( $remaining_payments !== 'unlimited' && $max_payments > 0 ) || ( 'split_payment' === $payment_type && $max_payments > 0 ) ) ? 'Show' : 'Hide'; ?>
-				</small>
+				</small> -->
 			</td>
 		</tr>
 		
