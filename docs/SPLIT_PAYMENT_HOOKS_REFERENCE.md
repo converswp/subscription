@@ -11,13 +11,11 @@ This document provides a comprehensive reference for the Split Payment feature i
 - **Payment Type Selection**: Choose between 'recurring' and 'split_payment'
 - **Number of Payments**: Set total installments (minimum 2)
 - **Access Ends Timing**: Three options:
-  - `after_last_payment`: Access ends immediately after final payment
-  - `after_full_duration`: Access ends after full subscription duration
-  - `custom_duration`: Custom access period after first payment
+  - `after_last_payment`: Access ends immediately after final payment is completed
+  - `after_full_duration`: Access ends after full subscription duration (payment interval × number of payments)
+  - `custom_duration`: Custom access period after first payment (e.g., 6 months after first payment)
 - **Custom Access Duration**: Time and type (days/weeks/months/years) for custom duration
-- **Payment Failure Settings**: 
-  - Maximum payment retries (0-10)
-  - Grace period in days (0-30)
+- **Payment Failure Handling**: Managed globally through WPS Pro Settings (applies to all products)
 
 **Files**: 
 - `includes/Admin/Product/Simple.php` (Simple products)
@@ -239,8 +237,8 @@ $default_grace_period = apply_filters('subscrpt_default_grace_period_days', $def
 ### ⚙️ **CONFIGURATION OPTIONS**
 
 #### Global Settings (WPS Pro Settings Page)
-- **Default Payment Retries**: 3 attempts (0-10, can be overridden per product)
-- **Default Grace Period**: 7 days (0-30, can be overridden per product)
+- **Default Payment Retries**: 3 attempts (0-10)
+- **Default Grace Period**: 7 days (0-30)
 - **Enable Payment Failure Emails**: Toggle email notifications on/off
 - **Payment Failure Email Delay**: 24 hours delay to avoid spam (1-168 hours)
 - **Enable Grace Period Notifications**: Toggle grace period warnings on/off
@@ -287,7 +285,59 @@ The Payment Failure Handling settings are now fully integrated into the WPS Pro 
 1. **Global Defaults**: Set default retry and grace period values for all products
 2. **Email Management**: Control when and how failure notifications are sent
 3. **Customer Experience**: Balance between immediate alerts and spam prevention
-4. **Flexibility**: Product-specific settings can override global defaults
+
+## 🆕 **ACCESS TIME SETTINGS EXPLAINED**
+
+### What Do Access Time Settings Do?
+The Access Time Settings control **when customer access ends** for split payment subscriptions. This is crucial for managing customer experience and business revenue:
+
+#### **Three Access Timing Options:**
+
+1. **`after_last_payment`** - Immediate Access Termination
+   - **Behavior**: Access ends immediately when the final payment is completed
+   - **Use Case**: For products where you want to ensure customers pay the full amount before getting access
+   - **Example**: A 12-month course with 4 payments - access ends after the 4th payment, regardless of time passed
+
+2. **`after_full_duration`** - Full Subscription Duration (Default)
+   - **Behavior**: Access continues for the full subscription period (payment interval × number of payments)
+   - **Use Case**: Standard subscription behavior where customers get full value for their payments
+   - **Example**: A 12-month course with 4 payments - access continues for 12 months from start date
+
+3. **`custom_duration`** - Flexible Access Extension
+   - **Behavior**: Access continues for a custom period after the first payment is completed
+   - **Use Case**: When you want to give customers immediate access but control how long it lasts
+   - **Example**: A 12-month course with 4 payments, but access continues for 6 months after first payment
+
+### **Why This Matters:**
+- **Customer Experience**: Controls how long customers can access your content
+- **Revenue Protection**: Ensures customers pay for the access they receive
+- **Business Flexibility**: Allows different strategies for different products
+- **Access Control**: Prevents customers from getting unlimited access with partial payments
+
+### **Global vs Per-Product Settings:**
+- **Payment Failure Handling**: Now managed globally through WPS Pro Settings (applies to all products)
+- **Access Time Settings**: Still configurable per product for maximum flexibility
+- **Rationale**: Payment failures are business-wide concerns, while access timing is product-specific
+
+### **Technical Implementation:**
+The Access Time Settings are implemented through the `SplitPaymentHandler` class which:
+
+1. **Calculates Access End Dates**: Uses different logic based on the selected timing option
+2. **Handles Payment Completion**: Applies the appropriate access control when payments are completed
+3. **Logs Access Decisions**: Records detailed activity notes explaining why access continues or expires
+4. **Integrates with Cron**: Automatically expires access when the calculated end date is reached
+
+#### **Key Methods:**
+```php
+// Calculate when access should end
+SplitPaymentHandler::calculate_access_end_date($subscription_id)
+
+// Handle access control when payments complete
+SplitPaymentHandler::handle_split_payment_completion($subscription_id, $payments_made, $max_payments)
+
+// Check if access should be expired
+SplitPaymentHandler::should_expire_access($subscription_id)
+```
 
 ### Smart Email Delivery
 - **Configurable Delays**: Prevent spam during temporary payment issues
