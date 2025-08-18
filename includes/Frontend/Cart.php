@@ -264,7 +264,7 @@ class Cart {
 					$recurrings[] = apply_filters(
 						'subscrpt_cart_recurring_data',
 						array(
-							'price'           => ( $cart_item['subscription']['per_cost'] * $cart_item['quantity'] ) * 100,
+							'price'           => ( (float) $cart_item['subscription']['per_cost'] * $cart_item['quantity'] ) * 100,
 							'time'            => $cart_subscription['time'],
 							'type'            => $cart_subscription['type'],
 							'description'     => empty( $cart_subscription['trial'] ) ? 'Next billing on: ' . $next_date : 'First billing on: ' . $start_date,
@@ -340,7 +340,7 @@ class Cart {
 		if ( isset( $cart_item['subscription'] ) ) {
 			$item_data = $cart_item['subscription'];
 			unset( $item_data['per_cost'] );
-			$item_data['cost'] = $cart_item['subscription']['per_cost'] * $cart_item['quantity'];
+			$item_data['cost'] = (float) $cart_item['subscription']['per_cost'] * $cart_item['quantity'];
 		}
 		if ( ! subscrpt_pro_activated() ) {
 			$item_data['time']       = null;
