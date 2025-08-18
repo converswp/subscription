@@ -487,7 +487,20 @@ class Subscriptions {
 		$subscrpt_status = get_post_status( $post->ID );
 		$started_date = get_the_date( 'F j, Y g:i A', $post->ID );
 		$next_payment = get_post_meta( $post->ID, '_subscrpt_next_date', true );
-		$next_payment_formatted = $next_payment ? date( 'F j, Y g:i A', strtotime( $next_payment ) ) : __( 'N/A', 'wp_subscription' );
+		
+		// Fix: Handle next_payment as timestamp, not string
+		if ( ! empty( $next_payment ) ) {
+			// Check if it's already a timestamp (numeric) or needs conversion
+			if ( is_numeric( $next_payment ) ) {
+				$next_payment_formatted = gmdate( 'F j, Y g:i A', $next_payment );
+			} else {
+				// If it's a string, try to convert it
+				$timestamp = strtotime( $next_payment );
+				$next_payment_formatted = $timestamp ? gmdate( 'F j, Y g:i A', $timestamp ) : __( 'N/A', 'wp_subscription' );
+			}
+		} else {
+			$next_payment_formatted = __( 'N/A', 'wp_subscription' );
+		}
 		
 		?>
 		<div class="wp-subscription-details-section">
