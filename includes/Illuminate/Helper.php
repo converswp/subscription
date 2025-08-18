@@ -589,6 +589,95 @@ class Helper {
 	}
 
 	/**
+	 * Get a subscription data.
+	 *
+	 * @param int $subscription_id Subscription ID.
+	 * @return array|null
+	 */
+	public static function get_subscription_data( int $subscription_id ): ?array {
+		if ( empty( get_post_meta( $subscription_id ) ) ) {
+			return null;
+		}
+
+		$status = get_post_status( $subscription_id );
+		$price  = get_post_meta( $subscription_id, '_subscrpt_price', true );
+
+		$signup_fee = get_post_meta( $subscription_id, '_subscrpt_signup_fee', true );
+		$signup_fee = ! empty( $signup_fee ) ? $signup_fee : 0;
+
+		$product_id = get_post_meta( $subscription_id, '_subscrpt_product_id', true );
+		$product_id = ! empty( $product_id ) ? (int) $product_id : 0;
+
+		$variation_id = get_post_meta( $subscription_id, '_subscrpt_variation_id', true );
+		$variation_id = ! empty( $variation_id ) ? (int) $variation_id : 0;
+
+		$order_id      = get_post_meta( $subscription_id, '_subscrpt_order_id', true );
+		$order_item_id = get_post_meta( $subscription_id, '_subscrpt_order_item_id', true );
+
+		$can_user_cancel = get_post_meta( $subscription_id, '_subscrpt_user_cancel', true ) === 'yes';
+
+		$start_date = get_post_meta( $subscription_id, '_subscrpt_start_date', true );
+		$start_date = ! empty( $start_date ) ? gmdate( DATE_RFC2822, $start_date ) : null;
+
+		$next_date = get_post_meta( $subscription_id, '_subscrpt_next_date', true );
+		$next_date = ! empty( $next_date ) ? gmdate( DATE_RFC2822, $next_date ) : null;
+
+		$timing_per    = get_post_meta( $subscription_id, '_subscrpt_timing_per', true );
+		$timing_option = get_post_meta( $subscription_id, '_subscrpt_timing_option', true );
+
+		$is_auto_renew = get_post_meta( $subscription_id, '_subscrpt_auto_renew', true );
+
+		$subscription_data = [
+			'id'              => $subscription_id,
+			'status'          => $status,
+			'schedule'        => [
+				'timing_per'    => $timing_per,
+				'timing_option' => $timing_option,
+			],
+			'price'           => $price,
+			'signup_fee'      => $signup_fee,
+			'start_date'      => $start_date,
+			'next_date'       => $next_date,
+			'product'         => [
+				'product_id'   => $product_id,
+				'variation_id' => $variation_id,
+			],
+			'order'           => [
+				'order_id'      => $order_id,
+				'order_item_id' => $order_item_id,
+			],
+			'can_user_cancel' => $can_user_cancel,
+			'is_auto_renew'   => (bool) $is_auto_renew,
+		];
+
+		return $subscription_data;
+	}
+
+	/**
+	 * Get related orders of a subscription.
+	 *
+	 * @param int $subscription_id Subscription ID.
+	 * @return array
+	 */
+	public static function get_related_orders( int $subscription_id ): array {
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'subscrpt_order_relation';
+
+		// @phpcs:ignore
+		$order_histories = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT order_id, order_item_id, type FROM %i WHERE subscription_id=%d ORDER BY id DESC',
+				[
+					$table_name,
+					$subscription_id,
+				]
+			)
+		);
+
+		return $order_histories;
+	}
+
+	/**
 	 * Create new order for renewal.
 	 *
 	 * @param \WC_Order      $old_order Old Order Object.
