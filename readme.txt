@@ -228,6 +228,9 @@ Learn more: [WPSubscription](https://wpsubscription.co/)
 
 == Changelog ==
 
+= 1.5.7 - Aug 24, 2025 =
+* fix: PayPal data conflict for Live and SandBox modes.
+
 = 1.5.6 - Aug 18, 2025 =
 * fix: 🐛 PayPal update order by webhook
 * fix: 🐛 Some subscription query dependency
