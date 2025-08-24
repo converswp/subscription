@@ -562,9 +562,9 @@ class Subscriptions {
 					</table>
 				</div>
 				
-				<!-- Important Dates -->
+				<!-- Schedule Dates -->
 				<div class="details-group">
-					<h3><?php esc_html_e( 'Important Dates', 'wp_subscription' ); ?></h3>
+					<h3><?php esc_html_e( 'Schedule Dates', 'wp_subscription' ); ?></h3>
 					<table>
 						<tr>
 							<th><?php esc_html_e( 'Started', 'wp_subscription' ); ?></th>

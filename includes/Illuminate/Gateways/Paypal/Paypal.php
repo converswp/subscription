@@ -346,6 +346,19 @@ class Paypal extends \WC_Payment_Gateway {
 		if ( empty( $paypal_subscription_id ) ) {
 			$paypal_subscription_id = $order->get_meta( $this->get_meta_key( 'subscription_id' ), true );
 		}
+
+		// OLD key migration.
+		// If no data check if the data exists with the old key. And update if necessary.
+		// ? Dev note: Remove after JAN 1, 2026.
+		if ( empty( $paypal_subscription_id ) ) {
+			$paypal_subscription_id = $order->get_meta( '_wp_subs_paypal_subscription_id', true );
+
+			if ( ! empty( $paypal_subscription_id ) ) {
+				$order->update_meta_data( $this->get_meta_key( 'subscription_id' ), $paypal_subscription_id );
+				$order->save();
+			}
+		}
+
 		if ( ! empty( $paypal_subscription_id ) ) {
 			$paypal_subscription_data = $this->get_paypal_subscription( $paypal_subscription_id );
 
@@ -977,6 +990,18 @@ class Paypal extends \WC_Payment_Gateway {
 				// Get PayPal subscription ID from order meta.
 				$tmp_paypal_subs_id = $order->get_meta( $this->get_meta_key( 'subscription_id' ) );
 
+				// OLD key migration.
+				// If no data check if the data exists with the old key. And update if necessary.
+				// ? Dev note: Remove after JAN 1, 2026.
+				if ( empty( $tmp_paypal_subs_id ) ) {
+					$tmp_paypal_subs_id = $order->get_meta( '_wp_subs_paypal_subscription_id', true );
+
+					if ( ! empty( $tmp_paypal_subs_id ) ) {
+						$order->update_meta_data( $this->get_meta_key( 'subscription_id' ), $tmp_paypal_subs_id );
+						$order->save();
+					}
+				}
+
 				if ( ! empty( $tmp_paypal_subs_id ) ) {
 					$paypal_subscription_id = $tmp_paypal_subs_id;
 					break;
@@ -1019,9 +1044,10 @@ class Paypal extends \WC_Payment_Gateway {
 	 * Get Prefixed Meta Key.
 	 * Prefix the key with '_wp_subs_' to avoid possible conflicts with other plugins.
 	 *
-	 * @param string $key The key to prefix.
+	 * @param string      $key The key to prefix.
+	 * @param string|null $mode_override Optional mode override (sandbox/live).
 	 */
-	public function get_meta_key( string $key ): string {
+	public function get_meta_key( string $key, ?string $mode_override = null ): string {
 		$keys         = [
 			'product_data'    => 'product_data',
 			'plan_id'         => 'plan_id',
@@ -1029,7 +1055,13 @@ class Paypal extends \WC_Payment_Gateway {
 			'subscription_id' => 'subscription_id',
 		];
 		$selected_key = $keys[ $key ] ?? $key;
-		return '_wp_subs_paypal_' . $selected_key;
+
+		$mode_string = $this->sandbox_mode ? 'sandbox_' : 'live_';
+		if ( ! empty( $mode_override ) ) {
+			$mode_string = 'sandbox' === $mode_override ? 'sandbox_' : 'live_';
+		}
+
+		return '_wp_subs_paypal_' . $mode_string . $selected_key;
 	}
 
 	/**

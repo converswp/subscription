@@ -26,7 +26,7 @@ WP Subscription aims to be the go-to subscription management solution for WordPr
 
 ### Prerequisites
 
-- PHP >= 7.0
+- PHP >= 7.4
 - WordPress >= 4.6
 - WooCommerce >= 3.0
 - Node.js (for frontend development)
